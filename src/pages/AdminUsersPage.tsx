@@ -1,0 +1,336 @@
+import React, { useState } from 'react';
+import { Card, Table, Button, Modal, Form, Input, Select, Tag, Space, message, Typography } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, CheckOutlined, StopOutlined } from '@ant-design/icons';
+import { useAuth } from '../hooks/useAuth';
+import type { User, CreateUserRequest } from '../types';
+
+const { Title } = Typography;
+const { Option } = Select;
+
+export const AdminUsersPage: React.FC = () => {
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [form] = Form.useForm();
+  
+  // Mock data - заменить на реальные хуки
+  const users: User[] = [];
+  const isLoading = false;
+
+  const columns = [
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+    },
+    {
+      title: 'ФИО',
+      key: 'fullName',
+      render: (record: User) => 
+        `${record.lastName || ''} ${record.firstName || ''} ${record.middleName || ''}`.trim() || 'Не указано',
+    },
+    {
+      title: 'Роли',
+      dataIndex: 'roles',
+      key: 'roles',
+      render: (roles: string[]) => (
+        <>
+          {roles.map(role => {
+            const roleMap = {
+              'admin': { color: 'red', text: 'Администратор' },
+              'expert': { color: 'blue', text: 'Эксперт' },
+              'author': { color: 'green', text: 'Автор' },
+            };
+            const roleInfo = roleMap[role as keyof typeof roleMap] || { color: 'default', text: role };
+            return <Tag key={role} color={roleInfo.color}>{roleInfo.text}</Tag>;
+          })}
+        </>
+      ),
+    },
+    {
+      title: 'Статус',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status: string) => {
+        const statusMap = {
+          'active': { color: 'success', text: 'Активен' },
+          'inactive': { color: 'warning', text: 'Неактивен' },
+          'archived': { color: 'default', text: 'Архивирован' },
+        };
+        const statusInfo = statusMap[status as keyof typeof statusMap] || { color: 'default', text: status };
+        return <Tag color={statusInfo.color}>{statusInfo.text}</Tag>;
+      },
+    },
+    {
+      title: 'Дата создания',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (date: string) => new Date(date).toLocaleDateString('ru-RU'),
+    },
+    {
+      title: 'Действия',
+      key: 'actions',
+      render: (_: any, record: User) => (
+        <Space>
+          <Button 
+            icon={<EditOutlined />} 
+            onClick={() => handleEditUser(record)}
+          >
+            Редактировать
+          </Button>
+          {record.status === 'active' ? (
+            <Button 
+              icon={<StopOutlined />} 
+              onClick={() => handleDeactivateUser(record.id)}
+            >
+              Деактивировать
+            </Button>
+          ) : (
+            <Button 
+              icon={<CheckOutlined />} 
+              onClick={() => handleActivateUser(record.id)}
+            >
+              Активировать
+            </Button>
+          )}
+          <Button 
+            danger
+            icon={<DeleteOutlined />} 
+            onClick={() => handleDeleteUser(record.id)}
+          >
+            Удалить
+          </Button>
+        </Space>
+      ),
+    },
+  ];
+
+  const handleCreateUser = () => {
+    setEditingUser(null);
+    setIsCreateModalOpen(true);
+    form.resetFields();
+  };
+
+  const handleEditUser = (user: User) => {
+    setEditingUser(user);
+    setIsCreateModalOpen(true);
+    form.setFieldsValue({
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      middleName: user.middleName,
+      phone: user.phone,
+      position: user.position,
+      workplace: user.workplace,
+      department: user.department,
+      roles: user.roles,
+      status: user.status,
+    });
+  };
+
+  const handleSubmitUser = async (values: any) => {
+    try {
+      if (editingUser) {
+        // await updateUser(editingUser.id, values);
+        message.success('Пользователь успешно обновлен!');
+      } else {
+        // await createUser(values);
+        message.success('Пользователь успешно создан!');
+      }
+      setIsCreateModalOpen(false);
+      form.resetFields();
+    } catch (error) {
+      message.error('Ошибка при сохранении пользователя');
+    }
+  };
+
+  const handleActivateUser = async (userId: string) => {
+    try {
+      // await activateUser(userId);
+      message.success('Пользователь активирован');
+    } catch (error) {
+      message.error('Ошибка при активации пользователя');
+    }
+  };
+
+  const handleDeactivateUser = async (userId: string) => {
+    try {
+      // await deactivateUser(userId);
+      message.success('Пользователь деактивирован');
+    } catch (error) {
+      message.error('Ошибка при деактивации пользователя');
+    }
+  };
+
+  const handleDeleteUser = async (userId: string) => {
+    Modal.confirm({
+      title: 'Подтверждение удаления',
+      content: 'Вы уверены, что хотите удалить этого пользователя?',
+      okText: 'Удалить',
+      cancelText: 'Отмена',
+      onOk: async () => {
+        try {
+          // await deleteUser(userId);
+          message.success('Пользователь удален');
+        } catch (error) {
+          message.error('Ошибка при удалении пользователя');
+        }
+      },
+    });
+  };
+
+  return (
+    <div style={{ padding: 24 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        <Title level={2}>Управление пользователями</Title>
+        <Button 
+          type="primary" 
+          icon={<PlusOutlined />}
+          onClick={handleCreateUser}
+        >
+          Создать пользователя
+        </Button>
+      </div>
+      
+      <Card>
+        <Table
+          columns={columns}
+          dataSource={users}
+          loading={isLoading}
+          rowKey="id"
+          pagination={{
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: (total, range) => 
+              `${range[0]}-${range[1]} из ${total} пользователей`,
+          }}
+        />
+      </Card>
+
+      {/* Модальное окно создания/редактирования */}
+      <Modal
+        title={editingUser ? 'Редактирование пользователя' : 'Создание пользователя'}
+        open={isCreateModalOpen}
+        onCancel={() => {
+          setIsCreateModalOpen(false);
+          form.resetFields();
+        }}
+        footer={null}
+        width={600}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmitUser}
+        >
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[
+              { required: true, message: 'Введите email' },
+              { type: 'email', message: 'Некорректный email' }
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          {!editingUser && (
+            <Form.Item
+              name="password"
+              label="Пароль"
+              rules={[
+                { required: true, message: 'Введите пароль' },
+                { min: 6, message: 'Пароль должен содержать минимум 6 символов' }
+              ]}
+            >
+              <Input.Password />
+            </Form.Item>
+          )}
+
+          <Form.Item
+            name="lastName"
+            label="Фамилия"
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="firstName"
+            label="Имя"
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="middleName"
+            label="Отчество"
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="phone"
+            label="Телефон"
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="position"
+            label="Должность"
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="workplace"
+            label="Место работы"
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="department"
+            label="Подразделение"
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="roles"
+            label="Роли"
+            rules={[{ required: true, message: 'Выберите роли' }]}
+          >
+            <Select mode="multiple" placeholder="Выберите роли">
+              <Option value="admin">Администратор</Option>
+              <Option value="expert">Эксперт</Option>
+              <Option value="author">Автор</Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="status"
+            label="Статус"
+            rules={[{ required: true, message: 'Выберите статус' }]}
+          >
+            <Select>
+              <Option value="active">Активен</Option>
+              <Option value="inactive">Неактивен</Option>
+              <Option value="archived">Архивирован</Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item>
+            <Space>
+              <Button type="primary" htmlType="submit">
+                {editingUser ? 'Обновить' : 'Создать'}
+              </Button>
+              <Button onClick={() => setIsCreateModalOpen(false)}>
+                Отмена
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
+  );
+};
