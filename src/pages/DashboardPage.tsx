@@ -172,8 +172,8 @@ export const DashboardPage: React.FC = () => {
 
       {/* Статистика */}
       {displayUser?.roles?.includes(UserRole.ADMIN) && (
-        <Row gutter={16} style={{ marginBottom: 32 }}>
-          <Col span={6}>
+        <Row style={{ gap: 16, marginBottom: 32 }}>
+          <Col style={{ flex: 1 }}>
             <Card>
               <Statistic
                 title="Всего программ"
@@ -182,7 +182,7 @@ export const DashboardPage: React.FC = () => {
               />
             </Card>
           </Col>
-          <Col span={6}>
+          <Col style={{ flex: 1 }}>
             <Card>
               <Statistic
                 title="Опубликованы"
@@ -192,7 +192,7 @@ export const DashboardPage: React.FC = () => {
               />
             </Card>
           </Col>
-          <Col span={6}>
+          <Col style={{ flex: 1 }}>
             <Card>
               <Statistic
                 title="На экспертизе"
@@ -202,7 +202,7 @@ export const DashboardPage: React.FC = () => {
               />
             </Card>
           </Col>
-          <Col span={6}>
+          <Col style={{ flex: 1 }}>
             <Card>
               <Statistic
                 title="В разработке"
@@ -218,13 +218,13 @@ export const DashboardPage: React.FC = () => {
         </Row>
       )}
 
-      <Row gutter={[16, 16]}>
+      <Row style={{ gap: 16 }}>
         {/* Быстрые действия */}
-        <Col span={16}>
+        <Col style={{ flex: 1 }}>
           <Card title="Быстрые действия" style={{ marginBottom: 16 }}>
             <Row gutter={[16, 16]}>
               {getQuickActions().map((action, index) => (
-                <Col span={8} key={index}>
+                <Col key={index}>
                   {action}
                 </Col>
               ))}
@@ -289,7 +289,7 @@ export const DashboardPage: React.FC = () => {
         </Col>
 
         {/* Боковая панель */}
-        <Col span={8}>
+        <Col style={{ flex: 1 }}>
           <Card title="Система ролей" style={{ marginBottom: 16 }}>
             <div>
               <Text strong>Ваши роли:</Text>
@@ -345,7 +345,7 @@ export const DashboardPage: React.FC = () => {
               renderItem={(item) => (
                 <List.Item>
                   <ClockCircleOutlined style={{ marginRight: 8, color: '#1890ff' }} />
-                  <Text>{item}</Text>
+                  <Text style={{ flex: 1 }}>{item}</Text>
                 </List.Item>
               )}
             />

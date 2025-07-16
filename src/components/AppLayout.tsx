@@ -9,7 +9,7 @@ import {
   SettingOutlined
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
-import {useAuth, useCurrentUser} from "../hooks/useAuth.ts";
+import {useAuth} from "../hooks/useAuth.ts";
 
 const { Header, Sider, Content } = Layout;
 const { Title } = Typography;
@@ -112,7 +112,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               icon={<UserOutlined />} 
               style={{ backgroundColor: '#1890ff' }}
             />
-            <span>{user.firstName} {user.lastName}</span>
+            <span>{user?.firstName} {user?.lastName}</span>
           </Space>
         </Header>
         
