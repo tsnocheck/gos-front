@@ -1,13 +1,13 @@
 import React from 'react';
 import { Card, Form, Input, Button, Typography, Row, Col, Tag, message } from 'antd';
 import { UserOutlined, SaveOutlined } from '@ant-design/icons';
-import { useCurrentUser } from '../hooks/useAuth';
 import { UserRole } from '../types';
+import { useAuth } from "../hooks/useAuth";
 
 const { Title } = Typography;
 
 export const ProfilePage: React.FC = () => {
-  const { data: user } = useCurrentUser();
+  const { user } = useAuth();
   const [form] = Form.useForm();
 
   const handleSave = async (values: any) => {

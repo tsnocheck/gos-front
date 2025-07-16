@@ -9,6 +9,7 @@ import {
   SettingOutlined
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
+import {useAuth, useCurrentUser} from "../hooks/useAuth.ts";
 
 const { Header, Sider, Content } = Layout;
 const { Title } = Typography;
@@ -19,12 +20,7 @@ interface AppLayoutProps {
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const location = useLocation();
-
-  const mockUser = {
-    firstName: 'Демо',
-    lastName: 'Пользователь',
-    email: 'demo@goszalupa.ru',
-  };
+  const { user } = useAuth()
 
   const getMenuItems = () => {
     return [
@@ -116,7 +112,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               icon={<UserOutlined />} 
               style={{ backgroundColor: '#1890ff' }}
             />
-            <span>{mockUser.firstName} {mockUser.lastName}</span>
+            <span>{user.firstName} {user.lastName}</span>
           </Space>
         </Header>
         

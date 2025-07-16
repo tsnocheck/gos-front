@@ -10,16 +10,16 @@ import {
   FileTextOutlined
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import { useCurrentUser } from '../hooks/useAuth';
+import { useAuth } from '../hooks/useAuth';
 import { useProgramStats, useMyPrograms } from '../hooks/usePrograms';
 import { UserRole, ProgramStatus } from '../types';
 
 const { Title, Text } = Typography;
 
 export const DashboardPage: React.FC = () => {
-  const { data: user, isLoading: userLoading } = useCurrentUser();
-  const { data: programStats, isLoading: statsLoading } = useProgramStats();
-  const { data: myPrograms, isLoading: programsLoading } = useMyPrograms({ limit: 5 });
+  const { user, isLoading } = useAuth();
+  const { data: programStats } = useProgramStats();
+  const { data: myPrograms } = useMyPrograms({ limit: 5 });
 
   // Если пользователь не загружен, используем заглушку для UI
   const displayUser = user || {

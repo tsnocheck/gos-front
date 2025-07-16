@@ -1,5 +1,5 @@
 import { apiClient } from '../lib/api';
-import type { LoginCredentials, RegisterData, AuthResponse, User } from '../types';
+import type {LoginCredentials, RegisterData, AuthResponse, User, UserIdentity} from '../types';
 
 export const authService = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
@@ -32,8 +32,12 @@ export const authService = {
     }
   },
 
-  async getCurrentUser(): Promise<User> {
-    return apiClient.get<User>('/auth/me');
+  async getId() {
+    return apiClient.get<UserIdentity>('/auth/me');
+  },
+
+  async getUser() {
+    return apiClient.get<User>('/users/profile')
   },
 
   async refreshToken(): Promise<AuthResponse> {

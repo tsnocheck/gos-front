@@ -1,4 +1,9 @@
 // User types
+export interface UserIdentity {
+  sessionKey: string;
+  userId: string;
+}
+
 export interface User {
   id: string;
   email: string;

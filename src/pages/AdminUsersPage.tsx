@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Table, Button, Modal, Form, Input, Select, Tag, Space, message, Typography } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, CheckOutlined, StopOutlined } from '@ant-design/icons';
-import { useAuth } from '../hooks/useAuth';
-import type { User, CreateUserRequest } from '../types';
+import type { User } from '../types';
 
 const { Title } = Typography;
 const { Option } = Select;
