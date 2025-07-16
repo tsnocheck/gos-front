@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Table, Button, Modal, Form, Input, Select, Rate, Typography, Space, message, Tag, Row, Col } from 'antd';
 import { EyeOutlined, EditOutlined } from '@ant-design/icons';
-import { usePrograms, useProgram } from '../hooks/usePrograms';
+import { usePrograms, useProgram } from '../queries/programs';
 import type { Program, ExpertiseForm } from '../types';
 
 const { Title, Text } = Typography;

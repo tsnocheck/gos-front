@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Steps, Button, Form, Input, Select, InputNumber, Space, Typography, Row, Col, message } from 'antd';
 import { PlusOutlined, SaveOutlined } from '@ant-design/icons';
-import { useCreateProgram } from '../hooks/usePrograms';
+import { useCreateProgram } from '../queries/programs';
 import type { CreateProgramForm } from '../types';
 
 const { Title } = Typography;

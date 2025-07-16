@@ -7,7 +7,7 @@ import {
   FileTextOutlined 
 } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
-import { useRegister } from '../hooks/useAuth';
+import { useRegister } from '../queries/auth';
 import type { RegisterData } from '../types';
 
 const { Title, Text } = Typography;

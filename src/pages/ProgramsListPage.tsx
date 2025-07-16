@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Table, Button, Typography, Space, Tag } from 'antd';
 import { PlusOutlined, EyeOutlined, EditOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import { usePrograms } from '../hooks/usePrograms';
+import { usePrograms } from '../queries/programs';
 import type { Program } from '../types';
 
 const { Title } = Typography;

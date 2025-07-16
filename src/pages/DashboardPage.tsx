@@ -11,7 +11,7 @@ import {
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { useProgramStats, useMyPrograms } from '../hooks/usePrograms';
+import { useProgramStats, useMyPrograms } from '../queries/programs.ts';
 import { UserRole, ProgramStatus } from '../types';
 
 const { Title, Text } = Typography;

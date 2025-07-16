@@ -37,15 +37,17 @@ export interface ChangeUserStatusData {
   status: UserStatus;
 }
 
+export interface GetUsersParams {
+  page?: number;
+  limit?: number;
+  role?: UserRole;
+  status?: UserStatus;
+  search?: string;
+}
+
 export const adminService = {
   // Управление пользователями
-  async getUsers(params?: {
-    page?: number;
-    limit?: number;
-    role?: UserRole;
-    status?: UserStatus;
-    search?: string;
-  }) {
+  async getUsers(params?: GetUsersParams) {
     return apiClient.get<PaginatedResponse<User>>(`/admin/users`, { params });
   },
 

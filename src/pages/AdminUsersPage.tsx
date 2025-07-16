@@ -2,18 +2,17 @@ import React, { useState } from 'react';
 import { Card, Table, Button, Modal, Form, Input, Select, Tag, Space, message, Typography } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, CheckOutlined, StopOutlined } from '@ant-design/icons';
 import type { User } from '../types';
+import {useUsers} from "../queries/admin.ts";
 
 const { Title } = Typography;
 const { Option } = Select;
 
 export const AdminUsersPage: React.FC = () => {
+  const { data: users, isLoading } = useUsers()
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [form] = Form.useForm();
-  
-  // Mock data - заменить на реальные хуки
-  const users: User[] = [];
-  const isLoading = false;
 
   const columns = [
     {
@@ -112,18 +111,7 @@ export const AdminUsersPage: React.FC = () => {
   const handleEditUser = (user: User) => {
     setEditingUser(user);
     setIsCreateModalOpen(true);
-    form.setFieldsValue({
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      middleName: user.middleName,
-      phone: user.phone,
-      position: user.position,
-      workplace: user.workplace,
-      department: user.department,
-      roles: user.roles,
-      status: user.status,
-    });
+    form.setFieldsValue({...user});
   };
 
   const handleSubmitUser = async (values: any) => {
@@ -179,7 +167,7 @@ export const AdminUsersPage: React.FC = () => {
 
   return (
     <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, flexWrap: "wrap", marginBottom: 24 }}>
         <Title level={2}>Управление пользователями</Title>
         <Button 
           type="primary" 
