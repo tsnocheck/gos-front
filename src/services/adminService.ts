@@ -15,16 +15,8 @@ export interface AdminCreateUserData {
   role: UserRole;
 }
 
-export interface AdminUpdateUserData {
-  firstName?: string;
-  lastName?: string;
-  middleName?: string;
-  phone?: string;
-  position?: string;
-  workplace?: string;
-  department?: string;
-  subjects?: string[];
-  academicDegree?: string;
+export interface AdminUpdateUserData extends Partial<Omit<AdminCreateUserData, 'email' | 'role'>> {
+  userId: string;
 }
 
 export interface ChangeUserRoleData {
@@ -67,7 +59,7 @@ export const adminService = {
     return apiClient.post<User>('/admin/users', data);
   },
 
-  async updateUser(userId: string, data: AdminUpdateUserData): Promise<User> {
+  async updateUser({ userId, ...data }: AdminUpdateUserData): Promise<User> {
     return apiClient.patch<User>(`/admin/users/${userId}`, data);
   },
 

@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { Card, Table, Button, Modal, Form, Input, Select, Tag, Space, message, Typography } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, CheckOutlined, StopOutlined } from '@ant-design/icons';
 import type { User } from '../types';
+import {useAdmin} from "../hooks/useAdmin.ts";
 import {useUsers} from "../queries/admin.ts";
 
 const { Title } = Typography;
 const { Option } = Select;
 
 export const AdminUsersPage: React.FC = () => {
-  const { data: users, isLoading } = useUsers()
+  const { data: users, isLoading } = useUsers();
+  const { activateUser, deactivateUser, createUser, deleteUser, updateUser } = useAdmin();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -68,7 +70,7 @@ export const AdminUsersPage: React.FC = () => {
       title: 'Действия',
       key: 'actions',
       render: (_: any, record: User) => (
-        <Space>
+        <Space style={{ display: 'flex', justifyContent: 'center' }}>
           <Button 
             icon={<EditOutlined />} 
             onClick={() => handleEditUser(record)}
@@ -117,10 +119,10 @@ export const AdminUsersPage: React.FC = () => {
   const handleSubmitUser = async (values: any) => {
     try {
       if (editingUser) {
-        // await updateUser(editingUser.id, values);
+        await updateUser(editingUser.id, values);
         message.success('Пользователь успешно обновлен!');
       } else {
-        // await createUser(values);
+        await createUser(values);
         message.success('Пользователь успешно создан!');
       }
       setIsCreateModalOpen(false);
@@ -132,7 +134,7 @@ export const AdminUsersPage: React.FC = () => {
 
   const handleActivateUser = async (userId: string) => {
     try {
-      // await activateUser(userId);
+      await activateUser(userId);
       message.success('Пользователь активирован');
     } catch (error) {
       message.error('Ошибка при активации пользователя');
@@ -141,7 +143,7 @@ export const AdminUsersPage: React.FC = () => {
 
   const handleDeactivateUser = async (userId: string) => {
     try {
-      // await deactivateUser(userId);
+      await deactivateUser(userId);
       message.success('Пользователь деактивирован');
     } catch (error) {
       message.error('Ошибка при деактивации пользователя');
@@ -156,7 +158,7 @@ export const AdminUsersPage: React.FC = () => {
       cancelText: 'Отмена',
       onOk: async () => {
         try {
-          // await deleteUser(userId);
+          await deleteUser(userId);
           message.success('Пользователь удален');
         } catch (error) {
           message.error('Ошибка при удалении пользователя');
