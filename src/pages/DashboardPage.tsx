@@ -17,7 +17,7 @@ import { UserRole, ProgramStatus } from '../types';
 const { Title, Text } = Typography;
 
 export const DashboardPage: React.FC = () => {
-  const { user, isLoading } = useAuth();
+  const { user } = useAuth();
   const { data: programStats } = useProgramStats();
   const { data: myPrograms } = useMyPrograms({ limit: 5 });
 

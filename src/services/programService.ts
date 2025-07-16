@@ -17,31 +17,12 @@ export interface UpdateProgramData extends Partial<CreateProgramForm> {
 
 export const programService = {
   // Основные операции с программами
-  async getPrograms(params?: ProgramQueryParams): Promise<PaginatedResponse<Program>> {
-    const queryParams = new URLSearchParams();
-    
-    if (params?.page) queryParams.append('page', params.page.toString());
-    if (params?.limit) queryParams.append('limit', params.limit.toString());
-    if (params?.status) queryParams.append('status', params.status);
-    if (params?.authorId) queryParams.append('authorId', params.authorId);
-    if (params?.search) queryParams.append('search', params.search);
-    if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
-    if (params?.sortOrder) queryParams.append('sortOrder', params.sortOrder);
-
-    return apiClient.get<PaginatedResponse<Program>>(`/programs?${queryParams}`);
+  async getPrograms(params?: ProgramQueryParams) {
+    return apiClient.get<PaginatedResponse<Program>>(`/programs`, { params });
   },
 
-  async getMyPrograms(params?: ProgramQueryParams): Promise<PaginatedResponse<Program>> {
-    const queryParams = new URLSearchParams();
-    
-    if (params?.page) queryParams.append('page', params.page.toString());
-    if (params?.limit) queryParams.append('limit', params.limit.toString());
-    if (params?.status) queryParams.append('status', params.status);
-    if (params?.search) queryParams.append('search', params.search);
-    if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
-    if (params?.sortOrder) queryParams.append('sortOrder', params.sortOrder);
-
-    return apiClient.get<PaginatedResponse<Program>>(`/programs/my?${queryParams}`);
+  async getMyPrograms(params?: ProgramQueryParams) {
+    return apiClient.get<PaginatedResponse<Program>>(`/programs/my`, { params });
   },
 
   async getProgramById(id: string): Promise<Program> {
@@ -107,6 +88,6 @@ export const programService = {
     byStatus: Record<ProgramStatus, number>;
     byAuthor: Array<{ authorId: string; authorName: string; count: number }>;
   }> {
-    return apiClient.get('/programs/stats');
+    return apiClient.get('/programs/statistics');
   }
 };
