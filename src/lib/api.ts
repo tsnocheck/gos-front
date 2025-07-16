@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
+import {useNavigate} from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
 
@@ -42,9 +43,11 @@ class ApiClient {
         return response;
       },
       async (error) => {
+        const navigate = useNavigate()
+
         const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url.includes('/auth/refresh')) {
           originalRequest._retry = true;
 
           try {
@@ -61,7 +64,7 @@ class ApiClient {
           } catch (refreshError) {
             // Если обновление токена не удалось, перенаправляем на логин
             this.logout();
-            window.location.href = '/login';
+            navigate('/login');
             return Promise.reject(refreshError);
           }
         }

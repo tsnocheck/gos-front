@@ -47,7 +47,7 @@ export const DashboardPage: React.FC = () => {
     total: 0
   };
 
-  const shouldShowMockData = !myPrograms && user?.roles.includes(UserRole.AUTHOR);
+  const shouldShowMockData = !myPrograms && user?.roles?.includes(UserRole.AUTHOR);
 
   const displayStats = programStats || mockStats;
   const displayPrograms = mockPrograms;
@@ -104,7 +104,7 @@ export const DashboardPage: React.FC = () => {
   const getQuickActions = () => {
     const actions = [];
 
-    if (displayUser?.roles.includes(UserRole.AUTHOR)) {
+    if (displayUser?.roles?.includes(UserRole.AUTHOR)) {
       actions.push(
         <Card key="create-program">
           <Card.Meta
@@ -116,7 +116,7 @@ export const DashboardPage: React.FC = () => {
       );
     }
 
-    if (displayUser?.roles.includes(UserRole.EXPERT)) {
+    if (displayUser?.roles?.includes(UserRole.EXPERT)) {
       actions.push(
         <Card key="expertise">
           <Card.Meta
@@ -128,7 +128,7 @@ export const DashboardPage: React.FC = () => {
       );
     }
 
-    if (displayUser?.roles.includes(UserRole.ADMIN)) {
+    if (displayUser?.roles?.includes(UserRole.ADMIN)) {
       actions.push(
         <Card key="admin">
           <Card.Meta
@@ -162,16 +162,16 @@ export const DashboardPage: React.FC = () => {
           }}>
             <Text>
               <strong>Добро пожаловать в систему ГОСЗАЛУПА!</strong> 
-              {displayUser.roles.includes(UserRole.AUTHOR) && " Начните с создания вашей первой образовательной программы."}
-              {displayUser.roles.includes(UserRole.EXPERT) && " Вы можете приступить к экспертизе программ."}
-              {displayUser.roles.includes(UserRole.ADMIN) && " Управляйте пользователями и контролируйте процессы в системе."}
+              {displayUser.roles?.includes(UserRole.AUTHOR) && " Начните с создания вашей первой образовательной программы."}
+              {displayUser.roles?.includes(UserRole.EXPERT) && " Вы можете приступить к экспертизе программ."}
+              {displayUser.roles?.includes(UserRole.ADMIN) && " Управляйте пользователями и контролируйте процессы в системе."}
             </Text>
           </div>
         )}
       </div>
 
       {/* Статистика */}
-      {displayUser?.roles.includes(UserRole.ADMIN) && (
+      {displayUser?.roles?.includes(UserRole.ADMIN) && (
         <Row gutter={16} style={{ marginBottom: 32 }}>
           <Col span={6}>
             <Card>
@@ -232,7 +232,7 @@ export const DashboardPage: React.FC = () => {
           </Card>
 
           {/* Мои последние программы */}
-          {displayUser?.roles.includes(UserRole.AUTHOR) && (
+          {displayUser?.roles?.includes(UserRole.AUTHOR) && (
             <Card 
               title="Мои программы" 
               extra={<Link to="/programs">Все программы</Link>}
@@ -294,7 +294,7 @@ export const DashboardPage: React.FC = () => {
             <div>
               <Text strong>Ваши роли:</Text>
               <div style={{ marginTop: 8 }}>
-                {displayUser?.roles.map(role => {
+                {displayUser?.roles?.map(role => {
                   const roleLabels = {
                     [UserRole.ADMIN]: 'Администратор',
                     [UserRole.EXPERT]: 'Эксперт',
