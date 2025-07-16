@@ -5,20 +5,12 @@ export const useAuth = () => {
   const loginMutation = useLogin();
   const logoutMutation = useLogout();
 
-  const login = async (credentials: any) => {
-    return loginMutation.mutateAsync(credentials);
-  };
-
-  const logout = () => {
-    logoutMutation.mutate();
-  };
-
   return {
     user: userQuery.data,
     isLoading: userQuery.isLoading || (!userQuery.data),
     isAuthenticated: !!userQuery.data,
-    login,
-    logout,
+    login: loginMutation.mutateAsync,
+    logout: logoutMutation.mutate,
     loginMutation,
     logoutMutation,
   };

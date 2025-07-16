@@ -8,7 +8,6 @@ export const useAdmin = () => {
     const createUserMutation = useCreateUser()
     const updateUserMutation = useUpdateUser();
 
-
     return {
         activateUser: (userId: string) => changeUserStatusMutation.mutateAsync({ userId, status: UserStatus.ACTIVE }),
         deactivateUser: (userId: string) => changeUserStatusMutation.mutateAsync({ userId, status: UserStatus.INACTIVE }),
