@@ -1,5 +1,7 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {authService} from "../services/authService.ts";
+import {authService} from "../services/authService";
+import type { AuthResponse } from '../types/auth';
+import type { User } from '../types/user';
 
 // Query keys
 export const authKeys = {
@@ -7,7 +9,6 @@ export const authKeys = {
     id: () => [...authKeys.all, 'id'] as const,
     user: () => [...authKeys.id(), 'user'] as const,
 };
-
 
 export const useId = () => {
     return useQuery({
@@ -19,7 +20,7 @@ export const useId = () => {
 };
 
 export const useCurrentUser = () => {
-    return useQuery({
+    return useQuery<User>({
         queryKey: authKeys.user(),
         queryFn: authService.getUser,
         staleTime: 5 * 60 * 1000, // 5 минут
@@ -27,11 +28,10 @@ export const useCurrentUser = () => {
     })
 }
 
-
 export const useLogin = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
+    return useMutation<AuthResponse>({
         mutationFn: authService.login,
         onSuccess: (data) => {
             localStorage.setItem('accessToken', data.accessToken);
@@ -44,7 +44,7 @@ export const useLogin = () => {
 export const useRegister = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
+    return useMutation<AuthResponse>({
         mutationFn: authService.register,
         onSuccess: (data) => {
             localStorage.setItem('accessToken', data.accessToken);

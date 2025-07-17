@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Typography, Row, Col, Card, Statistic, Button, List, Avatar, Tag } from 'antd';
 import { 
   BookOutlined, 
@@ -12,7 +12,8 @@ import {
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useProgramStats, useMyPrograms } from '../queries/programs.ts';
-import { UserRole, ProgramStatus } from '../types';
+import { type Program, UserRole, UserStatus, type User, ProgramStatus } from '../types';
+
 
 const { Title, Text } = Typography;
 
@@ -22,27 +23,32 @@ export const DashboardPage: React.FC = () => {
   const { data: myPrograms } = useMyPrograms({ limit: 5 });
 
   // Если пользователь не загружен, используем заглушку для UI
-  const displayUser = user || {
+  const displayUser: User = user || {
     id: '1',
+    email: 'demo@example.com',
+    password: '',
+    roles: [UserRole.AUTHOR],
+    status: UserStatus.ACTIVE,
+    createdAt: new Date(),
+    updatedAt: new Date(),
     firstName: 'Пользователь',
     lastName: '',
-    email: 'demo@example.com',
-    roles: [UserRole.AUTHOR] as UserRole[],
   };
 
   // Заглушка для статистики, если данные не загружены
   const mockStats = {
     total: 12,
     byStatus: {
-      [ProgramStatus.PUBLISHED]: 5,
-      [ProgramStatus.ON_EXPERTISE]: 3,
+      [ProgramStatus.APPROVED]: 5,
+      [ProgramStatus.SUBMITTED]: 3,
       [ProgramStatus.DRAFT]: 2,
-      [ProgramStatus.IN_DEVELOPMENT]: 2,
-    }
+      [ProgramStatus.IN_REVIEW]: 2,
+    },
+    byAuthor: [],
   };
 
   // Заглушка для программ, если данные не загружены  
-  const mockPrograms = myPrograms || {
+  const mockPrograms: { data: Program[]; total: number } = myPrograms || {
     data: [],
     total: 0
   };
@@ -67,11 +73,11 @@ export const DashboardPage: React.FC = () => {
   const getStatusColor = (status: ProgramStatus) => {
     switch (status) {
       case ProgramStatus.DRAFT:
-      case ProgramStatus.IN_DEVELOPMENT:
         return 'default';
-      case ProgramStatus.ON_EXPERTISE:
+      case ProgramStatus.IN_REVIEW:
+      case ProgramStatus.SUBMITTED:
         return 'processing';
-      case ProgramStatus.PUBLISHED:
+      case ProgramStatus.APPROVED:
         return 'success';
       case ProgramStatus.REJECTED:
         return 'error';
@@ -86,11 +92,11 @@ export const DashboardPage: React.FC = () => {
     switch (status) {
       case ProgramStatus.DRAFT:
         return 'Черновик';
-      case ProgramStatus.IN_DEVELOPMENT:
+      case ProgramStatus.IN_REVIEW:
         return 'В разработке';
-      case ProgramStatus.ON_EXPERTISE:
+      case ProgramStatus.SUBMITTED:
         return 'На экспертизе';
-      case ProgramStatus.PUBLISHED:
+      case ProgramStatus.APPROVED:
         return 'Опубликована';
       case ProgramStatus.REJECTED:
         return 'Отклонена';
@@ -186,7 +192,7 @@ export const DashboardPage: React.FC = () => {
             <Card>
               <Statistic
                 title="Опубликованы"
-                value={displayStats.byStatus[ProgramStatus.PUBLISHED] || 0}
+                value={displayStats.byStatus[ProgramStatus.APPROVED] || 0}
                 prefix={<CheckCircleOutlined />}
                 valueStyle={{ color: '#3f8600' }}
               />
@@ -196,7 +202,7 @@ export const DashboardPage: React.FC = () => {
             <Card>
               <Statistic
                 title="На экспертизе"
-                value={displayStats.byStatus[ProgramStatus.ON_EXPERTISE] || 0}
+                value={displayStats.byStatus[ProgramStatus.SUBMITTED] || 0}
                 prefix={<ClockCircleOutlined />}
                 valueStyle={{ color: '#1890ff' }}
               />
@@ -208,7 +214,7 @@ export const DashboardPage: React.FC = () => {
                 title="В разработке"
                 value={
                   (displayStats.byStatus[ProgramStatus.DRAFT] || 0) +
-                  (displayStats.byStatus[ProgramStatus.IN_DEVELOPMENT] || 0)
+                  (displayStats.byStatus[ProgramStatus.IN_REVIEW] || 0)
                 }
                 prefix={<FileTextOutlined />}
                 valueStyle={{ color: '#faad14' }}
@@ -241,7 +247,7 @@ export const DashboardPage: React.FC = () => {
                 <List
                   itemLayout="horizontal"
                   dataSource={displayPrograms.data}
-                  renderItem={(program: any) => (
+                  renderItem={(program: Program) => (
                     <List.Item
                       actions={[
                         <Link key="edit" to={`/programs/${program.id}/edit`}>

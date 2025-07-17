@@ -1,5 +1,7 @@
 import { apiClient } from '../lib/api';
-import type { Program, ProgramStatus, CreateProgramForm, PaginatedResponse } from '../types';
+import type { Program, ProgramStatus } from '../types/program';
+import type { CreateProgramForm } from '../types/forms';
+import type { PaginatedResponse } from '../types/common';
 
 export interface ProgramQueryParams {
   page?: number;
@@ -16,7 +18,6 @@ export interface UpdateProgramData extends Partial<CreateProgramForm> {
 }
 
 export const programService = {
-  // Основные операции с программами
   async getPrograms(params?: ProgramQueryParams) {
     return apiClient.get<PaginatedResponse<Program>>(`/programs`, { params });
   },
@@ -25,34 +26,32 @@ export const programService = {
     return apiClient.get<PaginatedResponse<Program>>(`/programs/my`, { params });
   },
 
-  async getProgramById(id: string): Promise<Program> {
+  async getProgramById(id: string) {
     return apiClient.get<Program>(`/programs/${id}`);
   },
 
-  async createProgram(data: CreateProgramForm): Promise<Program> {
-    return apiClient.post<Program>('/programs', data);
+  async getProgramVersions(id: string) {
+    return apiClient.get<Program[]>(`/programs/${id}/versions`);
   },
 
-  async updateProgram(id: string, data: UpdateProgramData): Promise<Program> {
+  async createProgram(data: CreateProgramForm) {
+    return apiClient.post<Program>(`/programs`, data);
+  },
+
+  async updateProgram(id: string, data: UpdateProgramData) {
     return apiClient.patch<Program>(`/programs/${id}`, data);
   },
 
-  async deleteProgram(id: string): Promise<void> {
-    await apiClient.delete(`/programs/${id}`);
+  async deleteProgram(id: string) {
+    return apiClient.delete(`/programs/${id}`);
   },
 
-  // Операции с версиями
-  async getProgramVersions(id: string): Promise<Program[]> {
-    return apiClient.get<Program[]>(`/programs/${id}/versions`);
+  async submitForExpertise(id: string): Promise<Program> {
+    return apiClient.post<Program>(`/programs/${id}/submit`);
   },
 
   async createNewVersion(id: string): Promise<Program> {
     return apiClient.post<Program>(`/programs/${id}/new-version`);
-  },
-
-  // Операции с экспертизой
-  async submitForExpertise(id: string): Promise<Program> {
-    return apiClient.post<Program>(`/programs/${id}/submit`);
   },
 
   async approveProgram(id: string, comment?: string): Promise<Program> {
@@ -63,7 +62,6 @@ export const programService = {
     return apiClient.post<Program>(`/programs/${id}/reject`, { reason });
   },
 
-  // Операции с архивом
   async archiveProgram(id: string): Promise<Program> {
     return apiClient.post<Program>(`/programs/${id}/archive`);
   },
@@ -72,22 +70,19 @@ export const programService = {
     return apiClient.post<Program>(`/programs/${id}/unarchive`);
   },
 
-  // Проверка возможности редактирования
-  async canEditProgram(id: string): Promise<{ canEdit: boolean; reason?: string }> {
-    return apiClient.get(`/programs/${id}/can-edit`);
-  },
-
-  // Экспорт программы в PDF
   async exportToPdf(id: string): Promise<Blob> {
     return apiClient.get(`/programs/${id}/pdf`, { responseType: 'blob' });
   },
 
-  // Получение статистики
   async getProgramStats(): Promise<{
     total: number;
     byStatus: Record<ProgramStatus, number>;
     byAuthor: Array<{ authorId: string; authorName: string; count: number }>;
   }> {
     return apiClient.get('/programs/statistics');
-  }
+  },
+
+  async canEditProgram(id: string): Promise<boolean> {
+    return apiClient.get(`/programs/${id}/can-edit`);
+  },
 };

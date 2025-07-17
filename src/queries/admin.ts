@@ -1,6 +1,6 @@
 // Query keys
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {adminService, type AdminUpdateUserData, type GetUsersParams} from "../services/adminService.ts";
+import {adminService, type GetUsersParams} from "../services/adminService.ts";
 
 export const adminKeys = {
     all: ['admin'] as const,

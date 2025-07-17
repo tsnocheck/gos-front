@@ -20,7 +20,7 @@ export interface UpdateDictionaryData {
 export const dictionaryService = {
   // Получение справочников
   async getDictionaries(): Promise<Dictionary[]> {
-    return apiClient.get<Dictionary[]>('/dictionaries');
+    return apiClient.get<Dictionary[]>('/dictionaries/all');
   },
 
   async getDictionaryByType(type: DictionaryType): Promise<Dictionary[]> {

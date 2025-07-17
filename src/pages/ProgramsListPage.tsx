@@ -3,7 +3,7 @@ import { Card, Table, Button, Typography, Space, Tag } from 'antd';
 import { PlusOutlined, EyeOutlined, EditOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { usePrograms } from '../queries/programs';
-import type { Program } from '../types';
+import {type Program, ProgramStatus} from '../types';
 
 const { Title } = Typography;
 
@@ -16,18 +16,24 @@ export const ProgramsListPage: React.FC = () => {
       dataIndex: 'title',
       key: 'title',
     },
+      {
+          title: 'Номер программы',
+          dataIndex: ['programCode'],
+          key: 'programCode',
+          render: (code: string) => code,
+      },
     {
       title: 'Статус',
       dataIndex: 'status',
       key: 'status',
-      render: (status: string) => {
-        const statusMap = {
-          'draft': { color: 'default', text: 'Черновик' },
-          'submitted': { color: 'processing', text: 'На рассмотрении' },
-          'approved': { color: 'success', text: 'Одобрено' },
-          'rejected': { color: 'error', text: 'Отклонено' },
-        };
-        const statusInfo = statusMap[status as keyof typeof statusMap] || { color: 'default', text: status };
+      render: (status: ProgramStatus) => {
+          const statusMap = new Map([
+              [ProgramStatus.DRAFT, { color: 'default', text: 'Черновик' }],
+              [ProgramStatus.IN_REVIEW, { color: 'processing', text: 'На рассмотрении' }],
+              [ProgramStatus.APPROVED, { color: 'success', text: 'Одобрено' }],
+              [ProgramStatus.REJECTED, { color: 'error', text: 'Отклонено' }],
+          ])
+        const statusInfo = statusMap.get(status) || { color: 'default', text: status };
         return <Tag color={statusInfo.color}>{statusInfo.text}</Tag>;
       },
     },
