@@ -48,20 +48,20 @@ export const ProgramsListPage: React.FC = () => {
       key: 'createdAt',
       render: (date: string) => new Date(date).toLocaleDateString('ru-RU'),
     },
-    {
-      title: 'Действия',
-      key: 'actions',
-      render: (_: any, record: Program) => (
-        <Space>
-          <Button icon={<EyeOutlined />} size="small">
-            Просмотр
-          </Button>
-          <Button icon={<EditOutlined />} size="small">
-            Редактировать
-          </Button>
-        </Space>
-      ),
-    },
+    // {
+    //   title: 'Действия',
+    //   key: 'actions',
+    //   render: (_: any, record: Program) => (
+    //     <Space>
+    //       <Button icon={<EyeOutlined />} size="small">
+    //         Просмотр
+    //       </Button>
+    //       <Button icon={<EditOutlined />} size="small">
+    //         Редактировать
+    //       </Button>
+    //     </Space>
+    //   ),
+    // },
   ];
 
   return (

@@ -3,6 +3,8 @@ import { Card, Table, Button, Modal, Form, Input, Select, Rate, Typography, Spac
 import { EyeOutlined, EditOutlined } from '@ant-design/icons';
 import {type ExpertiseForm, ExpertiseStatus, type Program} from '../types';
 import {useProgram, usePrograms} from "../queries/programs.ts";
+import {useCreateExpertise} from "../queries/expertises.ts";
+import {useAuth} from "../hooks/useAuth.ts";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -28,9 +30,12 @@ export const ExpertisePage: React.FC = () => {
   const [selectedProgram, setSelectedProgram] = useState<string | null>(null);
   const [isExpertiseModalOpen, setIsExpertiseModalOpen] = useState(false);
   const [form] = Form.useForm();
-  
+
+  const { user } = useAuth()
+
   const { data: programs, isLoading } = usePrograms();
   const { data: currentProgram } = useProgram(selectedProgram || '');
+  const submitExpertiseMutation = useCreateExpertise()
 
   const columns = [
     {
@@ -120,7 +125,7 @@ export const ExpertisePage: React.FC = () => {
         conclusion: values.conclusion
       };
 
-      // await submitExpertise(selectedProgram!, expertiseData);
+      await submitExpertiseMutation.mutateAsync({ programId: currentProgram.id, ...expertiseData, expertId: user.id });
       message.success('Экспертиза успешно отправлена!');
       setIsExpertiseModalOpen(false);
       form.resetFields();
