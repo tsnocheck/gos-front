@@ -1,10 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { programService } from '../services/programService';
-import type { Program } from '../types/program';
-import type { CreateProgramForm } from '../types/forms';
 import type { ProgramQueryParams, UpdateProgramData } from '../services/programService';
-import { UserRole, UserStatus } from '../types/user';
-import { ProgramStatus } from '../types/program';
+import {useNavigate} from "react-router-dom";
 
 // Query keys
 export const programKeys = {
@@ -27,93 +24,6 @@ export const usePrograms = (params?: ProgramQueryParams) => {
         retry: false,
         refetchOnWindowFocus: false,
         staleTime: 2 * 60 * 1000,
-        initialData: {
-            data: [
-                {
-                    id: 'p1',
-                    title: 'Программа 1',
-                    description: 'Описание программы 1',
-                    status: ProgramStatus.APPROVED,
-                    programCode: 'CODE-1',
-                    duration: 72,
-                    targetAudience: 'Учителя',
-                    competencies: 'Компетенции',
-                    learningOutcomes: 'Результаты',
-                    content: 'Содержание',
-                    methodology: 'Методология',
-                    assessment: 'Оценка',
-                    materials: 'Материалы',
-                    requirements: 'Требования',
-                    nprContent: '',
-                    pmrContent: '',
-                    vrContent: '',
-                    version: 1,
-                    parentId: undefined,
-                    submittedAt: '2023-12-01T10:00:00.000Z',
-                    approvedAt: '2023-12-01T10:00:00.000Z',
-                    archivedAt: undefined,
-                    rejectionReason: undefined,
-                    author: {
-                        id: 'a1',
-                        email: 'author1@example.com',
-                        password: '',
-                        roles: [UserRole.AUTHOR],
-                        status: UserStatus.ACTIVE,
-                        createdAt: '2023-12-01T10:00:00.000Z',
-                        updatedAt: '2023-12-01T10:00:00.000Z',
-                    },
-                    authorId: 'a1',
-                    approvedBy: undefined,
-                    approvedById: undefined,
-                    expertises: [],
-                    createdAt: '2023-12-01T10:00:00.000Z',
-                    updatedAt: '2023-12-01T10:00:00.000Z',
-                },
-                {
-                    id: 'p2',
-                    title: 'Программа 2',
-                    description: 'Описание программы 2',
-                    status: ProgramStatus.DRAFT,
-                    programCode: 'CODE-2',
-                    duration: 36,
-                    targetAudience: 'Студенты',
-                    competencies: '',
-                    learningOutcomes: '',
-                    content: '',
-                    methodology: '',
-                    assessment: '',
-                    materials: '',
-                    requirements: '',
-                    nprContent: '',
-                    pmrContent: '',
-                    vrContent: '',
-                    version: 1,
-                    parentId: undefined,
-                    submittedAt: undefined,
-                    approvedAt: undefined,
-                    archivedAt: undefined,
-                    rejectionReason: undefined,
-                    author: {
-                        id: 'a2',
-                        email: 'author2@example.com',
-                        password: '',
-                        roles: [UserRole.AUTHOR],
-                        status: UserStatus.ACTIVE,
-                        createdAt: '2023-12-01T10:00:00.000Z',
-                        updatedAt: '2023-12-01T10:00:00.000Z',
-                    },
-                    authorId: 'a2',
-                    approvedBy: undefined,
-                    approvedById: undefined,
-                    expertises: [],
-                    createdAt: '2023-12-01T10:00:00.000Z',
-                    updatedAt: '2023-12-01T10:00:00.000Z',
-                },
-            ] satisfies Program[],
-            total: 2,
-            page: 1,
-            limit: 10,
-        },
     });
 };
 
@@ -173,44 +83,19 @@ export const useCanEditProgram = (id: string) => {
 // Mutations
 export const useCreateProgram = (onSuccessCallback?: () => void) => {
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
 
     return useMutation({
-        mutationFn: (data: CreateProgramForm) => {
-            return programService.createProgram(data);
-        },
-        onSuccess: (data: Program) => {
-            // Вместо инвалидации, просто обновляем кэш добавляя новую программу
-            queryClient.setQueryData(
-                programKeys.list({}),
-                (oldData: any) => {
-                    if (!oldData) return oldData;
-                    return {
-                        ...oldData,
-                        data: [data, ...oldData.data],
-                        total: oldData.total + 1
-                    };
-                }
-            );
-
-            // И для "мои программы"
-            queryClient.setQueryData(
-                programKeys.myList({}),
-                (oldData: any) => {
-                    if (!oldData) return oldData;
-                    return {
-                        ...oldData,
-                        data: [data, ...oldData.data],
-                        total: oldData.total + 1
-                    };
-                }
-            );
-
-            // Вызываем callback если передан
+        mutationFn: programService.createProgram,
+        onSuccess: async () => {
+            navigate('/programs')
             if (onSuccessCallback) {
                 onSuccessCallback();
             }
+
+            await queryClient.invalidateQueries({ queryKey: programKeys.lists() });
         },
-        onError: (error: any) => {
+        onError: (error) => {
             console.error('Error creating program:', error);
             // Показываем сообщение об ошибке пользователю
             if (error?.message) {

@@ -10,7 +10,7 @@ const { Option } = Select;
 
 export const AdminUsersPage: React.FC = () => {
   const { data: users, isLoading } = useUsers();
-  const { activateUser, deactivateUser, createUser, deleteUser, updateUser } = useAdmin();
+  const { activateUser, deactivateUser, createUser, deleteUser, updateUser, archiveUser } = useAdmin();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -281,7 +281,7 @@ export const AdminUsersPage: React.FC = () => {
             name="department"
             label="Подразделение"
           >
-            <Input />
+            <Input  />
           </Form.Item>
 
           <Form.Item
@@ -313,6 +313,7 @@ export const AdminUsersPage: React.FC = () => {
               <Button type="primary" htmlType="submit">
                 {editingUser ? 'Обновить' : 'Создать'}
               </Button>
+              {editingUser && <Button type="default" icon={<DeleteOutlined />} onClick={() => archiveUser(editingUser?.id)}>В архив</Button>}
               <Button onClick={() => setIsCreateModalOpen(false)}>
                 Отмена
               </Button>

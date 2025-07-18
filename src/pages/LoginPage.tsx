@@ -42,7 +42,7 @@ export const LoginPage: React.FC = () => {
             <div style={{ textAlign: 'center', marginBottom: 32 }}>
               <FileTextOutlined style={{ fontSize: 48, color: '#1890ff', marginBottom: 16 }} />
               <Title level={2} style={{ margin: 0, color: '#1890ff' }}>
-                ГОСЗАЛУПА
+                ПОРТАЛ
               </Title>
               <Text type="secondary">
                 Система создания ДПП ПК
@@ -55,7 +55,7 @@ export const LoginPage: React.FC = () => {
               autoComplete="off"
               size="large"
               initialValues={{
-                email: 'admin@goszalupa.ru',
+                email: 'admin@gos.ru',
                 password: 'admin123456'
               }}
             >
@@ -93,19 +93,6 @@ export const LoginPage: React.FC = () => {
                   style={{ marginBottom: 16 }}
                 >
                   Войти
-                </Button>
-
-                <Button
-                  type="default"
-                  block
-                  style={{ marginBottom: 16 }}
-                  onClick={() => {
-                    // Устанавливаем демо токен для тестирования
-                    localStorage.setItem('accessToken', 'demo-token');
-                    navigate('/dashboard');
-                  }}
-                >
-                  Демо вход (для тестирования)
                 </Button>
 
                 <div style={{ textAlign: 'center' }}>

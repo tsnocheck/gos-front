@@ -1,12 +1,12 @@
 import React from 'react';
-import { Layout, Menu, Typography, Avatar, Space } from 'antd';
-import { 
-  UserOutlined, 
+import {Layout, Menu, Typography, Avatar, Space, Button} from 'antd';
+import {
+  UserOutlined,
   DashboardOutlined,
   BookOutlined,
   CheckCircleOutlined,
   TeamOutlined,
-  SettingOutlined
+  SettingOutlined, EditOutlined, DeleteOutlined
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
 import {useAuth} from "../hooks/useAuth.ts";
@@ -20,7 +20,7 @@ interface AppLayoutProps {
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const location = useLocation();
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
 
   const getMenuItems = () => {
     return [
@@ -57,6 +57,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           {
             key: '/admin/users',
             label: <Link to="/admin/users">Пользователи</Link>,
+            icon: <UserOutlined />,
+          },
+          {
+            key: '/admin/users/archive',
+            label: <Link to="/admin/users/archive">Архив</Link>,
+            icon: <DeleteOutlined />,
           },
         ],
       },
@@ -86,7 +92,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           textAlign: 'center'
         }}>
           <Title level={4} style={{ margin: 0 }}>
-            ГосЗаЛУПа
+            Портал
           </Title>
         </div>
         
@@ -107,12 +113,18 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           alignItems: 'center',
           borderBottom: '1px solid #f0f0f0'
         }}>
-          <Space>
+          <Space style={{ gap: 20 }}>
             <Avatar 
               icon={<UserOutlined />} 
               style={{ backgroundColor: '#1890ff' }}
             />
             <span>{user?.firstName} {user?.lastName}</span>
+            <Button
+                type="primary"
+                onClick={() => logout()}
+            >
+              Выход
+            </Button>
           </Space>
         </Header>
         

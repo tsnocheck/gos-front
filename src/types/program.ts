@@ -1,5 +1,8 @@
 // Типы и enum'ы программ
 
+import type {User} from "./user.ts";
+import type {Expertise} from "./expertise.ts";
+
 /** Статус программы */
 export enum ProgramStatus {
   /** Черновик */
@@ -75,15 +78,15 @@ export interface Program {
   /** Причина отклонения */
   rejectionReason?: string;
   /** Автор программы */
-  author: import('./user').User;
+  author: User;
   /** ID автора */
   authorId: string;
   /** Одобривший пользователь */
-  approvedBy?: import('./user').User;
+  approvedBy?: User;
   /** ID одобрившего */
   approvedById?: string;
   /** Экспертизы по программе */
-  expertises?: import('./expertise').Expertise[];
+  expertises?: Expertise[];
   /** Дата создания */
   createdAt: string | Date;
   /** Дата обновления */

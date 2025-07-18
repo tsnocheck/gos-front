@@ -92,7 +92,7 @@ export const adminService = {
   },
 
   async deleteUser(userId: string): Promise<void> {
-    await apiClient.delete(`/admin/users/${userId}`);
+    await apiClient.delete(`/users/${userId}`);
   },
 
   // Массовые операции

@@ -48,7 +48,7 @@ export const RegisterPage: React.FC = () => {
                 Регистрация
               </Title>
               <Text type="secondary">
-                Создание аккаунта в системе ГОСЗАЛУПА
+                Создание аккаунта в системе ПОРТАЛ
               </Text>
             </div>
 
@@ -170,42 +170,6 @@ export const RegisterPage: React.FC = () => {
                   mode="tags"
                   placeholder="Введите предметы"
                   style={{ width: '100%' }}
-                />
-              </Form.Item>
-
-              <Form.Item
-                label="Пароль"
-                name="password"
-                rules={[
-                  { required: true, message: 'Введите пароль!' },
-                  { min: 8, message: 'Пароль должен содержать минимум 8 символов!' }
-                ]}
-              >
-                <Input.Password
-                  prefix={<LockOutlined />}
-                  placeholder="Минимум 8 символов"
-                />
-              </Form.Item>
-
-              <Form.Item
-                label="Подтверждение пароля"
-                name="confirmPassword"
-                dependencies={['password']}
-                rules={[
-                  { required: true, message: 'Подтвердите пароль!' },
-                  ({ getFieldValue }) => ({
-                    validator(_, value) {
-                      if (!value || getFieldValue('password') === value) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(new Error('Пароли не совпадают!'));
-                    },
-                  }),
-                ]}
-              >
-                <Input.Password
-                  prefix={<LockOutlined />}
-                  placeholder="Повторите пароль"
                 />
               </Form.Item>
 

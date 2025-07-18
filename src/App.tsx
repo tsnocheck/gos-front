@@ -15,6 +15,8 @@ import { ProgramsListPage } from './pages/ProgramsListPage';
 import { ExpertisePage } from './pages/ExpertisePage';
 import { AdminUsersPage } from './pages/AdminUsersPage';
 import { ProfilePage } from './pages/ProfilePage';
+import {ProtectedRoute} from "./components/ProtectedRoute.tsx";
+import {AdminArchivePage} from "./pages/AdminArchivePage.tsx";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -57,54 +59,77 @@ function App() {
             <Route
               path="/dashboard"
               element={
-                <AppLayout>
-                  <DashboardPage />
-                </AppLayout>
+                <ProtectedRoute>
+                    <AppLayout>
+                      <DashboardPage />
+                    </AppLayout>
+                </ProtectedRoute>
               }
             />
 
             <Route
               path="/programs"
               element={
+                  <ProtectedRoute>
                 <AppLayout>
                   <ProgramsListPage />
                 </AppLayout>
+                  </ProtectedRoute>
               }
             />
             
             <Route
               path="/programs/constructor"
               element={
+                  <ProtectedRoute>
                 <AppLayout>
                   <ProgramConstructorPage />
                 </AppLayout>
+                  </ProtectedRoute>
               }
             />
 
             <Route
               path="/expertise"
               element={
-                <AppLayout>
-                  <ExpertisePage />
-                </AppLayout>
+                  <ProtectedRoute>
+                        <AppLayout>
+                          <ExpertisePage />
+                        </AppLayout>
+                  </ProtectedRoute>
               }
             />
 
             <Route
               path="/admin/users"
               element={
-                <AppLayout>
-                  <AdminUsersPage />
-                </AppLayout>
+                  <ProtectedRoute>
+                        <AppLayout>
+                          <AdminUsersPage />
+                        </AppLayout>
+                  </ProtectedRoute>
               }
             />
+
+              <Route
+                  path="/admin/users/archive"
+                  element={
+                      <ProtectedRoute>
+                      <AppLayout>
+                          <AdminArchivePage />
+                      </AppLayout>
+                      </ProtectedRoute>
+                  }
+              />
 
             <Route
               path="/profile"
               element={
+                  <ProtectedRoute>
                 <AppLayout>
                   <ProfilePage />
                 </AppLayout>
+                  </ProtectedRoute>
               }
             />
 

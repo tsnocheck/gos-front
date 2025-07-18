@@ -167,7 +167,7 @@ export const DashboardPage: React.FC = () => {
             borderRadius: 6 
           }}>
             <Text>
-              <strong>Добро пожаловать в систему ГОСЗАЛУПА!</strong> 
+              <strong>Добро пожаловать в систему ПОРТАЛ!</strong>
               {displayUser.roles?.includes(UserRole.AUTHOR) && " Начните с создания вашей первой образовательной программы."}
               {displayUser.roles?.includes(UserRole.EXPERT) && " Вы можете приступить к экспертизе программ."}
               {displayUser.roles?.includes(UserRole.ADMIN) && " Управляйте пользователями и контролируйте процессы в системе."}
@@ -176,8 +176,8 @@ export const DashboardPage: React.FC = () => {
         )}
       </div>
 
-      {/* Статистика */}
-      {displayUser?.roles?.includes(UserRole.ADMIN) && (
+      {/* Статистика (убрать false как будет понятно со статистикой) */}
+      {displayUser?.roles?.includes(UserRole.ADMIN) && false && (
         <Row style={{ gap: 16, marginBottom: 32 }}>
           <Col style={{ flex: 1 }}>
             <Card>

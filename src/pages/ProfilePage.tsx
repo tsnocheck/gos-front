@@ -1,19 +1,17 @@
 import React from 'react';
-import { Card, Form, Input, Button, Typography, Row, Col, Tag, message } from 'antd';
-import { UserOutlined, SaveOutlined } from '@ant-design/icons';
-import { UserRole } from '../types';
-import { useAuth } from "../hooks/useAuth";
+import {Button, Card, Col, Form, Input, message, Row, Tag, Typography} from 'antd';
+import {SaveOutlined, UserOutlined} from '@ant-design/icons';
+import {type RegisterData, UserRole} from '../types';
+import {useAuth} from "../hooks/useAuth";
 
 const { Title } = Typography;
 
 export const ProfilePage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, checkPermission } = useAuth();
   const [form] = Form.useForm();
 
-  const handleSave = async (values: any) => {
+  const handleSave = async (values: Partial<RegisterData>) => {
     try {
-      // TODO: Реализовать обновление профиля
-      console.log('Saving profile:', values);
       message.success('Профиль обновлен');
     } catch (error) {
       message.error('Ошибка обновления профиля');
@@ -49,16 +47,7 @@ export const ProfilePage: React.FC = () => {
               form={form}
               layout="vertical"
               onFinish={handleSave}
-              initialValues={{
-                email: user?.email,
-                firstName: user?.firstName,
-                lastName: user?.lastName,
-                middleName: user?.middleName,
-                phone: user?.phone,
-                position: user?.position,
-                workplace: user?.workplace,
-                department: user?.department,
-              }}
+              initialValues={{...user}}
             >
               <Row gutter={16}>
                 <Col span={12}>
@@ -75,7 +64,7 @@ export const ProfilePage: React.FC = () => {
                     name="phone"
                     label="Телефон"
                   >
-                    <Input />
+                    <Input disabled={!checkPermission([UserRole.ADMIN])} />
                   </Form.Item>
                 </Col>
               </Row>
@@ -86,7 +75,7 @@ export const ProfilePage: React.FC = () => {
                     name="lastName"
                     label="Фамилия"
                   >
-                    <Input />
+                    <Input disabled={!checkPermission([UserRole.ADMIN])} />
                   </Form.Item>
                 </Col>
                 <Col span={8}>
@@ -94,7 +83,7 @@ export const ProfilePage: React.FC = () => {
                     name="firstName"
                     label="Имя"
                   >
-                    <Input />
+                    <Input disabled={!checkPermission([UserRole.ADMIN])} />
                   </Form.Item>
                 </Col>
                 <Col span={8}>
@@ -102,7 +91,7 @@ export const ProfilePage: React.FC = () => {
                     name="middleName"
                     label="Отчество"
                   >
-                    <Input />
+                    <Input disabled={!checkPermission([UserRole.ADMIN])} />
                   </Form.Item>
                 </Col>
               </Row>
@@ -113,7 +102,7 @@ export const ProfilePage: React.FC = () => {
                     name="position"
                     label="Должность"
                   >
-                    <Input />
+                    <Input disabled={!checkPermission([UserRole.ADMIN])} />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
@@ -121,7 +110,7 @@ export const ProfilePage: React.FC = () => {
                     name="workplace"
                     label="Место работы"
                   >
-                    <Input />
+                    <Input disabled={!checkPermission([UserRole.ADMIN])} />
                   </Form.Item>
                 </Col>
               </Row>
@@ -130,7 +119,7 @@ export const ProfilePage: React.FC = () => {
                 name="department"
                 label="Подразделение"
               >
-                <Input />
+                <Input disabled={!checkPermission([UserRole.ADMIN])} />
               </Form.Item>
 
               <Form.Item>

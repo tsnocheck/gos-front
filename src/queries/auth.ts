@@ -1,7 +1,7 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {authService} from "../services/authService";
-import type { AuthResponse } from '../types/auth';
-import type { User } from '../types/user';
+import type { User } from '../types';
+import {useNavigate} from "react-router-dom";
 
 // Query keys
 export const authKeys = {
@@ -23,7 +23,7 @@ export const useCurrentUser = () => {
     return useQuery<User>({
         queryKey: authKeys.user(),
         queryFn: authService.getUser,
-        staleTime: 5 * 60 * 1000, // 5 минут
+        staleTime: 5 * 60 * 1000,
         retry: 1,
     })
 }
@@ -31,7 +31,7 @@ export const useCurrentUser = () => {
 export const useLogin = () => {
     const queryClient = useQueryClient();
 
-    return useMutation<AuthResponse>({
+    return useMutation({
         mutationFn: authService.login,
         onSuccess: (data) => {
             localStorage.setItem('accessToken', data.accessToken);
@@ -42,20 +42,14 @@ export const useLogin = () => {
 };
 
 export const useRegister = () => {
-    const queryClient = useQueryClient();
-
-    return useMutation<AuthResponse>({
+    return useMutation({
         mutationFn: authService.register,
-        onSuccess: (data) => {
-            localStorage.setItem('accessToken', data.accessToken);
-            queryClient.setQueryData(authKeys.user(), data.user);
-            queryClient.invalidateQueries({ queryKey: authKeys.all });
-        },
     });
 };
 
 export const useLogout = () => {
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
 
     return useMutation({
         mutationFn: authService.logout,
@@ -63,6 +57,7 @@ export const useLogout = () => {
             localStorage.removeItem('accessToken');
             queryClient.setQueryData(authKeys.user(), null);
             queryClient.clear();
+            navigate('/login')
         },
     });
 };

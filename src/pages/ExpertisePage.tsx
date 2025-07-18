@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Card, Table, Button, Modal, Form, Input, Select, Rate, Typography, Space, message, Tag, Row, Col } from 'antd';
 import { EyeOutlined, EditOutlined } from '@ant-design/icons';
-import {type Expertise, type ExpertiseForm, ExpertiseStatus} from '../types';
-import { useExpertise, useExpertises } from '../queries/expertises';
+import {type ExpertiseForm, ExpertiseStatus, type Program} from '../types';
+import {useProgram, usePrograms} from "../queries/programs.ts";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -29,18 +29,18 @@ export const ExpertisePage: React.FC = () => {
   const [isExpertiseModalOpen, setIsExpertiseModalOpen] = useState(false);
   const [form] = Form.useForm();
   
-  const { data: expertises, isLoading } = useExpertises();
-  const { data: currentExpertise } = useExpertise(selectedProgram || '');
+  const { data: programs, isLoading } = usePrograms();
+  const { data: currentProgram } = useProgram(selectedProgram || '');
 
   const columns = [
     {
       title: 'Название программы',
       dataIndex: ['program', 'title'],
       key: 'title',
-      render: (_: string, record: Expertise) => (
+      render: (_: string, record: Program) => (
         <div>
-          <div>{record.program?.title}</div>
-          <Text type="secondary">{record.expert?.email}</Text>
+          <div>{record.title}</div>
+          <Text type="secondary">{record.author?.email}</Text>
         </div>
       ),
     },
@@ -54,7 +54,7 @@ export const ExpertisePage: React.FC = () => {
       title: 'Длительность',
       dataIndex: ['program', 'duration'],
       key: 'duration',
-      render: (_: number, record: Expertise) => `${record.program?.duration ?? '-'} ч.`,
+      render: (_: number, record: Program) => `${record?.duration ?? '-'} ч.`,
     },
     {
       title: 'Статус',
@@ -77,23 +77,23 @@ export const ExpertisePage: React.FC = () => {
       title: 'Дата подачи',
       dataIndex: ['program', 'submittedAt'],
       key: 'submittedAt',
-      render: (_: string, record: Expertise) => record.program?.submittedAt ? new Date(record.program.submittedAt).toLocaleDateString('ru-RU') : '-',
+      render: (_: string, record: Program) => record?.submittedAt ? new Date(record.submittedAt).toLocaleDateString('ru-RU') : '-',
     },
     {
       title: 'Действия',
       key: 'actions',
-      render: (_: unknown, record: Expertise) => (
+      render: (_: unknown, record: Program) => (
         <Space>
           <Button 
             icon={<EyeOutlined />} 
-            onClick={() => handleViewProgram(record.program?.id || '')}
+            onClick={() => handleViewProgram(record?.id || '')}
           >
             Просмотр
           </Button>
           <Button 
             type="primary"
             icon={<EditOutlined />} 
-            onClick={() => handleStartExpertise(record.program?.id || '')}
+            onClick={() => handleStartExpertise(record?.id || '')}
           >
             Экспертиза
           </Button>
@@ -165,16 +165,16 @@ export const ExpertisePage: React.FC = () => {
       <Card>
         <Table
           columns={columns}
-          dataSource={expertises?.data || []}
+          dataSource={programs?.data || []}
           loading={isLoading}
           rowKey="id"
           pagination={{
-            total: expertises?.total,
-            pageSize: expertises?.limit,
-            current: expertises?.page,
+            total: programs?.total,
+            pageSize: programs?.limit,
+            current: programs?.page,
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total, range) => 
+            showTotal: (total, range) =>
               `${range[0]}-${range[1]} из ${total} программ`,
           }}
         />
@@ -182,7 +182,7 @@ export const ExpertisePage: React.FC = () => {
 
       {/* Модальное окно экспертизы */}
       <Modal
-        title={`Экспертиза программы: ${currentExpertise?.program.title}`}
+        title={`Экспертиза программы: ${currentProgram?.title}`}
         open={isExpertiseModalOpen}
         onCancel={() => {
           setIsExpertiseModalOpen(false);

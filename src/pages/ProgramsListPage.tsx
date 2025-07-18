@@ -3,7 +3,7 @@ import { Card, Table, Button, Typography, Space, Tag } from 'antd';
 import { PlusOutlined, EyeOutlined, EditOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { usePrograms } from '../queries/programs';
-import {type Program, ProgramStatus} from '../types';
+import { type Program, ProgramStatus } from '../types';
 
 const { Title } = Typography;
 
@@ -21,6 +21,11 @@ export const ProgramsListPage: React.FC = () => {
           dataIndex: ['programCode'],
           key: 'programCode',
           render: (code: string) => code,
+      },
+      {
+          title: 'Автор',
+          dataIndex: ['author', 'email'],
+          key: 'title',
       },
     {
       title: 'Статус',

@@ -3,25 +3,11 @@ import type {LoginCredentials, RegisterData, AuthResponse, User, UserIdentity} f
 
 export const authService = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const response = await apiClient.post<AuthResponse>('/auth/login', credentials);
-    
-    // Сохраняем токен в localStorage
-    if (response.accessToken) {
-      localStorage.setItem('accessToken', response.accessToken);
-    }
-    
-    return response;
+    return apiClient.post<AuthResponse>('/auth/login', credentials);
   },
 
-  async register(data: RegisterData): Promise<AuthResponse> {
-    const response = await apiClient.post<AuthResponse>('/auth/register', data);
-    
-    // Сохраняем токен в localStorage
-    if (response.accessToken) {
-      localStorage.setItem('accessToken', response.accessToken);
-    }
-    
-    return response;
+  async register(data: RegisterData) {
+    return apiClient.post<AuthResponse>('/auth/register', data);
   },
 
   async logout(): Promise<void> {

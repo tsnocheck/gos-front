@@ -29,6 +29,28 @@ export const useChangeUserStatus = () => {
     });
 }
 
+export const useArchiveUser = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: adminService.archiveUser,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: adminKeys.lists() })
+        }
+    });
+}
+
+export const useUnarchiveUser = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: adminService.unarchiveUser,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: adminKeys.lists() })
+        }
+    });
+}
+
 export const useCreateUser = () => {
     const queryClient = useQueryClient();
 

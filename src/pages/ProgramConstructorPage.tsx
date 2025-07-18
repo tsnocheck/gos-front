@@ -37,7 +37,6 @@ export const ProgramConstructorPage: React.FC = () => {
   });
   
   const createProgram = useCreateProgram(() => {
-    // Callback выполнится после успешного создания программы
     message.success('Программа успешно создана!');
     form.resetFields();
     setFormData({ learningOutcomes: [], sections: [] });
