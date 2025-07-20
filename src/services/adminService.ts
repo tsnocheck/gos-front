@@ -1,5 +1,5 @@
 import { apiClient } from '../lib/api';
-import type { User, UserRole, UserStatus, PaginatedResponse } from '../types';
+import type { User, UserRole, UserStatus } from '../types';
 
 export interface AdminCreateUserData {
   email: string;
@@ -43,11 +43,11 @@ export const adminService = {
     return apiClient.get<User[]>(`/admin/users`, { params });
   },
 
-  async getPendingUsers(): Promise<User[]> {
+  async getPendingUsers() {
     return apiClient.get<User[]>('/admin/users/pending');
   },
 
-  async getUsersByRole(role: UserRole): Promise<User[]> {
+  async getUsersByRole(role: UserRole) {
     return apiClient.get<User[]>(`/admin/users/role/${role}`);
   },
 
@@ -92,7 +92,7 @@ export const adminService = {
   },
 
   async deleteUser(userId: string): Promise<void> {
-    await apiClient.delete(`/users/admin/${userId}/hard`);
+    await apiClient.post(`/admin/users/${userId}/hide`);
   },
 
   // Массовые операции

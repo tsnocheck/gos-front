@@ -2,6 +2,8 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {adminService, type GetUsersParams} from "../services/adminService.ts";
 import type { UserRole, UserStatus } from "../types";
+import { authKeys } from "./auth.ts";
+import { useAuth } from "../hooks/useAuth.ts";
 
 export const adminKeys = {
     all: ['admin'] as const,
@@ -69,11 +71,13 @@ export const useCreateUser = () => {
 
 export const useUpdateUser = () => {
     const queryClient = useQueryClient();
+    const { user } = useAuth()
 
     return useMutation({
         mutationFn: adminService.updateUser,
-        onSuccess: () => {
+        onSuccess: ({ id }) => {
             queryClient.invalidateQueries({ queryKey: adminKeys.lists() })
+            if (user?.id === id) queryClient.invalidateQueries({ queryKey: authKeys.user() })
         }
     });
 }

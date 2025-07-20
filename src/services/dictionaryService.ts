@@ -1,20 +1,19 @@
 import { apiClient } from '../lib/api';
-import type { Dictionary, DictionaryType } from '../types';
+import type { Dictionary, DictionaryType, DictionaryStatus } from '../types';
 
 export interface CreateDictionaryData {
   type: DictionaryType;
-  name: string;
+  value: string;
   description?: string;
-  parentId?: string;
-  order?: number;
+  sortOrder?: number;
+  status?: DictionaryStatus;
 }
 
 export interface UpdateDictionaryData {
-  name?: string;
+  value?: string;
   description?: string;
-  parentId?: string;
-  order?: number;
-  isActive?: boolean;
+  sortOrder?: number;
+  status?: DictionaryStatus;
 }
 
 export const dictionaryService = {

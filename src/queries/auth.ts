@@ -33,10 +33,12 @@ export const useLogin = () => {
 
     return useMutation({
         mutationFn: authService.login,
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
             localStorage.setItem('accessToken', data.accessToken);
-            queryClient.setQueryData(authKeys.user(), data.user);
             queryClient.invalidateQueries({ queryKey: authKeys.all });
+            const { sessionKey } = await authService.getId();
+
+            console.log(sessionKey);
         },
     });
 };

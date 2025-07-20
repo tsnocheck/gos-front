@@ -55,17 +55,11 @@ export interface Dictionary {
   /** Описание значения */
   description?: string;
   /** Порядок сортировки */
-  sortOrder: number;
+  sortOrder?: number;
   /** Статус справочника */
-  status: DictionaryStatus;
+  status?: DictionaryStatus;
   /** Дата создания */
   createdAt: string | Date;
   /** Дата обновления */
   updatedAt: string | Date;
-  /** Полное название (для учреждений) */
-  fullName?: string;
-  /** Связь с родительским элементом */
-  parentId?: string;
-  /** Дополнительные данные в JSON формате */
-  metadata?: any;
 } 

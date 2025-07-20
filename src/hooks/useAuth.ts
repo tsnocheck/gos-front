@@ -7,10 +7,7 @@ export const useAuth = () => {
   const logoutMutation = useLogout();
 
   const checkPermission = (roles: UserRole[]) => {
-    for (const role of roles) {
-      if (userQuery.data?.roles.includes(role)) return true;
-    }
-    return false;
+    return roles.some((role) => userQuery.data?.roles.includes(role))
   }
 
   return {
