@@ -17,6 +17,7 @@ import { AdminUsersPage } from './pages/AdminUsersPage';
 import { ProfilePage } from './pages/ProfilePage';
 import {ProtectedRoute} from "./components/ProtectedRoute.tsx";
 import {AdminArchivePage} from "./pages/AdminArchivePage.tsx";
+import { ResetPasswordPage } from './pages/ResetPasswordPage.tsx';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -48,6 +49,11 @@ function App() {
             <Route 
               path="/register" 
               element={<RegisterPage />} 
+            />
+
+            <Route 
+              path="/auth/reset-password" 
+              element={<ResetPasswordPage />} 
             />
 
             {/* Main routes - авторизация отключена, но API работает */}

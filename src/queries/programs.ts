@@ -1,14 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { programService } from '../services/programService';
 import type { ProgramQueryParams, UpdateProgramData } from '../services/programService';
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // Query keys
 export const programKeys = {
     all: ['programs'] as const,
     lists: () => [...programKeys.all, 'list'] as const,
     list: (params: ProgramQueryParams) => [...programKeys.lists(), params] as const,
-    myPrograms: () => [...programKeys.all, 'my'] as const,
+    myPrograms: () => [...programKeys.lists(), 'my'] as const,
     myList: (params: ProgramQueryParams) => [...programKeys.myPrograms(), params] as const,
     details: () => [...programKeys.all, 'detail'] as const,
     detail: (id: string) => [...programKeys.details(), id] as const,

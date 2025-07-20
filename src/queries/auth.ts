@@ -67,10 +67,3 @@ export const useResetPassword = () => {
         mutationFn: authService.resetPassword,
     });
 };
-
-export const useSetPassword = () => {
-    return useMutation({
-        mutationFn: ({ token, password }: { token: string; password: string }) =>
-            authService.setPassword(token, password),
-    });
-};

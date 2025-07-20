@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
-import { Card, Table, Button, Modal, Form, Input, Select, Tag, Space, message, Typography } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, CheckOutlined, StopOutlined } from '@ant-design/icons';
-import type { User } from '../types';
+import React, {useState} from 'react';
+import {Button, Card, Form, Input, message, Modal, Select, Space, Table, Tag, Typography} from 'antd';
+import {
+  AlertOutlined,
+  CheckOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  StopOutlined
+} from '@ant-design/icons';
+import {type User, UserStatus} from '../types';
 import {useAdmin} from "../hooks/useAdmin.ts";
 import {useUsers} from "../queries/admin.ts";
 
@@ -10,7 +17,7 @@ const { Option } = Select;
 
 export const AdminUsersPage: React.FC = () => {
   const { data: users, isLoading } = useUsers();
-  const { activateUser, deactivateUser, createUser, deleteUser, updateUser, archiveUser } = useAdmin();
+  const { activateUser, deactivateUser, createUser, deleteUser, updateUser, archiveUser, unarchiveUser, sendInvitation } = useAdmin();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -131,6 +138,26 @@ export const AdminUsersPage: React.FC = () => {
       message.error('Ошибка при сохранении пользователя');
     }
   };
+
+  const handleArchiveUser = async () => {
+    try {
+      if (!editingUser) return;
+
+      switch (editingUser?.status) {
+        case UserStatus.ARCHIVED: {
+          await unarchiveUser(editingUser.id);
+          message.success('Пользователь убран из архива');
+        } break;
+        default: {
+          await archiveUser(editingUser?.id);
+          message.success('Пользователь архивирован');
+        }
+      }
+      setIsCreateModalOpen(false);
+    } catch {
+      message.error('Ошибка при архивации пользователя');
+    }
+  }
 
   const handleActivateUser = async (userId: string) => {
     try {
@@ -309,11 +336,18 @@ export const AdminUsersPage: React.FC = () => {
           </Form.Item>
 
           <Form.Item>
-            <Space>
+            <Space style={{ display: 'flex', flexWrap: "wrap" }}>
               <Button type="primary" htmlType="submit">
                 {editingUser ? 'Обновить' : 'Создать'}
               </Button>
-              {editingUser && <Button type="default" icon={<DeleteOutlined />} onClick={() => archiveUser(editingUser?.id)}>В архив</Button>}
+              {editingUser && <>
+                <Button type={'primary'} variant={'solid'} color={'purple'} icon={<AlertOutlined />} onClick={() => sendInvitation(editingUser?.id)}>
+                  Отправить приглашение на смену пароля
+                </Button>
+                <Button type="default" icon={<DeleteOutlined />} onClick={handleArchiveUser}>
+                  {editingUser.status !== UserStatus.ARCHIVED ? 'В архив' : 'Убрать из архива'}
+                </Button>
+              </>}
               <Button onClick={() => setIsCreateModalOpen(false)}>
                 Отмена
               </Button>

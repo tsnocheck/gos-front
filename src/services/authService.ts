@@ -36,12 +36,8 @@ export const authService = {
     return response;
   },
 
-  async resetPassword(email: string): Promise<void> {
-    await apiClient.post('/auth/reset-password', { email });
-  },
-
-  async setPassword(token: string, password: string): Promise<void> {
-    await apiClient.post('/auth/set-password', { token, password });
+  async resetPassword(data: { token: string, newPassword: string }) {
+    await apiClient.post('/auth/reset-password', data);
   },
 
   // Проверка аутентификации

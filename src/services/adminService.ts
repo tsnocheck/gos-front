@@ -40,7 +40,7 @@ export interface GetUsersParams {
 export const adminService = {
   // Управление пользователями
   async getUsers(params?: GetUsersParams) {
-    return apiClient.get<PaginatedResponse<User>>(`/admin/users`, { params });
+    return apiClient.get<User[]>(`/admin/users`, { params });
   },
 
   async getPendingUsers(): Promise<User[]> {
@@ -92,7 +92,7 @@ export const adminService = {
   },
 
   async deleteUser(userId: string): Promise<void> {
-    await apiClient.delete(`/users/${userId}`);
+    await apiClient.delete(`/users/admin/${userId}/hard`);
   },
 
   // Массовые операции
