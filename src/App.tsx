@@ -24,8 +24,10 @@ import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
 import { AdminArchivePage } from "./pages/AdminArchivePage.tsx";
 import { ResetPasswordPage } from "./pages/ResetPasswordPage.tsx";
 import { AdminDictionariesPage } from "./pages/AdminDictionariesPage";
+import { AdminExpertReplacePage } from "./pages/AdminExpertReplacePage";
 import type { JSX } from "react";
 import { UserRole } from "./types";
+import { AdminProgramsPage } from "./pages/AdminProgramsPage.tsx";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -100,6 +102,20 @@ const routes: TRoute[] = [
   {
     path: "/admin/dictionaries",
     element: <AdminDictionariesPage />,
+    protected: true,
+    layout: true,
+    requiredRoles: [UserRole.ADMIN]
+  },
+  {
+    path: "/admin/replace-expert",
+    element: <AdminExpertReplacePage />,
+    protected: true,
+    layout: true,
+    requiredRoles: [UserRole.ADMIN]
+  },
+  {
+    path: "/admin/programs",
+    element: <AdminProgramsPage />,
     protected: true,
     layout: true,
     requiredRoles: [UserRole.ADMIN]

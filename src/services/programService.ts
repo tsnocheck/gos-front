@@ -63,11 +63,11 @@ export const programService = {
   },
 
   async archiveProgram(id: string): Promise<Program> {
-    return apiClient.post<Program>(`/programs/${id}/archive`);
+    return apiClient.patch<Program>(`/programs/${id}/archive`);
   },
 
   async unarchiveProgram(id: string): Promise<Program> {
-    return apiClient.post<Program>(`/programs/${id}/unarchive`);
+    return apiClient.patch<Program>(`/programs/${id}/unarchive`);
   },
 
   async exportToPdf(id: string): Promise<Blob> {

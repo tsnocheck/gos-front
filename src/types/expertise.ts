@@ -63,4 +63,44 @@ export interface Expertise {
   createdAt: string | Date;
   /** Дата обновления */
   updatedAt: string | Date;
+}
+
+export interface ExpertiseCriteriaDto {
+  criterion1: boolean;
+  criterion1Comment?: string;
+  criterion2: boolean;
+  criterion2Comment?: string;
+  criterion3: boolean;
+  criterion3Comment?: string;
+  criterion4: boolean;
+  criterion4Comment?: string;
+  criterion5: boolean;
+  criterion5Comment?: string;
+  criterion6: boolean;
+  criterion6Comment?: string;
+  criterion7: boolean;
+  criterion7Comment?: string;
+  criterion8: boolean;
+  criterion8Comment?: string;
+  criterion9: boolean;
+  criterion9Comment?: string;
+  criterion10: boolean;
+  criterion10Comment?: string;
+  criterion11: boolean;
+  criterion11Comment?: string;
+  criterion12: boolean;
+  criterion12Comment?: string;
+  criterion13: boolean;
+  criterion13Comment?: string;
+  finalDecision: 'approve' | 'reject';
+  generalComment?: string;
+}
+
+export interface ExpertTableFilters {
+  status?: ExpertiseStatus;
+  programTitle?: string;
+  authorName?: string;
+  dateFrom?: string | Date;
+  dateTo?: string | Date;
+  result?: 'positive' | 'negative';
 } 

@@ -150,7 +150,7 @@ export const AdminDictionariesPage: React.FC = () => {
         title={DICTIONARY_LIST.find(d => d.type === openType)?.label}
         width={800}
         footer={null}
-        destroyOnClose
+        destroyOnHidden
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
           <Button onClick={handleClose}>Назад</Button>

@@ -342,7 +342,7 @@ export const AdminUsersPage: React.FC = () => {
               </Button>
               {editingUser && <>
                 <Button type={'primary'} variant={'solid'} color={'purple'} icon={<AlertOutlined />} onClick={() => sendInvitation(editingUser?.id)}>
-                  Отправить приглашение на смену пароля
+                  Сбросить пароль
                 </Button>
                 <Button type="default" icon={<DeleteOutlined />} onClick={handleArchiveUser}>
                   {editingUser.status !== UserStatus.ARCHIVED ? 'В архив' : 'Убрать из архива'}

@@ -17,6 +17,7 @@ import {
   SettingOutlined,
   EditOutlined,
   DeleteOutlined,
+  InboxOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.ts";
@@ -79,6 +80,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             key: "/admin/users/archive",
             label: <Link to="/admin/users/archive">Архив пользователей</Link>,
             icon: <DeleteOutlined />,
+          },
+          {
+            key: "/admin/programs",
+            label: <Link to="/admin/programs">ДПП ПК</Link>,
+            icon: <InboxOutlined />,
+          },
+          {
+            key: "/admin/replace-expert",
+            label: <Link to="/admin/replace-expert">Сменить эксперта</Link>,
+            icon: <EditOutlined />,
           },
           {
             key: "/admin/dictionaries",
