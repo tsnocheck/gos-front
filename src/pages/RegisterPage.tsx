@@ -1,25 +1,24 @@
 import React from 'react';
 import { Form, Input, Button, Typography, Card, message, Row, Col, Select } from 'antd';
 import { 
-  LockOutlined, 
   MailOutlined, 
   PhoneOutlined,
   FileTextOutlined 
 } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
-import { useRegister } from '../queries/auth';
-import type { RegisterData } from '../types';
+import { useCreateCandidate } from '../queries/candidates';
+import type { CreateCandidateData } from '../services/candidateService';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
-  const registerMutation = useRegister();
+  const createCandidateMutation = useCreateCandidate();
 
-  const onFinish = async (values: RegisterData) => {
+  const onFinish = async (values: CreateCandidateData) => {
     try {
-      await registerMutation.mutateAsync(values);
+      await createCandidateMutation.mutateAsync(values);
       message.success('Регистрация прошла успешно! Ожидайте одобрения администратора.');
       navigate('/login');
     } catch (error: any) {
@@ -177,7 +176,7 @@ export const RegisterPage: React.FC = () => {
                 <Button
                   type="primary"
                   htmlType="submit"
-                  loading={registerMutation.isPending}
+                  loading={createCandidateMutation.isPending}
                   block
                   size="large"
                   style={{ marginBottom: 16 }}

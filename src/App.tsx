@@ -28,6 +28,7 @@ import { AdminExpertReplacePage } from "./pages/AdminExpertReplacePage";
 import type { JSX } from "react";
 import { UserRole } from "./types";
 import { AdminProgramsPage } from "./pages/AdminProgramsPage.tsx";
+import { AdminCandidatesPage } from "./pages/AdminCandidatesPage.tsx";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -116,6 +117,13 @@ const routes: TRoute[] = [
   {
     path: "/admin/programs",
     element: <AdminProgramsPage />,
+    protected: true,
+    layout: true,
+    requiredRoles: [UserRole.ADMIN]
+  },
+  {
+    path: "/admin/candidates",
+    element: <AdminCandidatesPage />,
     protected: true,
     layout: true,
     requiredRoles: [UserRole.ADMIN]
