@@ -100,7 +100,7 @@ export const AdminDictionariesPage: React.FC = () => {
   ];
 
   // Колонки для модалки
-  const getColumns = (type: DictionaryType, onEdit: (record: Dictionary) => void) => [
+  const getColumns = (_: DictionaryType, onEdit: (record: Dictionary) => void) => [
     { title: 'Значение', dataIndex: 'value', key: 'value' },
     { title: 'Описание', dataIndex: 'description', key: 'description' },
     { title: 'Порядок', dataIndex: 'sortOrder', key: 'sortOrder' },

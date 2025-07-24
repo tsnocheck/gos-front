@@ -29,6 +29,8 @@ import type { JSX } from "react";
 import { UserRole } from "./types";
 import { AdminProgramsPage } from "./pages/AdminProgramsPage.tsx";
 import { AdminCandidatesPage } from "./pages/AdminCandidatesPage.tsx";
+import AdminRecommendationsPage from "./pages/AdminRecommendationsPage.tsx";
+import ProgramsConstructorPage from "./pages/ProgramsConstructorPage.tsx";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -74,7 +76,7 @@ const routes: TRoute[] = [
   },
   {
     path: "/programs/constructor",
-    element: <ProgramConstructorPage />,
+    element: <ProgramsConstructorPage />,
     protected: true,
     layout: true,
     requiredRoles: [UserRole.AUTHOR]
@@ -124,6 +126,13 @@ const routes: TRoute[] = [
   {
     path: "/admin/candidates",
     element: <AdminCandidatesPage />,
+    protected: true,
+    layout: true,
+    requiredRoles: [UserRole.ADMIN]
+  },
+  {
+    path: "/admin/recommendations",
+    element: <AdminRecommendationsPage />,
     protected: true,
     layout: true,
     requiredRoles: [UserRole.ADMIN]

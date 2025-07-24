@@ -37,6 +37,18 @@ export interface GetUsersParams {
   search?: string;
 }
 
+export interface GetExpertsTableParams {
+  search?: string;
+  subject?: string;
+  region?: string;
+  workplace?: string;
+  isActive?: boolean;
+  sortBy?: string;
+  sortOrder?: 'ASC' | 'DESC';
+  page?: number;
+  limit?: number;
+}
+
 export const adminService = {
   // Управление пользователями
   async getUsers(params?: GetUsersParams) {
@@ -93,6 +105,15 @@ export const adminService = {
 
   async deleteUser(userId: string): Promise<void> {
     await apiClient.post(`/admin/users/${userId}/hide`);
+  },
+
+  async getExpertsTable(params?: GetExpertsTableParams) {
+    await apiClient.get<{
+      experts: User[];
+      total: number;
+      page: number;
+      totalPages: number;
+    }>('/admin/experts/table', { params });
   },
 
   // Массовые операции

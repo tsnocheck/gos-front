@@ -3,7 +3,7 @@ import { Card, Table, Button, Modal, Form, Input, Select, Rate, Typography, Spac
 import { EyeOutlined, EditOutlined } from '@ant-design/icons';
 import {type ExpertiseForm, ExpertiseStatus, type Program} from '../types';
 import {useProgram, usePrograms} from "../queries/programs.ts";
-import {useCreateExpertise} from "../queries/expertises.ts";
+import {useAvailablePrograms, useCreateExpertise} from "../queries/expertises.ts";
 import {useAuth} from "../hooks/useAuth.ts";
 
 const { Title, Text } = Typography;
@@ -33,7 +33,7 @@ export const ExpertisePage: React.FC = () => {
 
   const { user } = useAuth()
 
-  const { data: programs, isLoading } = usePrograms();
+  const { data: programs, isLoading } = useAvailablePrograms();
   const { data: currentProgram } = useProgram(selectedProgram || '');
   const submitExpertiseMutation = useCreateExpertise()
 

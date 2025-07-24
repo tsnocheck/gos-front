@@ -1,7 +1,5 @@
 import { apiClient } from '../lib/api';
-import type { Program, ProgramStatus } from '../types/program';
-import type { CreateProgramForm } from '../types/forms';
-import type { PaginatedResponse } from '../types/common';
+import type { Program, ProgramStatus, CreateProgramForm, PaginatedResponse } from '../types';
 
 export interface ProgramQueryParams {
   page?: number;

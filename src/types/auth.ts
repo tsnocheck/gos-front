@@ -1,7 +1,5 @@
 // Типы для авторизации и сессий
 
-import type { User } from './user';
-
 export interface LoginCredentials {
   email: string;
   password: string;

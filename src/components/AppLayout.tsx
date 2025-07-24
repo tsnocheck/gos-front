@@ -19,6 +19,7 @@ import {
   DeleteOutlined,
   InboxOutlined,
   MonitorOutlined,
+  RightCircleOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.ts";
@@ -101,6 +102,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             key: "/admin/dictionaries",
             label: <Link to="/admin/dictionaries">Справочники</Link>,
             icon: <BookOutlined />,
+          },
+          {
+            key: "/admin/recommendations",
+            label: <Link to="/admin/recommendations">Рекомендации</Link>,
+            icon: <RightCircleOutlined />,
           },
         ],
         ...hideItemByPermission([UserRole.ADMIN]),

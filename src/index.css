@@ -41,3 +41,6 @@ html, body, #root {
   }
 }
 
+.ant-steps-item {
+  padding-inline-start: 0 !important;
+}

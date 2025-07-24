@@ -1,417 +1,424 @@
-import React, { useState } from 'react';
-import { Card, Steps, Button, Form, Input, Select, InputNumber, Space, Typography, Row, Col, message } from 'antd';
-import { PlusOutlined, SaveOutlined } from '@ant-design/icons';
-import { useCreateProgram } from '../queries/programs';
-import type { CreateProgramForm } from '../types';
+import React, { useState } from "react";
+import {
+  Card,
+  Steps,
+  Button,
+  Form,
+  Input,
+  Select,
+  InputNumber,
+  Space,
+  Typography,
+  message,
+  Spin,
+  Tooltip,
+  Descriptions,
+} from "antd";
+import { InfoCircleOutlined, SaveOutlined } from "@ant-design/icons";
+import { useCreateProgram } from "../queries/programs";
+import {
+  useDictionaryTypes,
+  useDictionariesByType,
+} from "../queries/dictionaries";
+import { DictionaryType, type Dictionary } from "../types/dictionary";
+import type { CreateProgramForm } from "../types";
 
 const { Title } = Typography;
-const { TextArea } = Input;
 const { Option } = Select;
 
-interface ProgramFormData {
-  title: string;
-  description: string;
-  category: string;
-  duration: number;
-  targetAudience: string;
-  prerequisites: string;
-  learningOutcomes: string[];
-  sections: ProgramSection[];
-}
+const LabelWithTooltip: React.FC<{ label: string; tooltipKey: string }> = ({
+  label,
+  tooltipKey,
+}) => (
+  <span>
+    {label}
+    <Tooltip title={`Рекомендации по ${tooltipKey}`}>
+      <InfoCircleOutlined style={{ color: "#1890ff" }} />
+    </Tooltip>
+  </span>
+);
 
-interface ProgramSection {
-  id: string;
-  title: string;
-  description: string;
-  duration: number;
-  topics: string[];
-  materials: string[];
-}
+const DynamicDictionaryField: React.FC<{
+  form: any;
+  typeName: string;
+  label: string;
+  name: string;
+}> = ({ form, typeName, label, name }) => {
+  const DICTIONARY_LIST = [
+    { type: DictionaryType.INSTITUTIONS, label: "Справочник учреждений" },
+    { type: DictionaryType.SUBDIVISIONS, label: "Справочник подразделений" },
+    {
+      type: DictionaryType.LABOR_FUNCTIONS,
+      label: "Справочник трудовых функций и действий",
+    },
+    {
+      type: DictionaryType.JOB_RESPONSIBILITIES,
+      label: "Справочник должностных обязанностей",
+    },
+    {
+      type: DictionaryType.STUDENT_CATEGORIES,
+      label: "Справочник категорий слушателей",
+    },
+    { type: DictionaryType.EDUCATION_FORMS, label: "Справочник форм обучения" },
+    { type: DictionaryType.SUBJECTS, label: "Справочник учебных предметов" },
+    {
+      type: DictionaryType.EXPERT_ALGORITHMS,
+      label: "Справочник алгоритмов назначения экспертов",
+    },
+    {
+      type: DictionaryType.KOIRO_SUBDIVISIONS,
+      label: "Справочник подразделений КОИРО",
+    },
+    {
+      type: DictionaryType.KOIRO_MANAGERS,
+      label: "Справочник руководителей КОИРО",
+    },
+  ];
+
+  const selectedType = Form.useWatch<DictionaryType>(typeName, form);
+  const dynamicDictQuery = useDictionariesByType(selectedType);
+
+  return (
+    <>
+      <Form.Item
+        name={typeName}
+        label={`Тип словаря: ${label}`}
+        rules={[{ required: true }]}
+      >
+        <Select placeholder="Выберите тип словаря">
+          {DICTIONARY_LIST?.map((dt) => (
+            <Option key={dt.type} value={dt.type}>
+              {dt.label}
+            </Option>
+          ))}
+        </Select>
+      </Form.Item>
+      <Form.Item
+        name={name}
+        label={<LabelWithTooltip label={label} tooltipKey={label} />}
+        rules={[{ required: true }]}
+      >
+        <Select
+          mode="multiple"
+          placeholder={`Выберите ${label}`}
+          loading={dynamicDictQuery.isLoading}
+        >
+          {dynamicDictQuery.data?.map((d: Dictionary) => (
+            <Option key={d.id} value={d.value}>
+              {d.value}
+            </Option>
+          ))}
+        </Select>
+      </Form.Item>
+    </>
+  );
+};
+
+const fieldLabels: Record<string, string> = {
+  title: "Название программы",
+  description: "Описание программы",
+  programCode: "Код программы",
+  duration: "Длительность (часы)",
+  targetAudienceType: "Тип словаря: Целевая аудитория",
+  targetAudience: "Целевая аудитория",
+  content: "Содержание",
+  learningOutcomes: "Результаты обучения",
+  competencies: "Компетенции",
+  methodology: "Методология",
+  assessment: "Оценка результатов",
+  materials: "Материалы",
+  requirements: "Требования",
+  nprContent: "Нормативно-правовой раздел",
+  pmrContent: "Предметно-методический раздел",
+  vrContent: "Вариативный раздел",
+};
 
 export const ProgramConstructorPage: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState(0);
   const [form] = Form.useForm();
-  const [formData, setFormData] = useState<Partial<ProgramFormData>>({
-    learningOutcomes: [],
-    sections: []
+
+  const dictTypesQuery = useDictionaryTypes();
+
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const [formData, setFormData] = useState<CreateProgramForm>({
+    title: "",
   });
-  
+
   const createProgram = useCreateProgram(() => {
-    message.success('Программа успешно создана!');
+    message.success("Программа успешно создана!");
     form.resetFields();
-    setFormData({ learningOutcomes: [], sections: [] });
+    setFormData({ title: "" });
     setCurrentStep(0);
   });
 
   const steps = [
-    {
-      title: 'Основная информация',
-      description: 'Название, описание, категория программы'
-    },
-    {
-      title: 'Параметры программы',
-      description: 'Длительность, аудитория, требования'
-    },
-    {
-      title: 'Результаты обучения',
-      description: 'Компетенции и навыки'
-    },
-    {
-      title: 'Структура программы',
-      description: 'Разделы и модули'
-    },
-    {
-      title: 'Проверка и создание',
-      description: 'Финальная проверка данных'
-    }
+    { title: "Основная информация" },
+    { title: "Содержание и структура" },
+    { title: "Методология и оценка" },
+    { title: "Нормативно-правовой раздел" },
+    { title: "Предметно-методический раздел" },
+    { title: "Вариативный раздел" },
+    { title: "Проверка и создание" },
   ];
-
-  const addLearningOutcome = () => {
-    const outcomes = formData.learningOutcomes || [];
-    setFormData({
-      ...formData,
-      learningOutcomes: [...outcomes, '']
-    });
-  };
-
-  const updateLearningOutcome = (index: number, value: string) => {
-    const outcomes = [...(formData.learningOutcomes || [])];
-    outcomes[index] = value;
-    setFormData({
-      ...formData,
-      learningOutcomes: outcomes
-    });
-  };
-
-  const removeLearningOutcome = (index: number) => {
-    const outcomes = formData.learningOutcomes?.filter((_, i) => i !== index) || [];
-    setFormData({
-      ...formData,
-      learningOutcomes: outcomes
-    });
-  };
-
-  const addSection = () => {
-    const sections = formData.sections || [];
-    const newSection: ProgramSection = {
-      id: Date.now().toString(),
-      title: '',
-      description: '',
-      duration: 0,
-      topics: [],
-      materials: []
-    };
-    setFormData({
-      ...formData,
-      sections: [...sections, newSection]
-    });
-  };
-
-  const updateSection = (index: number, field: keyof ProgramSection, value: any) => {
-    const sections = [...(formData.sections || [])];
-    sections[index] = { ...sections[index], [field]: value };
-    setFormData({
-      ...formData,
-      sections
-    });
-  };
-
-  const removeSection = (index: number) => {
-    const sections = formData.sections?.filter((_, i) => i !== index) || [];
-    setFormData({
-      ...formData,
-      sections
-    });
-  };
 
   const handleNext = async () => {
     try {
       await form.validateFields();
-      const values = form.getFieldsValue();
-      setFormData({ ...formData, ...values });
-      setCurrentStep(currentStep + 1);
-    } catch (error) {
-      message.error('Пожалуйста, заполните все обязательные поля');
+      setFormData({ ...formData, ...form.getFieldsValue() });
+      setCurrentStep((step) => step + 1);
+    } catch {
+      message.error("Пожалуйста, заполните все обязательные поля");
     }
   };
 
-  const handlePrev = () => {
-    setCurrentStep(currentStep - 1);
-  };
+  const handlePrev = () => setCurrentStep((step) => step - 1);
 
   const handleSubmit = async () => {
     try {
-      console.log('Current formData:', formData);
-      
-      // Проверяем что все данные заполнены
-      if (!formData.title || !formData.description || !formData.duration || 
-          !formData.targetAudience || !formData.prerequisites || 
-          !formData.learningOutcomes || formData.learningOutcomes.length === 0) {
-        message.error('Пожалуйста, заполните все шаги формы');
-        return;
-      }
-
-      const programData: CreateProgramForm = {
-        title: formData.title,
-        description: formData.description,
-        duration: formData.duration,
-        targetAudience: formData.targetAudience,
-        requirements: formData.prerequisites,
-        learningOutcomes: formData.learningOutcomes.join('\n'),
-        content: formData.sections?.map(section => 
-          `${section.title}: ${section.description}`
-        ).join('\n\n') || ''
-      };
-
-      console.log('Program data to submit:', programData);
-      
-      // Отключаем кнопку во время отправки
-      if (createProgram.isPending) {
-        return;
-      }
-
-      createProgram.mutate(programData);
-    } catch (error) {
-      console.error('Error in handleSubmit:', error);
-      message.error('Ошибка при создании программы');
+      await form.validateFields();
+      createProgram.mutate(formData);
+    } catch {
+      message.error("Ошибка при отправке формы");
     }
   };
 
-  const renderStepContent = () => {
+  const renderStep = () => {
     switch (currentStep) {
       case 0:
         return (
-          <Row gutter={24}>
-            <Col span={24}>
-              <Form.Item
-                name="title"
-                label="Название программы"
-                rules={[{ required: true, message: 'Введите название программы' }]}
-              >
-                <Input placeholder="Например: Цифровые технологии в образовании" />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                name="description"
-                label="Описание программы"
-                rules={[{ required: true, message: 'Введите описание программы' }]}
-              >
-                <TextArea 
-                  rows={4} 
-                  placeholder="Подробное описание целей и содержания программы"
+          <>
+            <Form.Item
+              name="title"
+              label={
+                <LabelWithTooltip
+                  label="Название программы "
+                  tooltipKey="Название"
                 />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="category"
-                label="Категория"
-                rules={[{ required: true, message: 'Выберите категорию' }]}
-              >
-                <Select placeholder="Выберите категорию">
-                  <Option value="it">Информационные технологии</Option>
-                  <Option value="management">Менеджмент</Option>
-                  <Option value="education">Образование</Option>
-                  <Option value="healthcare">Здравоохранение</Option>
-                  <Option value="other">Прочее</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
+              }
+              rules={[{ required: true }]}
+            >
+              <Input placeholder="Введите название" />
+            </Form.Item>
+            <Form.Item
+              name="description"
+              label={
+                <LabelWithTooltip
+                  label="Описание программы "
+                  tooltipKey="Описание"
+                />
+              }
+              rules={[{ required: true }]}
+            >
+              <Input.TextArea rows={4} placeholder="Краткое описание" />
+            </Form.Item>
+            <Form.Item
+              name="programCode"
+              label={
+                <LabelWithTooltip label="Код программы " tooltipKey="Код" />
+              }
+            >
+              <Input placeholder="IT-EDU-2025" />
+            </Form.Item>
+            <Form.Item
+              name="duration"
+              label={
+                <LabelWithTooltip
+                  label="Длительность (часы) "
+                  tooltipKey="Длительность"
+                />
+              }
+              rules={[{ required: true }]}
+            >
+              <InputNumber
+                min={1}
+                style={{ width: "100%" }}
+                placeholder="Часы"
+              />
+            </Form.Item>
+            <DynamicDictionaryField
+              form={form}
+              typeName="targetAudienceType"
+              name="targetAudience"
+              label="Целевая аудитория "
+            />
+          </>
         );
-
       case 1:
         return (
-          <Row gutter={24}>
-            <Col span={12}>
-              <Form.Item
-                name="duration"
-                label="Длительность (часы)"
-                rules={[{ required: true, message: 'Укажите длительность' }]}
-              >
-                <InputNumber min={16} max={500} style={{ width: '100%' }} />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                name="targetAudience"
-                label="Целевая аудитория"
-                rules={[{ required: true, message: 'Укажите целевую аудиторию' }]}
-              >
-                <TextArea 
-                  rows={3} 
-                  placeholder="Кто должен пройти эту программу?"
+          <>
+            <Form.Item
+              name="content"
+              label={
+                <LabelWithTooltip label="Содержание" tooltipKey="Содержание" />
+              }
+              rules={[{ required: true }]}
+            >
+              <Input.TextArea rows={4} placeholder="Основные темы" />
+            </Form.Item>
+            <Form.Item
+              name="learningOutcomes"
+              label={
+                <LabelWithTooltip
+                  label="Результаты обучения"
+                  tooltipKey="Результаты обучения"
                 />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                name="prerequisites"
-                label="Требования к слушателям"
-                rules={[{ required: true, message: 'Укажите требования' }]}
-              >
-                <TextArea 
-                  rows={3} 
-                  placeholder="Какие знания и навыки необходимы?"
-                />
-              </Form.Item>
-            </Col>
-          </Row>
+              }
+              rules={[{ required: true }]}
+            >
+              <Input.TextArea rows={4} placeholder="Компетенции" />
+            </Form.Item>
+          </>
         );
-
       case 2:
         return (
-          <div>
-            <div style={{ marginBottom: 16 }}>
-              <Button 
-                type="dashed" 
-                onClick={addLearningOutcome} 
-                icon={<PlusOutlined />}
-                block
-              >
-                Добавить результат обучения
-              </Button>
-            </div>
-            {formData.learningOutcomes?.map((outcome, index) => (
-              <Card 
-                key={index}
-                size="small" 
-                style={{ marginBottom: 16 }}
-                extra={
-                  <Button 
-                    type="text" 
-                    danger 
-                    onClick={() => removeLearningOutcome(index)}
-                  >
-                    Удалить
-                  </Button>
-                }
-              >
-                <Input
-                  value={outcome}
-                  onChange={(e) => updateLearningOutcome(index, e.target.value)}
-                  placeholder="После прохождения программы слушатель будет способен..."
+          <>
+            <Form.Item
+              name="competencies"
+              label={
+                <LabelWithTooltip
+                  label="Компетенции"
+                  tooltipKey="Компетенции"
                 />
-              </Card>
-            ))}
-          </div>
+              }
+              rules={[{ required: true }]}
+            >
+              <Input.TextArea rows={4} placeholder="Ключевые компетенции" />
+            </Form.Item>
+            <Form.Item
+              name="methodology"
+              label={
+                <LabelWithTooltip
+                  label="Методология"
+                  tooltipKey="Методология"
+                />
+              }
+              rules={[{ required: true }]}
+            >
+              <Input.TextArea rows={4} placeholder="Методы" />
+            </Form.Item>
+            <Form.Item
+              name="assessment"
+              label={
+                <LabelWithTooltip
+                  label="Оценка результатов"
+                  tooltipKey="Оценка результатов"
+                />
+              }
+              rules={[{ required: true }]}
+            >
+              <Input.TextArea rows={4} placeholder="Критерии" />
+            </Form.Item>
+            <Form.Item
+              name="materials"
+              label={
+                <LabelWithTooltip label="Материалы" tooltipKey="Материалы" />
+              }
+            >
+              <Input.TextArea rows={4} placeholder="Ресурсы" />
+            </Form.Item>
+            <Form.Item
+              name="requirements"
+              label={
+                <LabelWithTooltip label="Требования" tooltipKey="Требования" />
+              }
+            >
+              <Input.TextArea rows={4} placeholder="Предварительные знания" />
+            </Form.Item>
+          </>
         );
-
       case 3:
         return (
-          <div>
-            <div style={{ marginBottom: 16 }}>
-              <Button 
-                type="dashed" 
-                onClick={addSection} 
-                icon={<PlusOutlined />}
-                block
-              >
-                Добавить раздел программы
-              </Button>
-            </div>
-            {formData.sections?.map((section, index) => (
-              <Card 
-                key={section.id}
-                style={{ marginBottom: 16 }}
-                title={`Раздел ${index + 1}`}
-                extra={
-                  <Button 
-                    type="text" 
-                    danger 
-                    onClick={() => removeSection(index)}
-                  >
-                    Удалить раздел
-                  </Button>
-                }
-              >
-                <Row gutter={16}>
-                  <Col span={24}>
-                    <Input
-                      value={section.title}
-                      onChange={(e) => updateSection(index, 'title', e.target.value)}
-                      placeholder="Название раздела"
-                      style={{ marginBottom: 8 }}
-                    />
-                  </Col>
-                  <Col span={24}>
-                    <TextArea
-                      value={section.description}
-                      onChange={(e) => updateSection(index, 'description', e.target.value)}
-                      placeholder="Описание раздела"
-                      rows={2}
-                      style={{ marginBottom: 8 }}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <InputNumber
-                      value={section.duration}
-                      onChange={(value) => updateSection(index, 'duration', value || 0)}
-                      placeholder="Часы"
-                      min={0}
-                      style={{ width: '100%' }}
-                    />
-                  </Col>
-                </Row>
-              </Card>
-            ))}
-          </div>
+          <Form.Item
+            name="nprContent"
+            label={
+              <LabelWithTooltip
+                label="Нормативно-правовой раздел"
+                tooltipKey="НПР"
+              />
+            }
+            rules={[{ required: true }]}
+          >
+            <Input.TextArea rows={4} placeholder="Нормативные документы" />
+          </Form.Item>
         );
-
       case 4:
         return (
-          <div>
-            <Title level={4}>Проверьте данные программы:</Title>
-            <Card>
-              <p><strong>Название:</strong> {formData.title}</p>
-              <p><strong>Категория:</strong> {formData.category}</p>
-              <p><strong>Длительность:</strong> {formData.duration} часов</p>
-              <p><strong>Разделов:</strong> {formData.sections?.length || 0}</p>
-              <p><strong>Результатов обучения:</strong> {formData.learningOutcomes?.length || 0}</p>
-            </Card>
-          </div>
+          <Form.Item
+            name="pmrContent"
+            label={
+              <LabelWithTooltip
+                label="Предметно-методический раздел"
+                tooltipKey="ПМР"
+              />
+            }
+            rules={[{ required: true }]}
+          >
+            <Input.TextArea rows={4} placeholder="Методические указания" />
+          </Form.Item>
         );
-
+      case 5:
+        return (
+          <Form.Item
+            name="vrContent"
+            label={
+              <LabelWithTooltip label="Вариативный раздел" tooltipKey="ВР" />
+            }
+            rules={[{ required: true }]}
+          >
+            <Input.TextArea rows={4} placeholder="Дополнительные модули" />
+          </Form.Item>
+        );
+      case 6: {
+        return (
+          <Card>
+            <Title level={4}>Проверьте данные программы</Title>
+            <Descriptions bordered column={1}>
+              {Object.entries(formData).map(([key, val]) => (
+                <Descriptions.Item key={key} label={fieldLabels[key] || key}>
+                  {val}
+                </Descriptions.Item>
+              ))}
+            </Descriptions>
+          </Card>
+        );
+      }
       default:
         return null;
     }
   };
 
+  if (dictTypesQuery.isLoading) return <Spin size="large" />;
+
   return (
     <div style={{ padding: 24 }}>
-      <Title level={2}>Конструктор программ ДПП ПК</Title>
-      
-      <Steps current={currentStep} items={steps} style={{ marginBottom: 32 }} />
-      
-      <Form
-        form={form}
-        layout="vertical"
-        initialValues={formData}
-      >
-        {renderStepContent()}
+      <Title level={2}>Создание программы</Title>
+      <Steps
+        current={currentStep}
+        items={steps}
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr)",
+          gap: "1rem",
+          marginBottom: 24,
+        }}
+      />
+      <Form form={form} layout="vertical">
+        {renderStep()}
       </Form>
-
-      <div style={{ marginTop: 24 }}>
+      <div style={{ marginTop: 24, textAlign: "right" }}>
         <Space>
-          {currentStep > 0 && (
-            <Button onClick={handlePrev}>
-              Назад
-            </Button>
-          )}
-          
+          {currentStep > 0 && <Button onClick={handlePrev}>Назад</Button>}
           {currentStep < steps.length - 1 && (
             <Button type="primary" onClick={handleNext}>
               Далее
             </Button>
           )}
-          
           {currentStep === steps.length - 1 && (
-            <Button 
-              type="primary" 
+            <Button
+              type="primary"
               icon={<SaveOutlined />}
+              loading={createProgram.isLoading}
               onClick={handleSubmit}
-              loading={createProgram.isPending}
             >
               Создать программу
             </Button>

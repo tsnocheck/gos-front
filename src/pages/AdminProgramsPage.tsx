@@ -16,15 +16,28 @@ import { programService } from "../services/programService";
 import { type Program, ProgramStatus } from "../types/program";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useAssignExpertToProgram } from "../queries/expertises";
+import { useUsersByRole } from "../queries/admin";
+import { UserRole } from "../types";
 
 const { Title } = Typography;
 
 export const AdminProgramsPage: React.FC = () => {
+  const { data: programs, isLoading } = usePrograms();
+  const assignExpertToProgramMutation = useAssignExpertToProgram()
+  const { data: availableExperts } = useUsersByRole(UserRole.EXPERT)
+  
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [viewProgram, setViewProgram] = useState<Program | null>(null);
-  const { data: programs, isLoading } = usePrograms();
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
+
+  const handleAssignExpertToProgram = async () => {
+    if (!viewProgram) return;
+
+    await assignExpertToProgramMutation.mutateAsync({ programId: viewProgram.id, expertId: '' })
+  }
 
   // Архивирование и разархивирование
   const handleArchiveToggle = async (program: Program, checked: boolean) => {
