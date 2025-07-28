@@ -1,23 +1,83 @@
-import React, { useState } from 'react';
-import { Card, Typography, Table, Button, Space, Modal, Form, Input, Popconfirm, message, Select, Tag } from 'antd';
-import type { Dictionary } from '../types/dictionary';
-import { DictionaryType, DictionaryStatus } from '../types/dictionary';
-import { useDictionariesByType, useCreateDictionary, useUpdateDictionary, useDeleteDictionary } from '../queries/dictionaries';
+import React, { useState } from "react";
+import {
+  Card,
+  Typography,
+  Table,
+  Button,
+  Space,
+  Modal,
+  Form,
+  Input,
+  Popconfirm,
+  message,
+  Select,
+  Tag,
+} from "antd";
+import type { Dictionary } from "../types/dictionary";
+import { DictionaryType, DictionaryStatus } from "../types/dictionary";
+import {
+  useDictionariesByType,
+  useCreateDictionary,
+  useUpdateDictionary,
+  useDeleteDictionary,
+} from "../queries/dictionaries";
 
 const { Title } = Typography;
 
 const DICTIONARY_LIST = [
-  { type: DictionaryType.INSTITUTIONS, label: 'Справочник учреждений' },
-  { type: DictionaryType.SUBDIVISIONS, label: 'Справочник подразделений' },
-  { type: DictionaryType.LABOR_FUNCTIONS, label: 'Справочник трудовых функций и действий' },
-  { type: DictionaryType.JOB_RESPONSIBILITIES, label: 'Справочник должностных обязанностей' },
-  { type: DictionaryType.STUDENT_CATEGORIES, label: 'Справочник категорий слушателей' },
-  { type: DictionaryType.EDUCATION_FORMS, label: 'Справочник форм обучения' },
-  { type: DictionaryType.SUBJECTS, label: 'Справочник учебных предметов' },
-  { type: DictionaryType.EXPERT_ALGORITHMS, label: 'Справочник алгоритмов назначения экспертов' },
-  { type: DictionaryType.KOIRO_SUBDIVISIONS, label: 'Справочник подразделений КОИРО' },
-  { type: DictionaryType.KOIRO_MANAGERS, label: 'Справочник руководителей КОИРО' },
+  { type: DictionaryType.INSTITUTIONS, label: "Справочник учреждений" },
+  { type: DictionaryType.SUBDIVISIONS, label: "Справочник подразделений" },
+  {
+    type: DictionaryType.LABOR_FUNCTIONS,
+    label: "Справочник трудовых функций",
+  },
+  { type: DictionaryType.LABOR_ACTIONS, label: "Справочник трудовых действий" },
+  {
+    type: DictionaryType.JOB_RESPONSIBILITIES,
+    label: "Справочник должностных обязанностей",
+  },
+  {
+    type: DictionaryType.STUDENT_CATEGORIES,
+    label: "Справочник категорий слушателей",
+  },
+  { type: DictionaryType.EDUCATION_FORMS, label: "Справочник форм обучения" },
+  { type: DictionaryType.SUBJECTS, label: "Справочник учебных предметов" },
+  {
+    type: DictionaryType.EXPERT_ALGORITHMS,
+    label: "Справочник алгоритмов назначения экспертов",
+  },
+  {
+    type: DictionaryType.KOIRO_SUBDIVISIONS,
+    label: "Справочник подразделений КОИРО",
+  },
+  {
+    type: DictionaryType.KOIRO_MANAGERS,
+    label: "Справочник руководителей КОИРО",
+  },
 ];
+
+const laborActionType = {
+  forGet: (type: string) => {
+    return type.split('/')[1];
+  },
+  forSet: (laborFuncValue: string, type: string) => {
+    return `${laborFuncValue}/${type}`
+  }
+}
+
+const SelectLaborFunctionRender: React.FC = () => {
+  const { data } = useDictionariesByType(DictionaryType.LABOR_FUNCTIONS);
+
+  return (
+    <Form.Item name="function" label="Трудовая функция">
+      <Select>
+        {data?.map((laborFunc) => (
+          <Select.Option value={laborFunc.id}>{laborFunc.value}</Select.Option>
+        ))}
+      </Select>
+    </Form.Item>
+  );
+};
 
 export const AdminDictionariesPage: React.FC = () => {
   const [openType, setOpenType] = useState<DictionaryType | null>(null);
@@ -57,9 +117,9 @@ export const AdminDictionariesPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteMutation.mutateAsync(id);
-      message.success('Запись удалена');
+      message.success("Запись удалена");
     } catch {
-      message.error('Ошибка при удалении');
+      message.error("Ошибка при удалении");
     }
   };
 
@@ -68,28 +128,33 @@ export const AdminDictionariesPage: React.FC = () => {
       const values = await form.validateFields();
       if (editing) {
         await updateMutation.mutateAsync({ id: editing.id, data: values });
-        message.success('Запись обновлена');
+        message.success("Запись обновлена");
       } else {
-        await createMutation.mutateAsync({ type: openType!, ...values });
-        message.success('Запись создана');
+        const type =
+          openType === DictionaryType.LABOR_ACTIONS
+            ? laborActionType.forSet(values.function, openType)
+            : openType!;
+
+        await createMutation.mutateAsync({ type, ...values });
+        message.success("Запись создана");
       }
       setEditing(null);
       form.resetFields();
     } catch {
-      message.error('Ошибка при сохранении');
+      message.error("Ошибка при сохранении");
     }
   };
 
   // Колонки для таблицы справочников
   const mainColumns = [
     {
-      title: 'Справочник',
-      dataIndex: 'label',
-      key: 'label',
+      title: "Справочник",
+      dataIndex: "label",
+      key: "label",
     },
     {
-      title: '',
-      key: 'actions',
+      title: "",
+      key: "actions",
       render: (_: unknown, record: { type: DictionaryType }) => (
         <Button type="primary" onClick={() => handleOpen(record.type)}>
           Открыть
@@ -100,40 +165,70 @@ export const AdminDictionariesPage: React.FC = () => {
   ];
 
   // Колонки для модалки
-  const getColumns = (_: DictionaryType, onEdit: (record: Dictionary) => void) => [
-    { title: 'Значение', dataIndex: 'value', key: 'value' },
-    { title: 'Описание', dataIndex: 'description', key: 'description' },
-    { title: 'Порядок', dataIndex: 'sortOrder', key: 'sortOrder' },
-    {
-      title: 'Статус',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status: string) => {
-        const statusMap = {
-          active: { color: 'green', text: 'Активен' },
-          inactive: { color: 'red', text: 'Неактивен' },
-        };
-        const info = statusMap[status as 'active' | 'inactive'] || { color: 'default', text: status };
-        return <Tag color={info.color}>{info.text}</Tag>;
+  const getColumns = (
+    _: DictionaryType,
+    onEdit: (record: Dictionary) => void
+  ) => {
+    const columns = [
+      { title: "Значение", dataIndex: "value", key: "value" },
+      { title: "Описание", dataIndex: "description", key: "description" },
+      { title: "Порядок", dataIndex: "sortOrder", key: "sortOrder" },
+      {
+        title: "Статус",
+        dataIndex: "status",
+        key: "status",
+        render: (status: string) => {
+          const statusMap = {
+            active: { color: "green", text: "Активен" },
+            inactive: { color: "red", text: "Неактивен" },
+          };
+          const info = statusMap[status as "active" | "inactive"] || {
+            color: "default",
+            text: status,
+          };
+          return <Tag color={info.color}>{info.text}</Tag>;
+        },
       },
-    },
-    {
-      title: 'Действия',
-      key: 'actions',
-      render: (_: unknown, record: Dictionary) => (
-        <Space>
-          <Button onClick={() => onEdit(record)}>Редактировать</Button>
-          <Popconfirm title="Удалить запись?" onConfirm={() => handleDelete(record.id)} okText="Да" cancelText="Нет">
-            <Button danger>Удалить</Button>
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ];
+      {
+        title: "Действия",
+        key: "actions",
+        render: (_: unknown, record: Dictionary) => (
+          <Space>
+            <Button onClick={() => onEdit(record)}>Редактировать</Button>
+            <Popconfirm
+              title="Удалить запись?"
+              onConfirm={() => handleDelete(record.id)}
+              okText="Да"
+              cancelText="Нет"
+            >
+              <Button danger>Удалить</Button>
+            </Popconfirm>
+          </Space>
+        ),
+      },
+    ];
+
+    if (openType === DictionaryType.LABOR_ACTIONS) {
+      columns.unshift({
+        key: "function",
+        title: "Функция",
+        render: (_: unknown, record) => (<>{record.type?.split('/')?.[0]}</>)
+      });
+    }
+
+    return columns;
+  };
 
   return (
     <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 24,
+        }}
+      >
         <Title level={2}>Справочники системы</Title>
       </div>
       <Card>
@@ -147,14 +242,27 @@ export const AdminDictionariesPage: React.FC = () => {
       <Modal
         open={modalVisible}
         onCancel={handleClose}
-        title={DICTIONARY_LIST.find(d => d.type === openType)?.label}
+        title={DICTIONARY_LIST.find((d) => d.type === openType)?.label}
         width={800}
         footer={null}
         destroyOnHidden
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 16,
+          }}
+        >
           <Button onClick={handleClose}>Назад</Button>
-          <Button type="primary" onClick={() => { setEditing(null); form.resetFields(); }}>
+          <Button
+            type="primary"
+            onClick={() => {
+              setEditing(null);
+              form.resetFields();
+            }}
+          >
             Добавить запись
           </Button>
         </div>
@@ -166,27 +274,57 @@ export const AdminDictionariesPage: React.FC = () => {
           pagination={false}
           style={{ marginBottom: 24 }}
         />
-        <Form form={form} layout="vertical" onFinish={handleOk} initialValues={{ value: '', description: '', sortOrder: 0, status: 'active' }}>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleOk}
+          initialValues={{
+            value: "",
+            description: "",
+            sortOrder: 0,
+            status: "active",
+          }}
+        >
+          {openType === DictionaryType.LABOR_ACTIONS && (
+            <SelectLaborFunctionRender />
+          )}
           <Form.Item name="value" label="Значение" required>
-            <Input /> 
+            <Input />
           </Form.Item>
           <Form.Item name="description" label="Описание">
             <Input />
           </Form.Item>
-          <Form.Item getValueFromEvent={e => +e.target.value} name="sortOrder" label="Порядок">
+          <Form.Item
+            getValueFromEvent={(e) => +e.target.value}
+            name="sortOrder"
+            label="Порядок"
+          >
             <Input type="number" />
           </Form.Item>
           <Form.Item name="status" label="Статус">
             <Select>
-              <Select.Option value={DictionaryStatus.ACTIVE}>Активен</Select.Option>
-              <Select.Option value={DictionaryStatus.INACTIVE}>Неактивен</Select.Option>
+              <Select.Option value={DictionaryStatus.ACTIVE}>
+                Активен
+              </Select.Option>
+              <Select.Option value={DictionaryStatus.INACTIVE}>
+                Неактивен
+              </Select.Option>
             </Select>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" style={{ marginRight: 8 }}>
-              {editing ? 'Сохранить изменения' : 'Добавить'}
+              {editing ? "Сохранить изменения" : "Добавить"}
             </Button>
-            {editing && <Button onClick={() => { setEditing(null); form.resetFields(); }}>Отмена</Button>}
+            {editing && (
+              <Button
+                onClick={() => {
+                  setEditing(null);
+                  form.resetFields();
+                }}
+              >
+                Отмена
+              </Button>
+            )}
           </Form.Item>
         </Form>
       </Modal>
@@ -194,4 +332,4 @@ export const AdminDictionariesPage: React.FC = () => {
   );
 };
 
-export default AdminDictionariesPage; 
+export default AdminDictionariesPage;

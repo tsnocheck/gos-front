@@ -8,6 +8,7 @@ import ConstructorStep6 from "../components/constructor/ConstructorStep6.tsx";
 import ConstructorStep7 from "../components/constructor/ConstructorStep7.tsx";
 import ConstructorStep8 from "../components/constructor/ConstructorStep8.tsx";
 import ConstructorStep9 from "../components/constructor/ConstructorStep9.tsx";
+import ConstructorStep10 from "../components/constructor/ConstructorStep10.tsx";
 import type { CreateProgramForm } from "../types/program";
 
 const steps = [
@@ -19,6 +20,7 @@ const steps = [
   { title: "Учебно-тематический план", component: ConstructorStep7 },
   { title: "Формы аттестации", component: ConstructorStep8 },
   { title: "Орг.-пед. условия", component: ConstructorStep9 },
+  { title: "Предпросмотр программы", component: ConstructorStep10 },
 ];
 
 export interface ConstructorFormData {
@@ -43,10 +45,6 @@ const ProgramsConstructorPage: React.FC = () => {
     setFormData((prev) => ({ ...prev, ...data }));
   };
   const handleFinish = () => {
-    // Выводим все данные в консоль
-    // Приводим к типу CreateProgramForm для наглядности
-    // eslint-disable-next-line no-console
-    console.log("Черновик программы:", formData);
     message.success("Черновик программы сохранён локально (отправка на сервер не реализована)");
   };
 
@@ -56,7 +54,7 @@ const ProgramsConstructorPage: React.FC = () => {
       
       <Steps
         current={currentStep}
-        items={steps}
+        items={steps.map((item) => ({ title: item.title }))}
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr)",
