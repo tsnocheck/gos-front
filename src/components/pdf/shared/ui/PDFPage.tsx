@@ -1,20 +1,16 @@
 import { Page, View, Text } from "@react-pdf/renderer";
-import type { FC } from "react";
+import type { FC, PropsWithChildren } from "react";
 import { PDFStyles, type StyleObject } from "../utils";
 
-interface PDFPageProps {
-  children?: React.ReactNode;
-  ui?: { view?: StyleObject };
-  title?: string;
-}
+type Props = PropsWithChildren<{ ui?: { view?: StyleObject }; title?: string }>;
 
-export const PDFPage: FC<PDFPageProps> = ({ children, ui, title }) => {
+export const PDFPage: FC<Props> = ({ children, ui, title }) => {
   return (
     <Page size="A4" style={PDFStyles.page}>
-      <View style={{ flex: 1, ...ui }}>
+      <View style={{ flex: 1, ...ui?.view }}>
         {title && <Text style={PDFStyles.sectionTitle}>{title}</Text>}
         {children}
-        </View>
+      </View>
     </Page>
   );
 };

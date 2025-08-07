@@ -7,7 +7,7 @@ import { DictionaryType } from '../types/dictionary';
 export const dictionaryKeys = {
   all: ['dictionaries'] as const,
   types: () => [...dictionaryKeys.all, 'types'] as const,
-  list: (type: DictionaryType) => [...dictionaryKeys.all, 'list', type] as const,
+  list: (type: DictionaryType | string) => [...dictionaryKeys.all, 'list', type] as const,
 };
 
 // Queries
@@ -20,13 +20,21 @@ export const useDictionaryTypes = () => {
   });
 };
 
-export const useDictionariesByType = (type: DictionaryType) => {
+export const useDictionariesByType = (type: DictionaryType | string) => {
   return useQuery({
     queryKey: dictionaryKeys.list(type),
     queryFn: () => dictionaryService.getDictionaryByType(type),
     enabled: !!type,
     staleTime: 2 * 60 * 1000,
     refetchOnWindowFocus: false,
+  });
+};
+
+export const useActionsByFunctions = (functionsIds: string[], enabled = true) => {
+  return useQuery({
+    queryKey: [dictionaryKeys.all, 'actions', functionsIds],
+    queryFn: () => dictionaryService.getActionsByFunctions(functionsIds),
+    enabled: enabled && functionsIds?.length > 0,
   });
 };
 

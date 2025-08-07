@@ -1,5 +1,5 @@
 import { apiClient } from '../lib/api';
-import type { Program, ProgramStatus, CreateProgramForm, PaginatedResponse } from '../types';
+import type { Program, ProgramStatus, CreateProgramForm, PaginatedResponse, User } from '../types';
 
 export interface ProgramQueryParams {
   page?: number;
@@ -83,4 +83,8 @@ export const programService = {
   async canEditProgram(id: string): Promise<boolean> {
     return apiClient.get(`/programs/${id}/can-edit`);
   },
-};
+
+  async availableCoAuthors() {
+    return apiClient.get<User[]>('/programs/co-authors');
+  }
+}

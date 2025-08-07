@@ -1,4 +1,4 @@
-import { Text } from "@react-pdf/renderer";
+import { Text,  } from "@react-pdf/renderer";
 import type { FC } from "react";
 import type { CreateProgramForm } from "../../../../types";
 import { PDFPage } from "../../shared/ui/PDFPage";

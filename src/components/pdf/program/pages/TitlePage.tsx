@@ -8,7 +8,7 @@ export const TitlePage: FC<{ program: CreateProgramForm }> = ({ program }) => {
   return (
     <PDFPage ui={{ view: { justifyContent: "center" } }}>
       <Text style={{ textAlign: "center", marginBottom: 60 }}>
-        Национальный исследовательский технологический университет "МИСиС"
+        { program.customInstitution ? program.customInstitution : program.institution }
       </Text>
 
       <View style={{ flexGrow: 1, paddingTop: 50 }}>

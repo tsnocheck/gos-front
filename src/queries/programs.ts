@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { programService } from '../services/programService';
 import type { ProgramQueryParams, UpdateProgramData } from '../services/programService';
 import { useNavigate } from "react-router-dom";
+import { adminKeys } from './admin';
 
 // Query keys
 export const programKeys = {
@@ -79,6 +80,14 @@ export const useCanEditProgram = (id: string) => {
         staleTime: 2 * 60 * 1000,
     });
 };
+
+export const useAvailableAuthors = () => {
+    return useQuery({
+        queryKey: [...adminKeys.all, 'authors'],
+        queryFn: programService.availableCoAuthors,
+        retry: false
+    })
+}
 
 // Mutations
 export const useCreateProgram = (onSuccessCallback?: () => void) => {

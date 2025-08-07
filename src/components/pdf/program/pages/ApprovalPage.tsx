@@ -1,7 +1,7 @@
 import { Text } from "@react-pdf/renderer";
 import { currentYear } from "../../shared/utils";
 import type { FC } from "react";
-import type { CreateProgramForm, User } from "../../../../types";
+import type { CreateProgramForm, User } from "@/types";
 import { PDFPage } from "../../shared/ui/PDFPage";
 
 export const ApprovalPage: FC<{

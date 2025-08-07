@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Select, Form, Typography } from "antd";
-import { useUsersByRole } from "../../queries/admin";
-import { UserRole } from "../../types/user";
-import type { User } from "../../types/user";
 import type { CreateProgramForm } from "../../types/program";
+import { useAvailableAuthors } from "@/queries/programs";
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -14,15 +12,14 @@ interface Props {
 }
 
 const ConstructorStep3: React.FC<Props> = ({ value, onChange }) => {
-  const { data: authors = [], isLoading: loadingAuthors } = useUsersByRole(UserRole.AUTHOR) as { data: User[]; isLoading: boolean };
+  const { data: authors = [], isLoading: loadingAuthors } = useAvailableAuthors();
 
   const [author1, setAuthor1] = useState(value.author1 || "");
   const [author2, setAuthor2] = useState(value.author2 || "");
 
   useEffect(() => {
     onChange({ author1, author2 });
-    // eslint-disable-next-line
-  }, [author1, author2]);
+  }, [author1, author2, onChange]);
 
   return (
     <Form layout="vertical">
@@ -35,7 +32,7 @@ const ConstructorStep3: React.FC<Props> = ({ value, onChange }) => {
           placeholder="Выберите автора"
           allowClear
         >
-          {authors.map((u) => (
+          {authors?.map((u) => (
             <Option key={u.id} value={u.id}>
               {u.lastName} {u.firstName} {u.middleName}
             </Option>

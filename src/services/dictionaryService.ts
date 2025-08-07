@@ -1,5 +1,5 @@
 import { apiClient } from '../lib/api';
-import type { Dictionary, DictionaryType, DictionaryStatus } from '../types';
+import { type Dictionary, DictionaryType, type DictionaryStatus } from '../types';
 
 export interface CreateDictionaryData {
   type: DictionaryType;
@@ -22,8 +22,23 @@ export const dictionaryService = {
     return apiClient.get<Dictionary[]>('/dictionaries/all');
   },
 
-  async getDictionaryByType(type: DictionaryType): Promise<Dictionary[]> {
+  async getDictionaryByType(type: DictionaryType | string): Promise<Dictionary[]> {
     return apiClient.get<Dictionary[]>(`/dictionaries/type/${type}`);
+  },
+
+  async getActionsByFunctions(functionsIds: string[]) {
+    console.log(functionsIds)
+
+    const promises: (() => Promise<Dictionary[]>)[] = []
+
+    functionsIds.forEach((id) => promises.push(() => this.getDictionaryByType(id + `--${DictionaryType.LABOR_ACTIONS}`)))
+
+    const rawActions = await Promise.all(promises.map((fn) => fn()))
+
+    return rawActions.reduce((acc, items) => {
+      acc.push(...items)
+      return acc;
+    }, [])
   },
 
   async getDictionaryHierarchy(type: DictionaryType): Promise<Dictionary[]> {

@@ -17,6 +17,9 @@ export const PDFStyles = StyleSheet.create({
     textAlign: "center",
     textTransform: "uppercase",
   },
+  paragraph: { marginBottom: 10 },
+  bold: { fontWeight: 'bold' },
+  italic: { fontStyle: 'italic' },
   block: {
     marginBottom: 10,
   },
@@ -26,3 +29,4 @@ export const PDFStyles = StyleSheet.create({
 });
 
 export const currentYear = new Date().getFullYear();
+

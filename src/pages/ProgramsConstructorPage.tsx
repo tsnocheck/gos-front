@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Button, Steps, Typography, message } from "antd";
 import ConstructorStep2 from "../components/constructor/ConstructorStep2";
-import ConstructorStep3 from "../components/constructor/ConstructorStep3.tsx";
-import ConstructorStep4 from "../components/constructor/ConstructorStep4.tsx";
-import ConstructorStep5 from "../components/constructor/ConstructorStep5.tsx";
-import ConstructorStep6 from "../components/constructor/ConstructorStep6.tsx";
-import ConstructorStep7 from "../components/constructor/ConstructorStep7.tsx";
-import ConstructorStep8 from "../components/constructor/ConstructorStep8.tsx";
-import ConstructorStep9 from "../components/constructor/ConstructorStep9.tsx";
-import ConstructorStep10 from "../components/constructor/ConstructorStep10.tsx";
+import ConstructorStep3 from "../components/constructor/ConstructorStep3";
+import ConstructorStep4 from "../components/constructor/ConstructorStep4";
+import ConstructorStep5 from "../components/constructor/ConstructorStep5";
+import ConstructorStep6 from "../components/constructor/ConstructorStep6";
+import ConstructorStep7 from "../components/constructor/ConstructorStep7";
+import ConstructorStep8 from "../components/constructor/ConstructorStep8";
+import ConstructorStep9 from "../components/constructor/ConstructorStep9";
+import ConstructorStep10 from "../components/constructor/ConstructorStep10";
 import type { CreateProgramForm } from "../types/program";
 
 const steps = [
@@ -41,9 +41,9 @@ const ProgramsConstructorPage: React.FC = () => {
   const handlePrev = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 0));
   };
-  const handleChange = (data: Partial<CreateProgramForm>) => {
+  const handleChange = useCallback((data: Partial<CreateProgramForm>) => {
     setFormData((prev) => ({ ...prev, ...data }));
-  };
+  }, []);
   const handleFinish = () => {
     message.success("Черновик программы сохранён локально (отправка на сервер не реализована)");
   };

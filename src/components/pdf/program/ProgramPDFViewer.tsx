@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
 import { Document, PDFViewer, Font } from "@react-pdf/renderer";
-import { type CreateProgramForm, type User } from "../../../types";
-import timesNewRoman from "../../../assets/times.ttf";
-import { useUsers } from "../../../queries/admin";
-import { useAuth } from "../../../hooks/useAuth";
+import { type CreateProgramForm, type User } from "@/types";
+import timesNewRoman from "@/assets/times.ttf";
+import { useUsers } from "@/queries/admin";
+import { useAuth } from "@/hooks/useAuth";
 import {
   AbbreviationPage,
   ApprovalPage,

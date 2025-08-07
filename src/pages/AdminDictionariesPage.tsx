@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Card,
   Typography,
@@ -20,6 +20,7 @@ import {
   useCreateDictionary,
   useUpdateDictionary,
   useDeleteDictionary,
+  useActionsByFunctions,
 } from "../queries/dictionaries";
 
 const { Title } = Typography;
@@ -58,21 +59,23 @@ const DICTIONARY_LIST = [
 
 const laborActionType = {
   forGet: (type: string) => {
-    return type.split('/')[1];
+    return type.split("--")[1];
   },
   forSet: (laborFuncValue: string, type: string) => {
-    return `${laborFuncValue}/${type}`
-  }
-}
+    return `${laborFuncValue}--${type}`;
+  },
+};
 
 const SelectLaborFunctionRender: React.FC = () => {
   const { data } = useDictionariesByType(DictionaryType.LABOR_FUNCTIONS);
 
   return (
-    <Form.Item name="function" label="Трудовая функция">
+    <Form.Item name="function" label="Трудовая функция" required>
       <Select>
         {data?.map((laborFunc) => (
-          <Select.Option value={laborFunc.id}>{laborFunc.value}</Select.Option>
+          <Select.Option key={laborFunc.id} value={laborFunc.id}>
+            {laborFunc.value}
+          </Select.Option>
         ))}
       </Select>
     </Form.Item>
@@ -85,8 +88,24 @@ export const AdminDictionariesPage: React.FC = () => {
   const [editing, setEditing] = useState<Dictionary | null>(null);
   const [form] = Form.useForm();
 
-  // Для модалки
-  const { data, isLoading } = useDictionariesByType(openType as DictionaryType);
+  const laborFunctions = useDictionariesByType(DictionaryType.LABOR_FUNCTIONS);
+
+  const functionsId = useMemo(
+    () => laborFunctions.data?.map((v) => v.id) || [],
+    [laborFunctions.data]
+  );
+
+  const isLaborActions = openType === DictionaryType.LABOR_ACTIONS;
+
+  const actions = useActionsByFunctions(functionsId, isLaborActions);
+
+  const generalDictionaries = useDictionariesByType(openType!);
+
+  const data = isLaborActions ? actions.data : generalDictionaries.data;
+  const isLoading = isLaborActions
+    ? actions.isLoading
+    : generalDictionaries.isLoading;
+
   const createMutation = useCreateDictionary();
   const updateMutation = useUpdateDictionary();
   const deleteMutation = useDeleteDictionary();
@@ -212,7 +231,13 @@ export const AdminDictionariesPage: React.FC = () => {
       columns.unshift({
         key: "function",
         title: "Функция",
-        render: (_: unknown, record) => (<>{record.type?.split('/')?.[0]}</>)
+        render: (_: unknown, record) => (
+          <>
+            {laborFunctions.data?.find(
+              (func) => func.id === record.type?.split("--")?.[0]
+            )?.value}
+          </>
+        ),
       });
     }
 
