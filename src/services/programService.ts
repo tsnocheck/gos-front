@@ -25,7 +25,7 @@ export const programService = {
   },
 
   async getProgramById(id: string) {
-    return apiClient.get<Program>(`/programs/${id}`);
+    return apiClient.get<Program>(`/programs/id/${id}`);
   },
 
   async getProgramVersions(id: string) {

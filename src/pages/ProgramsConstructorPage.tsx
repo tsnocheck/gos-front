@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Button, Steps, Typography, message } from "antd";
 import ConstructorStep2 from "../components/constructor/ConstructorStep2";
 import ConstructorStep3 from "../components/constructor/ConstructorStep3";
@@ -15,7 +15,7 @@ const steps = [
   { title: "Титульный лист", component: ConstructorStep2 },
   { title: "Лист согласования", component: ConstructorStep3 },
   { title: "Список сокращений", component: ConstructorStep4 },
-  { title: "Пояснительная записка", component: ConstructorStep5 },
+  { title: "Характеристика программы", component: ConstructorStep5 },
   { title: "Учебный план", component: ConstructorStep6 },
   { title: "Учебно-тематический план", component: ConstructorStep7 },
   { title: "Формы аттестации", component: ConstructorStep8 },
@@ -23,17 +23,13 @@ const steps = [
   { title: "Предпросмотр программы", component: ConstructorStep10 },
 ];
 
-export interface ConstructorFormData {
-  [key: string]: unknown;
-}
-
 const { Title } = Typography;
 
 const ProgramsConstructorPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState<CreateProgramForm>({ title: "" });
+  const [formData, setFormData] = useState<Partial<CreateProgramForm>>({ title: "" });
 
-  const StepComponent = steps[currentStep].component;
+  const StepComponent = useMemo(() => steps[currentStep].component, [currentStep]);
 
   const handleNext = () => {
     setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
@@ -41,9 +37,11 @@ const ProgramsConstructorPage: React.FC = () => {
   const handlePrev = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 0));
   };
+
   const handleChange = useCallback((data: Partial<CreateProgramForm>) => {
     setFormData((prev) => ({ ...prev, ...data }));
   }, []);
+
   const handleFinish = () => {
     message.success("Черновик программы сохранён локально (отправка на сервер не реализована)");
   };
@@ -55,6 +53,7 @@ const ProgramsConstructorPage: React.FC = () => {
       <Steps
         current={currentStep}
         items={steps.map((item) => ({ title: item.title }))}
+        onChange={(stepIndex) => setCurrentStep(stepIndex)}
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr)",

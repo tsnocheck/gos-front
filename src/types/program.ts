@@ -1,32 +1,33 @@
 // Типы и enum'ы программ
 
-import type {User} from "./user.ts";
-import type {Expertise} from "./expertise.ts";
+import type { User } from "./user.ts";
+import type { Expertise } from "./expertise.ts";
+import type { Dictionary, Standard } from "./index.ts";
 
 /** Статус программы */
 export enum ProgramStatus {
   /** Черновик */
-  DRAFT = 'draft',
+  DRAFT = "draft",
   /** Отправлена на экспертизу */
-  SUBMITTED = 'submitted',
+  SUBMITTED = "submitted",
   /** На рассмотрении */
-  IN_REVIEW = 'in_review',
+  IN_REVIEW = "in_review",
   /** Одобрена */
-  APPROVED = 'approved',
+  APPROVED = "approved",
   /** Отклонена */
-  REJECTED = 'rejected',
+  REJECTED = "rejected",
   /** В архиве */
-  ARCHIVED = 'archived',
+  ARCHIVED = "archived",
 }
 
 /** Раздел программы */
 export enum ProgramSection {
   /** Нормативно-правовой раздел */
-  NPR = 'npr',
+  NPR = "npr",
   /** Предметно-методический раздел */
-  PMR = 'pmr',
+  PMR = "pmr",
   /** Вариативный раздел */
-  VR = 'vr',
+  VR = "vr",
 }
 
 /** Программа */
@@ -109,97 +110,121 @@ export enum DistanceEquipment {
   OTHER_DISTANCE = "other-distance",
 }
 
+export const programSection: {
+  full: Record<ProgramSection, string>;
+  short: Record<ProgramSection, string>;
+} = {
+  full: {
+    [ProgramSection.NPR]: "Нормативно-правовой раздел",
+    [ProgramSection.PMR]: "Предметно-методический раздел",
+    [ProgramSection.VR]: "Вариативный раздел",
+  },
+  short: {
+    [ProgramSection.NPR]: "НПР",
+    [ProgramSection.PMR]: "ПМР",
+    [ProgramSection.VR]: "ВР",
+  }
+};
+
+export const attestationForms = ["Тест", "Практическая работа", "Кейс"];
+
 export interface Abbreviation {
   abbreviation: string; // Сокращение (например, "КОИРО")
-  fullname: string;     // Полная расшифровка
+  fullname: string; // Полная расшифровка
 }
 
 export interface Module {
-  code: string;         // Код модуля
-  name: string;         // Название модуля
-  lecture: number;      // Часы лекций
-  practice: number;     // Часы практики
-  distant: number;      // Часы дистанционного обучения
-  total: number;        // Всего часов
-  kad: number;          // Количество аудиторных дней
+  section: ProgramSection;
+  code: string; // Код модуля
+  name: string; // Название модуля
+  lecture: number; // Часы лекций
+  practice: number; // Часы практики
+  distant: number; // Часы дистанционного обучения
+  kad: number; // Количество аудиторных дней
 }
 
 export interface Attestation {
-  name: string;         // Название аттестации
-  lecture: number;      // Часы лекций
-  practice: number;     // Часы практики
-  distant: number;      // Часы дистанционного обучения
-  form: string;         // Форма аттестации (экзамен, зачёт)
-  total: number;        // Всего часов
+  moduleCode?: string;
+  name: string; // Название аттестации
+  lecture: number; // Часы лекций
+  practice: number; // Часы практики
+  distant: number; // Часы дистанционного обучения
+  form: string; // Форма аттестации
 }
 
 export interface Topic {
-  name: string;         // Название темы
-  lecture: number;      // Часы лекций
-  practice: number;     // Часы практики
-  distant: number;      // Часы дистанционного обучения
+  name: string; // Название темы
+  lecture: number; // Часы лекций
+  practice: number; // Часы практики
+  distant: number; // Часы дистанционного обучения
 }
 
 export interface NetworkOrg {
-  org: string;          // Наименование организации
-  participation: string;// Участие в реализации
-  form: string;         // Форма участия
+  org: string; // Наименование организации
+  participation: string; // Участие в реализации
+  form: string; // Форма участия
 }
 
 export interface OrgPedConditions {
-  normativeDocuments?: string;      // Нормативные документы
-  mainLiterature?: string;          // Основная литература
-  additionalLiterature?: string;    // Дополнительная литература
-  electronicMaterials?: string;     // Электронные учебные материалы
-  internetResources?: string;       // Интернет-ресурсы
-  equipment?: Equipment[];             // Оборудование для аудиторных занятий (чекбоксы)
-  otherEquipment?: string;          // Иное оборудование (текст)
-  distanceEquipment?: DistanceEquipment[];     // Оборудование для дистанционного обучения (чекбоксы)
-  otherDistance?: string;           // Иное оборудование для дистанционного обучения (текст)
-  personnelProvision?: string;      // Кадровое обеспечение
+  normativeDocuments?: string; // Нормативные документы
+  mainLiterature?: string; // Основная литература
+  additionalLiterature?: string; // Дополнительная литература
+  electronicMaterials?: string; // Электронные учебные материалы
+  internetResources?: string; // Интернет-ресурсы
+  equipment?: Equipment[]; // Оборудование для аудиторных занятий (чекбоксы)
+  otherEquipment?: string; // Иное оборудование (текст)
+  distanceEquipment?: DistanceEquipment[]; // Оборудование для дистанционного обучения (чекбоксы)
+  otherDistance?: string; // Иное оборудование для дистанционного обучения (текст)
+  personnelProvision?: string; // Кадровое обеспечение
 }
 
 export interface CreateProgramForm {
   // Шаг 2: Титульный лист
-  institution?: string;         // Краткое название выбранного учреждения (например, "КОИРО")
-  customInstitution?: string;   // Название учреждения, если выбран вариант "Иное"
-  title: string;                // Название программы
+  institution?: string; // Краткое название выбранного учреждения (например, "КОИРО")
+  customInstitution?: string; // Название учреждения, если выбран вариант "Иное"
+  title: string; // Название программы
 
   // Шаг 3: Лист согласования
-  author1?: string;             // ID первого соавтора (пользователь)
-  author2?: string;             // ID второго соавтора (пользователь)
+  author1?: string; // ID первого соавтора (пользователь)
+  author2?: string; // ID второго соавтора (пользователь)
 
   // Шаг 4: Список сокращений
   abbreviations?: Abbreviation[]; // Массив сокращений (аббревиатура + расшифровка)
 
   // Шаг 5: Пояснительная записка
-  relevance?: string;           // Актуальность разработки программы
-  goal?: string;                // Цель реализации программы
-  standard?: string;            // Выбранный стандарт: "professional-standard", "eks" или "both"
-  functions?: string[];         // Трудовые функции (если выбран проф. стандарт)
-  actions?: string[];           // Трудовые действия (если выбран проф. стандарт)
-  duties?: string[];            // Должностные обязанности (если выбран ЕКС)
-  know?: string;                // Что должен знать слушатель
-  can?: string;                 // Что должен уметь слушатель
-  category?: string;            // Категория слушателей
-  educationForm?: string;       // Форма обучения (очная, заочная и т.д.)
-  term?: number;                // Срок освоения программы (часы)
+  relevance?: string; // Актуальность разработки программы
+  goal?: string; // Цель реализации программы
+  standard?: Standard; // Выбранный стандарт: "professional-standard", "eks" или "both"
+  functions?: string[]; // Трудовые функции (если выбран проф. стандарт)
+  actions?: string[]; // Трудовые действия (если выбран проф. стандарт)
+  duties?: string[]; // Должностные обязанности (если выбран ЕКС)
+  know?: string; // Что должен знать слушатель
+  can?: string; // Что должен уметь слушатель
+  category?: string; // Категория слушателей
+  educationForm?: string; // Форма обучения (очная, заочная и т.д.)
+  term?: number; // Срок освоения программы (часы)
 
   // Шаг 6: Учебный план
-  modules?: Module[];           // Модули программы (таблица)
+  modules?: Module[]; // Модули программы (таблица)
   attestations?: Attestation[]; // Аттестации (таблица)
 
   // Шаг 7: Учебно-тематический план
-  topics?: Topic[];             // Темы учебно-тематического плана (таблица)
-  network?: NetworkOrg[];       // Организации для сетевой формы (таблица)
-  networkEnabled?: boolean;     // Используется ли сетевая форма
+  topics?: Topic[]; // Темы учебно-тематического плана (таблица)
+  network?: NetworkOrg[]; // Организации для сетевой формы (таблица)
+  networkEnabled?: boolean; // Используется ли сетевая форма
 
   // Шаг 8: Формы аттестации и оценочные материалы
-  requirements?: string;        // Описание требований к выполнению
-  criteria?: string;            // Критерии оценивания
-  examples?: string;            // Примеры заданий
-  attempts?: number;            // Количество попыток
+  requirements?: string; // Описание требований к выполнению
+  criteria?: string; // Критерии оценивания
+  examples?: string; // Примеры заданий
+  attempts?: number; // Количество попыток
 
   // Шаг 9: Организационно-педагогические условия
   orgPedConditions?: OrgPedConditions; // См. ниже
+}
+
+export interface ProgramPDFProps {
+  program: Partial<CreateProgramForm>;
+  allAuthors: User[];
+  getDictionaryById: (id: string) => Dictionary | undefined;
 }

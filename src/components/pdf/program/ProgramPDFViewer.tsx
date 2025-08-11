@@ -1,9 +1,11 @@
 import React, { useMemo } from "react";
 import { Document, PDFViewer, Font } from "@react-pdf/renderer";
-import { type CreateProgramForm, type User } from "@/types";
-import timesNewRoman from "@/assets/times.ttf";
+import { type CreateProgramForm, type Dictionary, type User } from "@/types";
+import TimesNewRoman from "@/assets/times.ttf";
+import TimesNewRomanBold from "@/assets/times_bold.ttf";
 import { useUsers } from "@/queries/admin";
 import { useAuth } from "@/hooks/useAuth";
+import { useProgramDictionaries } from "@/hooks/useProgramDictionaries";
 import {
   AbbreviationPage,
   ApprovalPage,
@@ -17,30 +19,45 @@ import {
 
 Font.register({
   family: "Times-New-Roman",
-  src: timesNewRoman,
+  fonts: [
+    { src: TimesNewRoman, fontWeight: "normal" },
+    { src: TimesNewRomanBold, fontWeight: "bold" },
+  ],
 });
+
+const pages = [
+  TitlePage,
+  ApprovalPage,
+  AbbreviationPage,
+  ExplanatoryPage,
+  SyllabusPage,
+  ThematicPage,
+  EvaluationPage,
+  OrganizationPage,
+];
 
 // Генератор PDF-документа по шагам
 const ProgramPDF: React.FC<{
   program: CreateProgramForm;
   authors: User[];
   user?: User;
-}> = ({ program, authors, user }) => {
+  getDictionaryById: (id: string) => Dictionary | undefined;
+}> = ({ program, authors, user, getDictionaryById }) => {
   const allAuthors = useMemo(
     () => [...authors, user].filter((v) => !!v),
     [authors, user]
   );
 
+  const props = useMemo(
+    () => ({ program, allAuthors, getDictionaryById }),
+    [program, allAuthors, getDictionaryById]
+  );
+
   return (
-    <Document>
-      <TitlePage program={program} />
-      <ApprovalPage program={program} allAuthors={allAuthors} />
-      <AbbreviationPage program={program} />
-      <ExplanatoryPage program={program} />
-      <SyllabusPage program={program} />
-      <ThematicPage program={program} />
-      <EvaluationPage program={program} />
-      <OrganizationPage program={program} />
+    <Document title={program.title ?? "Программа"}>
+      {pages.map((Page, index) => (
+        <Page key={index} {...props}></Page>
+      ))}
     </Document>
   );
 };
@@ -48,6 +65,8 @@ const ProgramPDF: React.FC<{
 export const ProgramPDFViewer: React.FC<{ program: CreateProgramForm }> = ({
   program,
 }) => {
+  const { getDictionaryById } = useProgramDictionaries();
+
   const { data: users = [] } = useUsers();
   const { user } = useAuth();
 
@@ -60,7 +79,12 @@ export const ProgramPDFViewer: React.FC<{ program: CreateProgramForm }> = ({
   return (
     <div style={{ height: "100vh" }}>
       <PDFViewer width="100%" height="100%">
-        <ProgramPDF program={program} authors={coAuthors} user={user} />
+        <ProgramPDF
+          program={program}
+          authors={coAuthors}
+          user={user}
+          getDictionaryById={getDictionaryById}
+        />
       </PDFViewer>
     </div>
   );

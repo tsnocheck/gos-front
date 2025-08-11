@@ -11,20 +11,18 @@ export const ApprovalPage: FC<{
   return (
     <PDFPage title="ЛИСТ СОГЛАСОВАНИЯ">
       <Text style={{ marginBottom: 10 }}>
-        <Text style={{ fontWeight: "bold", fontSize: 15 }}>
+        <Text style={{ fontWeight: "bold", fontSize: 12 }}>
           Разработчик(и) программы: {"\n"}
         </Text>
-        {allAuthors.map(({ lastName, firstName, middleName }) => (
-          <>
-            <Text>
-              {(lastName ?? "") +
-                " " +
-                (firstName ?? "") +
-                " " +
-                (middleName ?? "")}
-              {"\n"}
-            </Text>
-          </>
+        {allAuthors.map(({ lastName, firstName, middleName }, idx) => (
+          <Text key={idx}>
+            {(lastName ?? "") +
+              " " +
+              (firstName ?? "") +
+              " " +
+              (middleName ?? "")}
+            {"\n"}
+          </Text>
         ))}
       </Text>
 

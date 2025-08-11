@@ -27,18 +27,9 @@ export const dictionaryService = {
   },
 
   async getActionsByFunctions(functionsIds: string[]) {
-    console.log(functionsIds)
+    const promises = functionsIds.map((id) => this.getDictionaryByType(id + `--${DictionaryType.LABOR_ACTIONS}`))
 
-    const promises: (() => Promise<Dictionary[]>)[] = []
-
-    functionsIds.forEach((id) => promises.push(() => this.getDictionaryByType(id + `--${DictionaryType.LABOR_ACTIONS}`)))
-
-    const rawActions = await Promise.all(promises.map((fn) => fn()))
-
-    return rawActions.reduce((acc, items) => {
-      acc.push(...items)
-      return acc;
-    }, [])
+    return (await Promise.all(promises)).flat()
   },
 
   async getDictionaryHierarchy(type: DictionaryType): Promise<Dictionary[]> {

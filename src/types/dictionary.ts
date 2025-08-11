@@ -3,45 +3,59 @@
 /** Тип справочника */
 export enum DictionaryType {
   /** Место работы */
-  WORKPLACE = 'workplace',
+  WORKPLACE = "workplace",
   /** Структурное подразделение */
-  DEPARTMENT = 'department',
+  DEPARTMENT = "department",
   /** Должность */
-  POSITION = 'position',
+  POSITION = "position",
   /** Учёная степень */
-  ACADEMIC_DEGREE = 'academic_degree',
+  ACADEMIC_DEGREE = "academic_degree",
   /** Учебный предмет */
-  SUBJECT = 'subject',
+  SUBJECT = "subject",
   /** Учреждение */
-  INSTITUTIONS = 'institutions',
+  INSTITUTIONS = "institutions",
   /** Подразделение */
-  SUBDIVISIONS = 'subdivisions',
+  SUBDIVISIONS = "subdivisions",
   /** Трудовые функции */
-  LABOR_FUNCTIONS = 'labor_functions',
+  LABOR_FUNCTIONS = "labor_functions",
   /** Трудовые действия */
-  LABOR_ACTIONS = 'labor_actions',
+  LABOR_ACTIONS = "labor_actions",
   /** Должностные обязанности */
-  JOB_RESPONSIBILITIES = 'job_responsibilities',
+  JOB_RESPONSIBILITIES = "job_responsibilities",
   /** Категории слушателей */
-  STUDENT_CATEGORIES = 'student_categories',
+  STUDENT_CATEGORIES = "student_categories",
   /** Формы обучения */
-  EDUCATION_FORMS = 'education_forms',
+  EDUCATION_FORMS = "education_forms",
   /** Учебные предметы */
-  SUBJECTS = 'subjects',
+  SUBJECTS = "subjects",
   /** Алгоритмы назначения экспертов */
-  EXPERT_ALGORITHMS = 'expert_algorithms',
+  EXPERT_ALGORITHMS = "expert_algorithms",
   /** Подразделения КОИРО */
-  KOIRO_SUBDIVISIONS = 'koiro_subdivisions',
+  KOIRO_SUBDIVISIONS = "koiro_subdivisions",
   /** Руководители КОИРО */
-  KOIRO_MANAGERS = 'koiro_managers',
+  KOIRO_MANAGERS = "koiro_managers",
 }
+
+export type TDictionaryType = DictionaryType | `${string}--${DictionaryType}`;
 
 /** Статус справочника */
 export enum DictionaryStatus {
   /** Активен */
-  ACTIVE = 'active',
+  ACTIVE = "active",
   /** Неактивен */
-  INACTIVE = 'inactive',
+  INACTIVE = "inactive",
+}
+
+export enum Standard {
+  PROFESSIONAL = "professional-standard",
+  EKS = "eks",
+  BOTH = "both",
+}
+
+export const standards: Record<Standard, string> = {
+  [Standard.PROFESSIONAL]: "Профессиональный стандарт",
+  [Standard.EKS]: "Единый квалификационный справочник",
+  [Standard.BOTH]: "Проф. стандарт + ЕКС",
 }
 
 /** Справочник */
@@ -62,4 +76,4 @@ export interface Dictionary {
   createdAt: string | Date;
   /** Дата обновления */
   updatedAt: string | Date;
-} 
+}

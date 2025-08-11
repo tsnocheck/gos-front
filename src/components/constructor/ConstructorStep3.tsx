@@ -7,7 +7,7 @@ const { Option } = Select;
 const { Title } = Typography;
 
 interface Props {
-  value: CreateProgramForm;
+  value: Partial<CreateProgramForm>;
   onChange: (data: Partial<CreateProgramForm>) => void;
 }
 
@@ -44,6 +44,7 @@ const ConstructorStep3: React.FC<Props> = ({ value, onChange }) => {
           value={author2}
           onChange={setAuthor2}
           loading={loadingAuthors}
+          disabled={!author1}
           placeholder="Выберите второго автора"
           allowClear
         >

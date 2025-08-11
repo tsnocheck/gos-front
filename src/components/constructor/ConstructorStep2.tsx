@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Input, Select, Form, Typography } from "antd";
 import type { CreateProgramForm } from "../../types/program";
-import { useDictionariesByType } from "@/queries/dictionaries";
-import { DictionaryType } from "@/types";
+import { useProgramDictionaries } from "@/hooks/useProgramDictionaries";
 
 const { Option } = Select;
 const { Title } = Typography;
 
 interface Props {
-  value: CreateProgramForm;
+  value: Partial<CreateProgramForm>;
   onChange: (data: Partial<CreateProgramForm>) => void;
 }
 
@@ -17,7 +16,8 @@ const ConstructorStep2: React.FC<Props> = ({ value, onChange }) => {
   const [institution, setInstitution] = useState(value.institution || "");
   const [title, setTitle] = useState(value.title || "");
 
-  const { data = [] } = useDictionariesByType(DictionaryType.INSTITUTIONS)
+  const { institutions: institutionList } = useProgramDictionaries()
+
 
   useEffect(() => {
     onChange({ institution, customInstitution, title });
@@ -32,7 +32,7 @@ const ConstructorStep2: React.FC<Props> = ({ value, onChange }) => {
           onChange={setInstitution}
           placeholder="Выберите учреждение"
         >
-          {data?.map((inst) => (
+          {institutionList?.map((inst) => (
             <Option key={inst.value} value={inst.value}>
               {inst.value}
             </Option>

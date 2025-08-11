@@ -5,7 +5,7 @@ import type { CreateProgramForm, Abbreviation } from "../../types/program";
 const { Title } = Typography;
 
 interface Props {
-  value: CreateProgramForm;
+  value: Partial<CreateProgramForm>;
   onChange: (data: Partial<CreateProgramForm>) => void;
 }
 
@@ -16,7 +16,6 @@ const ConstructorStep4: React.FC<Props> = ({ value, onChange }) => {
 
   useEffect(() => {
     onChange({ abbreviations });
-    // eslint-disable-next-line
   }, [abbreviations]);
 
   const handleAdd = (values: Abbreviation) => {

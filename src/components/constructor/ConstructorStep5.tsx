@@ -1,20 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Form, Input, Select, Typography } from "antd";
-import {
-  useActionsByFunctions,
-  useDictionariesByType,
-} from "@/queries/dictionaries";
-import { DictionaryType, type CreateProgramForm } from "@/types";
+import { standards, type CreateProgramForm } from "@/types";
+import { useProgramDictionaries } from "@/hooks/useProgramDictionaries";
 
 const { Title } = Typography;
 const { Option } = Select;
-
-const standards = [
-  { value: "professional-standard", label: "Профессиональный стандарт" },
-  { value: "eks", label: "ЕКС" },
-  { value: "both", label: "Проф. стандарт + ЕКС" },
-];
-const dutiesList = ["Обязанность 1", "Обязанность 2", "Обязанность 3"];
 
 interface Props {
   value: Partial<CreateProgramForm>;
@@ -23,47 +13,40 @@ interface Props {
 
 const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
   const [form] = Form.useForm<Partial<CreateProgramForm>>();
-  const [standard, setStandard] = useState((value.standard as string) || "");
+  const [standard, setStandard] = useState(value.standard || "");
 
-  const selectedFunctions = Form.useWatch<string[]>("functions", form);
-
-  const { data: functions } = useDictionariesByType(
-    DictionaryType.LABOR_FUNCTIONS
+  const selectedFunctions = Form.useWatch<string[] | undefined>(
+    "functions",
+    form
   );
 
-  const { data: categories } = useDictionariesByType(
-    DictionaryType.STUDENT_CATEGORIES
+  const { functions, getActions, categories, educationForms, duties } =
+    useProgramDictionaries();
+
+  const actions = useMemo(
+    () => getActions(selectedFunctions ?? []),
+    [selectedFunctions]
   );
 
-  const { data: educationForms } = useDictionariesByType(
-    DictionaryType.EDUCATION_FORMS
+  const handleValuesChange = useCallback(
+    (changedValues?: Partial<CreateProgramForm>) => {
+      if (changedValues?.functions) form.setFieldValue("actions", []);
+
+      onChange(form.getFieldsValue());
+    },
+    [form, functions, onChange, selectedFunctions]
   );
 
-  const { data: actions } = useActionsByFunctions(selectedFunctions);
-
-  const onValuesChange = useCallback(() => {
-    onChange({
-      ...form.getFieldsValue(),
-      functions: selectedFunctions?.map(
-        (id) => functions?.find((f) => id === f.id)?.value ?? ""
-      ),
-    });
-  }, [form, functions, onChange, selectedFunctions]);
-
-  useEffect(() => form.setFieldValue("actions", []), [form, selectedFunctions]);
-
-  useEffect(() => {
-    onValuesChange();
-  }, [form, onValuesChange, standard]);
+  useEffect(() => handleValuesChange(), []);
 
   return (
     <Form
       form={form}
       layout="vertical"
       initialValues={value}
-      onValuesChange={onValuesChange}
+      onValuesChange={handleValuesChange}
     >
-      <Title level={4}>Пояснительная записка</Title>
+      <Title level={4}>Характеристика программы</Title>
       <Form.Item name="relevance" label="Актуальность разработки программы">
         <Input.TextArea rows={2} />
       </Form.Item>
@@ -72,16 +55,20 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
       </Form.Item>
       <Form.Item name="standard" label="Проф. стандарт/ЕКС">
         <Select onChange={setStandard} placeholder="Выберите стандарт">
-          {standards.map((s) => (
-            <Option key={s.value} value={s.value}>
-              {s.label}
+          {Object.entries(standards).map(([value, label]) => (
+            <Option key={value} value={value}>
+              {label}
             </Option>
           ))}
         </Select>
       </Form.Item>
       {(standard === "professional-standard" || standard === "both") && (
-        <>
-          <Form.Item name="functions" label="Трудовые функции">
+        <div style={{ display: "flex", width: "100%", gap: 20 }}>
+          <Form.Item
+            name="functions"
+            label="Трудовые функции"
+            style={{ flex: 1 }}
+          >
             <Select
               mode="multiple"
               options={functions?.map((f) => ({
@@ -90,19 +77,27 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
               }))}
             />
           </Form.Item>
-          <Form.Item name="actions" label="Трудовые действия">
+          <Form.Item
+            name="actions"
+            label="Трудовые действия"
+            style={{ flex: 1 }}
+          >
             <Select
               mode="multiple"
-              options={actions?.map((a) => ({ value: a.value }))}
+              options={actions?.map((a) => ({
+                value: a.id,
+                label: a.value,
+              }))}
+              disabled={!selectedFunctions?.length}
             />
           </Form.Item>
-        </>
+        </div>
       )}
       {(standard === "eks" || standard === "both") && (
         <Form.Item name="duties" label="Должностные обязанности">
           <Select
             mode="multiple"
-            options={dutiesList.map((d) => ({ value: d, label: d }))}
+            options={duties?.map((d) => ({ value: d.id, label: d.value }))}
           />
         </Form.Item>
       )}
@@ -114,13 +109,13 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
       </Form.Item>
       <Form.Item name="category" label="Категория слушателей">
         <Select
-          options={categories?.map((c) => ({ value: c.value, label: c.value }))}
+          options={categories?.map((c) => ({ value: c.id, label: c.value }))}
         />
       </Form.Item>
       <Form.Item name="educationForm" label="Форма обучения">
         <Select
           options={educationForms?.map((f) => ({
-            value: f.value,
+            value: f.id,
             label: f.value,
           }))}
         />

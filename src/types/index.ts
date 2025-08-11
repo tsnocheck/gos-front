@@ -1,5 +1,3 @@
-// Barrel file: экспорт всех типов из отдельных файлов
-
 export * from './user';
 export * from './program';
 export * from './expertise';
