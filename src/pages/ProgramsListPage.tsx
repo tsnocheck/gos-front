@@ -1,14 +1,33 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { Card, Table, Button, Typography, Tag, Space, message } from "antd";
 import { CheckOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-import { getStatusColor, getStatusText, useMyPrograms, useSubmitForExpertise } from "../queries/programs";
+import {
+  getStatusColor,
+  getStatusText,
+  useMyPrograms,
+  useSubmitForExpertise,
+} from "../queries/programs";
 import { ProgramStatus, type Program, type User } from "../types";
+import type { ProgramQueryParams } from "@/services/programService";
 
 const { Title, Text } = Typography;
 
 export const ProgramsListPage: React.FC = () => {
-  const { data: programs, isLoading } = useMyPrograms();
+  const [params, setParams] = useState<ProgramQueryParams>({
+    page: 1,
+    limit: 10,
+    status: [
+      ProgramStatus.DRAFT,
+      ProgramStatus.IN_REVIEW,
+      ProgramStatus.APPROVED,
+      ProgramStatus.REJECTED,
+      ProgramStatus.SUBMITTED,
+    ],
+  });
+
+  const { data: programs, isLoading } = useMyPrograms(params);
+
   const submitForExpertiseMutation = useSubmitForExpertise();
 
   const handleSubmitForExpertise = async (id: string) => {
@@ -49,7 +68,9 @@ export const ProgramsListPage: React.FC = () => {
       dataIndex: "status",
       key: "status",
       render: (status: ProgramStatus) => {
-        return <Tag color={getStatusColor(status)}>{getStatusText(status)}</Tag>;
+        return (
+          <Tag color={getStatusColor(status)}>{getStatusText(status)}</Tag>
+        );
       },
     },
     {
@@ -112,10 +133,11 @@ export const ProgramsListPage: React.FC = () => {
           pagination={{
             total: programs?.total,
             pageSize: programs?.limit || 10,
-            current: programs?.page || 1,
+            current: params.page,
             showSizeChanger: true,
             showTotal: (total, range) =>
               `${range[0]}-${range[1]} из ${total} программ`,
+            onChange: (page) => setParams({ ...params, page }),
           }}
         />
       </Card>

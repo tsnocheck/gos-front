@@ -4,7 +4,7 @@ import type { Program, ProgramStatus, CreateProgramForm, PaginatedResponse, User
 export interface ProgramQueryParams {
   page?: number;
   limit?: number;
-  status?: ProgramStatus;
+  status?: ProgramStatus[];
   authorId?: string;
   search?: string;
   sortBy?: string;
