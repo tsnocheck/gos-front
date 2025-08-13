@@ -3,7 +3,7 @@ import { Card, Table, Button, Modal, Form, Input, Select, Rate, Typography, Spac
 import { EyeOutlined, EditOutlined } from '@ant-design/icons';
 import {type ExpertiseForm, ExpertiseStatus, type Program} from '../types';
 import {useProgram, usePrograms} from "../queries/programs.ts";
-import {useAvailablePrograms, useCreateExpertise} from "../queries/expertises.ts";
+import {useAvailablePrograms, useCreateExpertise, useMyExpertises} from "../queries/expertises.ts";
 import {useAuth} from "../hooks/useAuth.ts";
 
 const { Title, Text } = Typography;

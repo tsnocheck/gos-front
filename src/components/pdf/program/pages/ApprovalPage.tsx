@@ -1,20 +1,17 @@
 import { Text } from "@react-pdf/renderer";
 import { currentYear } from "../../shared/utils";
 import type { FC } from "react";
-import type { CreateProgramForm, User } from "@/types";
+import type { ProgramPDFProps } from "@/types";
 import { PDFPage } from "../../shared/ui/PDFPage";
 
-export const ApprovalPage: FC<{
-  program: CreateProgramForm;
-  allAuthors: User[];
-}> = ({ program, allAuthors }) => {
+export const ApprovalPage: FC<ProgramPDFProps> = ({ program, authors }) => {
   return (
     <PDFPage title="ЛИСТ СОГЛАСОВАНИЯ">
       <Text style={{ marginBottom: 10 }}>
         <Text style={{ fontWeight: "bold", fontSize: 12 }}>
           Разработчик(и) программы: {"\n"}
         </Text>
-        {allAuthors.map(({ lastName, firstName, middleName }, idx) => (
+        {authors.map(({ lastName, firstName, middleName }, idx) => (
           <Text key={idx}>
             {(lastName ?? "") +
               " " +

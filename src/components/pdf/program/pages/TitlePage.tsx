@@ -1,10 +1,10 @@
 import { View, Text } from "@react-pdf/renderer";
 import { currentYear } from "../../shared/utils";
 import type { FC } from "react";
-import type { CreateProgramForm } from "../../../../types";
+import type { ProgramPDFProps } from "@/types";
 import { PDFPage } from "../../shared/ui/PDFPage";
 
-export const TitlePage: FC<{ program: CreateProgramForm }> = ({ program }) => {
+export const TitlePage: FC<ProgramPDFProps> = ({ program }) => {
   return (
     <PDFPage ui={{ view: { justifyContent: "center" } }}>
       <Text style={{ textAlign: "center", marginBottom: 60 }}>

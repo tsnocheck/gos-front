@@ -15,7 +15,6 @@ import { AppLayout } from "./components/AppLayout";
 import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { DashboardPage } from "./pages/DashboardPage";
-import { ProgramConstructorPage } from "./pages/ProgramConstructorPage";
 import { ProgramsListPage } from "./pages/ProgramsListPage";
 import { ExpertisePage } from "./pages/ExpertisePage";
 import { AdminUsersPage } from "./pages/AdminUsersPage";
@@ -76,6 +75,13 @@ const routes: TRoute[] = [
   },
   {
     path: "/programs/constructor",
+    element: <ProgramsConstructorPage />,
+    protected: true,
+    layout: true,
+    requiredRoles: [UserRole.AUTHOR]
+  },
+  {
+    path: "/programs/constructor/:id",
     element: <ProgramsConstructorPage />,
     protected: true,
     layout: true,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Card,
   Table,
@@ -11,33 +11,46 @@ import {
   Tag,
 } from "antd";
 import { EyeOutlined, DeleteOutlined, InboxOutlined } from "@ant-design/icons";
-import { usePrograms } from "../queries/programs";
+import {
+  getStatusColor,
+  getStatusText,
+  usePrograms,
+} from "../queries/programs";
 import { programService } from "../services/programService";
-import { type Program, ProgramStatus } from "../types/program";
+import {
+  type CreateProgramForm,
+  type Program,
+  ProgramStatus,
+} from "../types/program";
 import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import { useAssignExpertToProgram } from "../queries/expertises";
-import { useUsersByRole } from "../queries/admin";
-import { UserRole } from "../types";
+import { useUsers } from "../queries/admin";
 
 const { Title } = Typography;
 
 export const AdminProgramsPage: React.FC = () => {
   const { data: programs, isLoading } = usePrograms();
-  const assignExpertToProgramMutation = useAssignExpertToProgram()
-  const { data: availableExperts } = useUsersByRole(UserRole.EXPERT)
-  
-  const navigate = useNavigate();
+  const assignExpertToProgramMutation = useAssignExpertToProgram();
+  const { data: users = [] } = useUsers();
+
   const queryClient = useQueryClient();
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [viewProgram, setViewProgram] = useState<Program | null>(null);
 
+  const getUserById = useCallback(
+    (id: string) => users.find((user) => user.id === id),
+    [users]
+  );
+
   const handleAssignExpertToProgram = async () => {
     if (!viewProgram) return;
 
-    await assignExpertToProgramMutation.mutateAsync({ programId: viewProgram.id, expertId: '' })
-  }
+    await assignExpertToProgramMutation.mutateAsync({
+      programId: viewProgram.id,
+      expertId: "",
+    });
+  };
 
   // Архивирование и разархивирование
   const handleArchiveToggle = async (program: Program, checked: boolean) => {
@@ -62,20 +75,9 @@ export const AdminProgramsPage: React.FC = () => {
 
   const columns = [
     {
-      title: "Номер",
-      dataIndex: "programCode",
-      key: "programCode",
-    },
-    {
       title: "Название",
       dataIndex: "title",
       key: "title",
-    },
-    {
-      title: "Предмет",
-      dataIndex: "competencies",
-      key: "competencies",
-      render: (val: string) => val || "-",
     },
     {
       title: "Версия",
@@ -91,30 +93,29 @@ export const AdminProgramsPage: React.FC = () => {
     },
     {
       title: "Соавторы",
-      dataIndex: "coauthors",
       key: "coauthors",
-      render: (_: any, record: Program) => record.competencies || "-", // TODO: заменить на реальных соавторов, если появятся
+      render: (_: any, record: CreateProgramForm) => {
+        const authors = [record.author1Id, record.author2Id].map((id) =>
+          getUserById(id || "")
+        );
+
+        return authors.reduce(
+          (acc, author) =>
+            author
+              ? acc + `${author?.lastName} ${author?.firstName}\n`
+              : acc + "",
+          ""
+        );
+      },
     },
     {
       title: "Статус",
       dataIndex: "status",
       key: "status",
       render: (status: ProgramStatus) => {
-        const statusMap = new Map([
-          [ProgramStatus.ARCHIVED, { color: "default", text: "Архивирован" }],
-          [ProgramStatus.DRAFT, { color: "default", text: "Черновик" }],
-          [
-            ProgramStatus.IN_REVIEW,
-            { color: "processing", text: "На рассмотрении" },
-          ],
-          [ProgramStatus.APPROVED, { color: "success", text: "Одобрено" }],
-          [ProgramStatus.REJECTED, { color: "error", text: "Отклонено" }],
-        ]);
-        const statusInfo = statusMap.get(status) || {
-          color: "default",
-          text: status,
-        };
-        return <Tag color={statusInfo.color}>{statusInfo.text}</Tag>;
+        return (
+          <Tag color={getStatusColor(status)}>{getStatusText(status)}</Tag>
+        );
       },
     },
     {

@@ -1,14 +1,15 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Document, PDFViewer, Font } from "@react-pdf/renderer";
 import { type CreateProgramForm, type Dictionary, type User } from "@/types";
 import TimesNewRoman from "@/assets/times.ttf";
 import TimesNewRomanBold from "@/assets/times_bold.ttf";
-import { useUsers } from "@/queries/admin";
+import TimesNewRomanItalic from "@/assets/times-new-roman-italic.ttf";
 import { useAuth } from "@/hooks/useAuth";
 import { useProgramDictionaries } from "@/hooks/useProgramDictionaries";
 import {
   AbbreviationPage,
   ApprovalPage,
+  CalendarPage,
   EvaluationPage,
   ExplanatoryPage,
   OrganizationPage,
@@ -16,12 +17,14 @@ import {
   ThematicPage,
   TitlePage,
 } from "./pages";
+import { useAvailableAuthors } from "@/queries/programs";
 
 Font.register({
   family: "Times-New-Roman",
   fonts: [
     { src: TimesNewRoman, fontWeight: "normal" },
     { src: TimesNewRomanBold, fontWeight: "bold" },
+    { src: TimesNewRomanItalic, fontStyle: "italic" },
   ],
 });
 
@@ -31,6 +34,7 @@ const pages = [
   AbbreviationPage,
   ExplanatoryPage,
   SyllabusPage,
+  CalendarPage,
   ThematicPage,
   EvaluationPage,
   OrganizationPage,
@@ -42,16 +46,8 @@ const ProgramPDF: React.FC<{
   authors: User[];
   user?: User;
   getDictionaryById: (id: string) => Dictionary | undefined;
-}> = ({ program, authors, user, getDictionaryById }) => {
-  const allAuthors = useMemo(
-    () => [...authors, user].filter((v) => !!v),
-    [authors, user]
-  );
-
-  const props = useMemo(
-    () => ({ program, allAuthors, getDictionaryById }),
-    [program, allAuthors, getDictionaryById]
-  );
+}> = ({ program, authors, getDictionaryById }) => {
+  const props = { program, authors, getDictionaryById };
 
   return (
     <Document title={program.title ?? "Программа"}>
@@ -66,26 +62,27 @@ export const ProgramPDFViewer: React.FC<{ program: CreateProgramForm }> = ({
   program,
 }) => {
   const { getDictionaryById } = useProgramDictionaries();
-
-  const { data: users = [] } = useUsers();
+  const { data: users = [] } = useAvailableAuthors();
   const { user } = useAuth();
 
-  const coAuthors = useMemo(() => {
-    return users?.filter((user) =>
-      [program.author1, program.author2].includes(user.id)
-    );
-  }, [program.author1, program.author2, users]);
+  const authors = [
+    program.author ?? user!,
+    ...users.filter((user) =>
+      [program.author1Id, program.author2Id].includes(user.id)
+    ),
+  ];
 
   return (
     <div style={{ height: "100vh" }}>
-      <PDFViewer width="100%" height="100%">
-        <ProgramPDF
-          program={program}
-          authors={coAuthors}
-          user={user}
-          getDictionaryById={getDictionaryById}
-        />
-      </PDFViewer>
+      {program && users.length && (
+        <PDFViewer width="100%" height="100%">
+          <ProgramPDF
+            program={program}
+            authors={authors}
+            getDictionaryById={getDictionaryById}
+          />
+        </PDFViewer>
+      )}
     </div>
   );
 };

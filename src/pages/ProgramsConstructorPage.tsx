@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Steps, Typography, message } from "antd";
 import ConstructorStep2 from "../components/constructor/ConstructorStep2";
 import ConstructorStep3 from "../components/constructor/ConstructorStep3";
@@ -10,6 +10,8 @@ import ConstructorStep8 from "../components/constructor/ConstructorStep8";
 import ConstructorStep9 from "../components/constructor/ConstructorStep9";
 import ConstructorStep10 from "../components/constructor/ConstructorStep10";
 import type { CreateProgramForm } from "../types/program";
+import { useCreateProgram, useProgram } from "@/queries/programs";
+import { useParams } from "react-router-dom";
 
 const steps = [
   { title: "Титульный лист", component: ConstructorStep2 },
@@ -26,10 +28,19 @@ const steps = [
 const { Title } = Typography;
 
 const ProgramsConstructorPage: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState<Partial<CreateProgramForm>>({ title: "" });
+  const params = useParams();
 
-  const StepComponent = useMemo(() => steps[currentStep].component, [currentStep]);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [formData, setFormData] = useState<Partial<CreateProgramForm>>({
+    title: "",
+  });
+  const createProgram = useCreateProgram();
+  const { data: programData, isSuccess } = useProgram(params.id ?? "");
+
+  const StepComponent = useMemo(
+    () => steps[currentStep].component,
+    [currentStep]
+  );
 
   const handleNext = () => {
     setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
@@ -42,14 +53,27 @@ const ProgramsConstructorPage: React.FC = () => {
     setFormData((prev) => ({ ...prev, ...data }));
   }, []);
 
-  const handleFinish = () => {
-    message.success("Черновик программы сохранён локально (отправка на сервер не реализована)");
+  const handleFinish = async () => {
+    try {
+      createProgram.mutate(formData);
+      message.success("Программа успешно сохранена")
+    } catch {
+      message.error("Ошибка при отправке формы");
+    }
   };
+
+  useEffect(() => {
+    if (isSuccess && programData) {
+      setFormData(programData);
+    }
+  }, [isSuccess, programData]);
 
   return (
     <div style={{ padding: 24 }}>
-      <Title style={{ marginBottom: 32 }} level={2}>Конструктор программы</Title>
-      
+      <Title style={{ marginBottom: 32 }} level={2}>
+        Конструктор программы
+      </Title>
+
       <Steps
         current={currentStep}
         items={steps.map((item) => ({ title: item.title }))}
@@ -62,27 +86,25 @@ const ProgramsConstructorPage: React.FC = () => {
         }}
       />
       <div style={{ minHeight: 400, marginBottom: 32 }}>
-        <StepComponent
-          value={formData}
-          onChange={handleChange}
-        />
+        <StepComponent value={formData} onChange={handleChange} />
       </div>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <Button onClick={handlePrev} disabled={currentStep === 0}>
           Назад
         </Button>
-        {currentStep < steps.length - 1 ? (
-          <Button type="primary" onClick={handleNext}>
-            Далее
+        <div style={{ display: 'flex', gap: 10 }}>
+          {currentStep < steps.length - 1 && (
+            <Button type="primary" onClick={handleNext}>
+              Далее
+            </Button>
+          )}
+          <Button type="primary" variant="solid" color="green" onClick={handleFinish}>
+            Сохранить программу
           </Button>
-        ) : (
-          <Button type="primary" onClick={handleFinish}>
-            Сохранить черновик
-          </Button>
-        )}
+        </div>
       </div>
     </div>
   );
 };
 
-export default ProgramsConstructorPage; 
+export default ProgramsConstructorPage;

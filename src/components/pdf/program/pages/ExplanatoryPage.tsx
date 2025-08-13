@@ -24,12 +24,12 @@ export const ExplanatoryPage: FC<ProgramPDFProps> = ({
   const ProfessionalStandardCols: FC = useCallback(() => {
     return (
       <>
-        <PDFTable.Td>
+        <PDFTable.Td style={{ flex: 1 }}>
           <PDFList
             items={(program.functions ?? []).map(getValueFromDictionary)}
           />
         </PDFTable.Td>
-        <PDFTable.Td>
+        <PDFTable.Td style={{ flex: 1 }}>
           <PDFList
             items={(program.actions ?? []).map(getValueFromDictionary)}
           />
@@ -40,7 +40,7 @@ export const ExplanatoryPage: FC<ProgramPDFProps> = ({
 
   const EksStandardCols: FC = useCallback(() => {
     return (
-      <PDFTable.Td>
+      <PDFTable.Td style={{ flex: 1 }}>
         <PDFList items={(program.duties ?? []).map(getValueFromDictionary)} />
       </PDFTable.Td>
     );
@@ -67,32 +67,38 @@ export const ExplanatoryPage: FC<ProgramPDFProps> = ({
       <Text style={PDFStyles.bold}>{standards[program.standard!] ?? ""}</Text>
       <PDFTable.Self
         style={{
-          borderWidth:
-            isEksStandard ||
-            isProfessionalStandard ||
-            program.know ||
-            program.can
-              ? 1
-              : "0px",
+          marginBottom: 12,
         }}
       >
         <PDFTable.Tr>
           {isProfessionalStandard && (
             <>
-              <PDFTable.Th>Трудовые функции</PDFTable.Th>
-              <PDFTable.Th>Трудовые действия</PDFTable.Th>
+              <PDFTable.Th style={{ flex: 1 }}>Трудовые функции</PDFTable.Th>
+              <PDFTable.Th style={{ flex: 1 }}>Трудовые действия</PDFTable.Th>
             </>
           )}
-          {isEksStandard && <PDFTable.Th>Трудовые обязанности</PDFTable.Th>}
-          {program.know && <PDFTable.Th>Знать</PDFTable.Th>}
-          {program.can && <PDFTable.Th>Уметь</PDFTable.Th>}
+          {isEksStandard && (
+            <PDFTable.Th style={{ flex: 1 }}>Трудовые обязанности</PDFTable.Th>
+          )}
         </PDFTable.Tr>
 
         <PDFTable.Tr>
           {isProfessionalStandard && <ProfessionalStandardCols />}
           {isEksStandard && <EksStandardCols />}
-          {program.know && <PDFTable.Td>{program.know}</PDFTable.Td>}
-          {program.can && <PDFTable.Td>{program.can}</PDFTable.Td>}
+        </PDFTable.Tr>
+
+        <PDFTable.Tr>
+          {program.know && <PDFTable.Th style={{ flex: 1 }}>Знать</PDFTable.Th>}
+          {program.can && <PDFTable.Th style={{ flex: 1 }}>Уметь</PDFTable.Th>}
+        </PDFTable.Tr>
+
+        <PDFTable.Tr>
+          {program.know && (
+            <PDFTable.Td style={{ flex: 1 }}>{program.know}</PDFTable.Td>
+          )}
+          {program.can && (
+            <PDFTable.Td style={{ flex: 1 }}>{program.can}</PDFTable.Td>
+          )}
         </PDFTable.Tr>
       </PDFTable.Self>
 

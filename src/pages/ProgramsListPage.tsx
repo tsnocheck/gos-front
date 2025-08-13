@@ -1,14 +1,24 @@
 import React from "react";
-import { Card, Table, Button, Typography, Tag, Space } from "antd";
-import { EditOutlined, EyeOutlined, PlusOutlined } from "@ant-design/icons";
+import { Card, Table, Button, Typography, Tag, Space, message } from "antd";
+import { CheckOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-import { useMyPrograms } from "../queries/programs";
-import { ProgramStatus, type User } from "../types";
+import { getStatusColor, getStatusText, useMyPrograms, useSubmitForExpertise } from "../queries/programs";
+import { ProgramStatus, type Program, type User } from "../types";
 
 const { Title, Text } = Typography;
 
 export const ProgramsListPage: React.FC = () => {
   const { data: programs, isLoading } = useMyPrograms();
+  const submitForExpertiseMutation = useSubmitForExpertise();
+
+  const handleSubmitForExpertise = async (id: string) => {
+    try {
+      await submitForExpertiseMutation.mutateAsync(id);
+      message.success("Программа успешно отправлена на экспертизу");
+    } catch {
+      message.error("Не удалось отправить программу на экспертизу");
+    }
+  };
 
   const columns = [
     {
@@ -17,18 +27,13 @@ export const ProgramsListPage: React.FC = () => {
       key: "title",
     },
     {
-      title: "Номер программы",
-      dataIndex: ["programCode"],
-      key: "programCode",
-    },
-    {
       title: "Автор",
       dataIndex: ["author"],
       key: "author",
       render: (author: User) => {
         return (
           <div>
-            <div>{author.lastName + ' ' + author.firstName}</div>
+            <div>{author.lastName + " " + author.firstName}</div>
             <Text type="secondary">{author.email}</Text>
           </div>
         );
@@ -44,34 +49,37 @@ export const ProgramsListPage: React.FC = () => {
       dataIndex: "status",
       key: "status",
       render: (status: ProgramStatus) => {
-        const statusMap = new Map([
-          [ProgramStatus.ARCHIVED, { color: "default", text: "Архивирован" }],
-          [ProgramStatus.DRAFT, { color: "default", text: "Черновик" }],
-          [
-            ProgramStatus.IN_REVIEW,
-            { color: "processing", text: "На рассмотрении" },
-          ],
-          [ProgramStatus.APPROVED, { color: "success", text: "Одобрено" }],
-          [ProgramStatus.REJECTED, { color: "error", text: "Отклонено" }],
-        ]);
-        const statusInfo = statusMap.get(status) || {
-          color: "default",
-          text: status,
-        };
-        return <Tag color={statusInfo.color}>{statusInfo.text}</Tag>;
+        return <Tag color={getStatusColor(status)}>{getStatusText(status)}</Tag>;
       },
     },
     {
       title: "Действия",
+      dataIndex: "id",
       key: "actions",
-      render: (_: unknown) => (
+      render: (id: string, data: Program) => (
         <Space>
-          <Button icon={<EyeOutlined />} size="small">
-            Просмотр
-          </Button>
-          <Button icon={<EditOutlined />} size="small">
-            Редактировать
-          </Button>
+          {[ProgramStatus.DRAFT, ProgramStatus.REJECTED].includes(
+            data.status
+          ) && (
+            <Button
+              href={`/programs/constructor/${id}`}
+              icon={<EditOutlined />}
+            >
+              Редактировать
+            </Button>
+          )}
+          {[ProgramStatus.DRAFT, ProgramStatus.REJECTED].includes(
+            data.status
+          ) && (
+            <Button
+              onClick={() => handleSubmitForExpertise(id)}
+              icon={<CheckOutlined />}
+              variant="solid"
+              color="primary"
+            >
+              Отправить на экспертизу
+            </Button>
+          )}
         </Space>
       ),
     },
@@ -103,8 +111,8 @@ export const ProgramsListPage: React.FC = () => {
           rowKey="id"
           pagination={{
             total: programs?.total,
-            pageSize: programs?.limit,
-            current: programs?.page,
+            pageSize: programs?.limit || 10,
+            current: programs?.page || 1,
             showSizeChanger: true,
             showTotal: (total, range) =>
               `${range[0]}-${range[1]} из ${total} программ`,

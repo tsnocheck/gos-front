@@ -25,14 +25,14 @@ export const programService = {
   },
 
   async getProgramById(id: string) {
-    return apiClient.get<Program>(`/programs/id/${id}`);
+    return apiClient.get<CreateProgramForm>(`/programs/id/${id}`);
   },
 
   async getProgramVersions(id: string) {
     return apiClient.get<Program[]>(`/programs/${id}/versions`);
   },
 
-  async createProgram(data: CreateProgramForm) {
+  async createProgram(data: Partial<CreateProgramForm>) {
     return apiClient.post<Program>(`/programs`, data);
   },
 

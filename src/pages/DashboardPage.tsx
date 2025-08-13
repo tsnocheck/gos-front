@@ -1,19 +1,34 @@
-import React from 'react';
-import { Typography, Row, Col, Card, Statistic, Button, List, Avatar, Tag } from 'antd';
-import { 
-  BookOutlined, 
-  ExperimentOutlined, 
-  TeamOutlined, 
+import React from "react";
+import {
+  Typography,
+  Row,
+  Col,
+  Card,
+  Statistic,
+  Button,
+  List,
+  Avatar,
+  Tag,
+} from "antd";
+import {
+  BookOutlined,
+  ExperimentOutlined,
+  TeamOutlined,
   PlusOutlined,
   ClockCircleOutlined,
   CheckCircleOutlined,
-  FileTextOutlined
-} from '@ant-design/icons';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import { useProgramStats, useMyPrograms } from '../queries/programs.ts';
-import { type Program, UserRole, UserStatus, type User, ProgramStatus } from '../types';
-
+  FileTextOutlined,
+} from "@ant-design/icons";
+import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import { useProgramStats, useMyPrograms, getStatusColor, getStatusText } from "../queries/programs.ts";
+import {
+  type Program,
+  UserRole,
+  UserStatus,
+  type User,
+  ProgramStatus,
+} from "../types";
 
 const { Title, Text } = Typography;
 
@@ -24,15 +39,15 @@ export const DashboardPage: React.FC = () => {
 
   // Если пользователь не загружен, используем заглушку для UI
   const displayUser: User = user || {
-    id: '1',
-    email: 'demo@example.com',
-    password: '',
+    id: "1",
+    email: "demo@example.com",
+    password: "",
     roles: [UserRole.AUTHOR],
     status: UserStatus.ACTIVE,
     createdAt: new Date(),
     updatedAt: new Date(),
-    firstName: 'Пользователь',
-    lastName: '',
+    firstName: "Пользователь",
+    lastName: "",
   };
 
   // Заглушка для статистики, если данные не загружены
@@ -47,64 +62,30 @@ export const DashboardPage: React.FC = () => {
     byAuthor: [],
   };
 
-  // Заглушка для программ, если данные не загружены  
+  // Заглушка для программ, если данные не загружены
   const mockPrograms: { data: Program[]; total: number } = myPrograms || {
     data: [],
-    total: 0
+    total: 0,
   };
 
-  const shouldShowMockData = !myPrograms && user?.roles?.includes(UserRole.AUTHOR);
+  const shouldShowMockData =
+    !myPrograms && user?.roles?.includes(UserRole.AUTHOR);
 
   const displayStats = programStats || mockStats;
   const displayPrograms = mockPrograms;
 
   const getWelcomeMessage = () => {
-    const name = displayUser ? `${displayUser.firstName} ${displayUser.lastName}` : 'Пользователь';
+    const name = displayUser
+      ? `${displayUser.firstName} ${displayUser.lastName}`
+      : "Пользователь";
     const time = new Date().getHours();
-    
-    let greeting = 'Добро пожаловать';
-    if (time < 12) greeting = 'Доброе утро';
-    else if (time < 18) greeting = 'Добрый день';
-    else greeting = 'Добрый вечер';
+
+    let greeting = "Добро пожаловать";
+    if (time < 12) greeting = "Доброе утро";
+    else if (time < 18) greeting = "Добрый день";
+    else greeting = "Добрый вечер";
 
     return `${greeting}, ${name}!`;
-  };
-
-  const getStatusColor = (status: ProgramStatus) => {
-    switch (status) {
-      case ProgramStatus.DRAFT:
-        return 'default';
-      case ProgramStatus.IN_REVIEW:
-      case ProgramStatus.SUBMITTED:
-        return 'processing';
-      case ProgramStatus.APPROVED:
-        return 'success';
-      case ProgramStatus.REJECTED:
-        return 'error';
-      case ProgramStatus.ARCHIVED:
-        return 'warning';
-      default:
-        return 'default';
-    }
-  };
-
-  const getStatusText = (status: ProgramStatus) => {
-    switch (status) {
-      case ProgramStatus.DRAFT:
-        return 'Черновик';
-      case ProgramStatus.IN_REVIEW:
-        return 'В разработке';
-      case ProgramStatus.SUBMITTED:
-        return 'На экспертизе';
-      case ProgramStatus.APPROVED:
-        return 'Опубликована';
-      case ProgramStatus.REJECTED:
-        return 'Отклонена';
-      case ProgramStatus.ARCHIVED:
-        return 'Архивирована';
-      default:
-        return status;
-    }
   };
 
   const getQuickActions = () => {
@@ -114,7 +95,12 @@ export const DashboardPage: React.FC = () => {
       actions.push(
         <Card key="create-program">
           <Card.Meta
-            avatar={<Avatar icon={<PlusOutlined />} style={{ backgroundColor: '#52c41a' }} />}
+            avatar={
+              <Avatar
+                icon={<PlusOutlined />}
+                style={{ backgroundColor: "#52c41a" }}
+              />
+            }
             title={<Link to="/programs/constructor">Создать программу</Link>}
             description="Создание новой ДПП ПК"
           />
@@ -126,7 +112,12 @@ export const DashboardPage: React.FC = () => {
       actions.push(
         <Card key="expertise">
           <Card.Meta
-            avatar={<Avatar icon={<ExperimentOutlined />} style={{ backgroundColor: '#1890ff' }} />}
+            avatar={
+              <Avatar
+                icon={<ExperimentOutlined />}
+                style={{ backgroundColor: "#1890ff" }}
+              />
+            }
             title={<Link to="/expertise">Экспертиза</Link>}
             description="Проведение экспертизы программ"
           />
@@ -138,7 +129,12 @@ export const DashboardPage: React.FC = () => {
       actions.push(
         <Card key="admin">
           <Card.Meta
-            avatar={<Avatar icon={<TeamOutlined />} style={{ backgroundColor: '#f5222d' }} />}
+            avatar={
+              <Avatar
+                icon={<TeamOutlined />}
+                style={{ backgroundColor: "#f5222d" }}
+              />
+            }
             title={<Link to="/admin/users">Администрирование</Link>}
             description="Управление системой"
           />
@@ -154,23 +150,29 @@ export const DashboardPage: React.FC = () => {
       <div style={{ marginBottom: 32 }}>
         <Title level={2}>{getWelcomeMessage()}</Title>
         <Text type="secondary">
-          Система создания дополнительных профессиональных программ повышения квалификации
+          Система создания дополнительных профессиональных программ повышения
+          квалификации
         </Text>
-        
+
         {/* Краткая инструкция для новых пользователей */}
         {displayUser && !programStats && (
-          <div style={{ 
-            marginTop: 16, 
-            padding: 16, 
-            backgroundColor: '#f6ffed', 
-            border: '1px solid #b7eb8f', 
-            borderRadius: 6 
-          }}>
+          <div
+            style={{
+              marginTop: 16,
+              padding: 16,
+              backgroundColor: "#f6ffed",
+              border: "1px solid #b7eb8f",
+              borderRadius: 6,
+            }}
+          >
             <Text>
               <strong>Добро пожаловать в систему ПОРТАЛ!</strong>
-              {displayUser.roles?.includes(UserRole.AUTHOR) && " Начните с создания вашей первой образовательной программы."}
-              {displayUser.roles?.includes(UserRole.EXPERT) && " Вы можете приступить к экспертизе программ."}
-              {displayUser.roles?.includes(UserRole.ADMIN) && " Управляйте пользователями и контролируйте процессы в системе."}
+              {displayUser.roles?.includes(UserRole.AUTHOR) &&
+                " Начните с создания вашей первой образовательной программы."}
+              {displayUser.roles?.includes(UserRole.EXPERT) &&
+                " Вы можете приступить к экспертизе программ."}
+              {displayUser.roles?.includes(UserRole.ADMIN) &&
+                " Управляйте пользователями и контролируйте процессы в системе."}
             </Text>
           </div>
         )}
@@ -194,7 +196,7 @@ export const DashboardPage: React.FC = () => {
                 title="Опубликованы"
                 value={displayStats.byStatus[ProgramStatus.APPROVED] || 0}
                 prefix={<CheckCircleOutlined />}
-                valueStyle={{ color: '#3f8600' }}
+                valueStyle={{ color: "#3f8600" }}
               />
             </Card>
           </Col>
@@ -204,7 +206,7 @@ export const DashboardPage: React.FC = () => {
                 title="На экспертизе"
                 value={displayStats.byStatus[ProgramStatus.SUBMITTED] || 0}
                 prefix={<ClockCircleOutlined />}
-                valueStyle={{ color: '#1890ff' }}
+                valueStyle={{ color: "#1890ff" }}
               />
             </Card>
           </Col>
@@ -217,7 +219,7 @@ export const DashboardPage: React.FC = () => {
                   (displayStats.byStatus[ProgramStatus.IN_REVIEW] || 0)
                 }
                 prefix={<FileTextOutlined />}
-                valueStyle={{ color: '#faad14' }}
+                valueStyle={{ color: "#faad14" }}
               />
             </Card>
           </Col>
@@ -230,17 +232,15 @@ export const DashboardPage: React.FC = () => {
           <Card title="Быстрые действия" style={{ marginBottom: 16 }}>
             <Row gutter={[16, 16]}>
               {getQuickActions().map((action, index) => (
-                <Col key={index}>
-                  {action}
-                </Col>
+                <Col key={index}>{action}</Col>
               ))}
             </Row>
           </Card>
 
           {/* Мои последние программы */}
           {displayUser?.roles?.includes(UserRole.AUTHOR) && (
-            <Card 
-              title="Мои программы" 
+            <Card
+              title="Мои программы"
               extra={<Link to="/programs">Все программы</Link>}
             >
               {displayPrograms?.data && displayPrograms.data.length > 0 ? (
@@ -250,20 +250,28 @@ export const DashboardPage: React.FC = () => {
                   renderItem={(program: Program) => (
                     <List.Item
                       actions={[
-                        <Link key="edit" to={`/programs/${program.id}/edit`}>
-                          Редактировать
-                        </Link>
+                        <>
+                          {[
+                            ProgramStatus.DRAFT,
+                            ProgramStatus.REJECTED,
+                          ].includes(program.status) && (
+                            <Link
+                              key="edit"
+                              to={`/programs/constructor/${program.id}`}
+                            >
+                              Редактировать
+                            </Link>
+                          )}
+                        </>,
                       ]}
                     >
                       <List.Item.Meta
                         avatar={<Avatar icon={<BookOutlined />} />}
                         title={
                           <div>
-                            <Link to={`/programs/${program.id}`}>
-                              {program.title}
-                            </Link>
-                            <Tag 
-                              color={getStatusColor(program.status)} 
+                            <Link to={`/programs`}>{program.title}</Link>
+                            <Tag
+                              color={getStatusColor(program.status)}
                               style={{ marginLeft: 8 }}
                             >
                               {getStatusText(program.status)}
@@ -276,15 +284,19 @@ export const DashboardPage: React.FC = () => {
                   )}
                 />
               ) : (
-                <div style={{ textAlign: 'center', padding: 40 }}>
-                  <BookOutlined style={{ fontSize: 48, color: '#d9d9d9', marginBottom: 16 }} />
+                <div style={{ textAlign: "center", padding: 40 }}>
+                  <BookOutlined
+                    style={{ fontSize: 48, color: "#d9d9d9", marginBottom: 16 }}
+                  />
                   <div>
                     <Text type="secondary">У вас пока нет программ</Text>
                   </div>
-                  <Button 
-                    type="primary" 
+                  <Button
+                    type="primary"
                     style={{ marginTop: 16 }}
-                    onClick={() => window.location.href = '/programs/constructor'}
+                    onClick={() =>
+                      (window.location.href = "/programs/constructor")
+                    }
                   >
                     Создать первую программу
                   </Button>
@@ -300,21 +312,25 @@ export const DashboardPage: React.FC = () => {
             <div>
               <Text strong>Ваши роли:</Text>
               <div style={{ marginTop: 8 }}>
-                {displayUser?.roles?.map(role => {
+                {displayUser?.roles?.map((role) => {
                   const roleLabels = {
-                    [UserRole.ADMIN]: 'Администратор',
-                    [UserRole.EXPERT]: 'Эксперт',
-                    [UserRole.AUTHOR]: 'Автор',
+                    [UserRole.ADMIN]: "Администратор",
+                    [UserRole.EXPERT]: "Эксперт",
+                    [UserRole.AUTHOR]: "Автор",
                   };
-                  
+
                   const roleColors = {
-                    [UserRole.ADMIN]: 'red',
-                    [UserRole.EXPERT]: 'blue',
-                    [UserRole.AUTHOR]: 'green',
+                    [UserRole.ADMIN]: "red",
+                    [UserRole.EXPERT]: "blue",
+                    [UserRole.AUTHOR]: "green",
                   };
 
                   return (
-                    <Tag key={role} color={roleColors[role]} style={{ marginBottom: 4 }}>
+                    <Tag
+                      key={role}
+                      color={roleColors[role]}
+                      style={{ marginBottom: 4 }}
+                    >
                       {roleLabels[role]}
                     </Tag>
                   );
@@ -327,9 +343,12 @@ export const DashboardPage: React.FC = () => {
             <List
               size="small"
               dataSource={[
-                { title: 'Как создать программу?', link: '/help/create-program' },
-                { title: 'Процесс экспертизы', link: '/help/expertise' },
-                { title: 'Работа с справочниками', link: '/help/dictionaries' },
+                {
+                  title: "Как создать программу?",
+                  link: "/help/create-program",
+                },
+                { title: "Процесс экспертизы", link: "/help/expertise" },
+                { title: "Работа с справочниками", link: "/help/dictionaries" },
               ]}
               renderItem={(item) => (
                 <List.Item>
@@ -345,12 +364,14 @@ export const DashboardPage: React.FC = () => {
               dataSource={[
                 'Программа "Основы веб-разработки" отправлена на экспертизу',
                 'Новый эксперт назначен на программу "IT-менеджмент"',
-                'Обновлены справочники направлений подготовки',
-                'Система обновлена до версии 2.1.0'
+                "Обновлены справочники направлений подготовки",
+                "Система обновлена до версии 2.1.0",
               ]}
               renderItem={(item) => (
                 <List.Item>
-                  <ClockCircleOutlined style={{ marginRight: 8, color: '#1890ff' }} />
+                  <ClockCircleOutlined
+                    style={{ marginRight: 8, color: "#1890ff" }}
+                  />
                   <Text style={{ flex: 1 }}>{item}</Text>
                 </List.Item>
               )}

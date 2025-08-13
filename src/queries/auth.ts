@@ -36,9 +36,7 @@ export const useLogin = () => {
         onSuccess: async (data) => {
             localStorage.setItem('accessToken', data.accessToken);
             queryClient.invalidateQueries({ queryKey: authKeys.all });
-            const { sessionKey } = await authService.getId();
-
-            console.log(sessionKey);
+            // const { sessionKey } = await authService.getId();
         },
     });
 };

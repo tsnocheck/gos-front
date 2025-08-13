@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Input, Select, Form, Typography } from "antd";
 import type { CreateProgramForm } from "../../types/program";
 import { useProgramDictionaries } from "@/hooks/useProgramDictionaries";
@@ -12,24 +12,15 @@ interface Props {
 }
 
 const ConstructorStep2: React.FC<Props> = ({ value, onChange }) => {
-  const [customInstitution, setCustomInstitution] = useState(value.customInstitution || "");
-  const [institution, setInstitution] = useState(value.institution || "");
-  const [title, setTitle] = useState(value.title || "");
-
   const { institutions: institutionList } = useProgramDictionaries()
-
-
-  useEffect(() => {
-    onChange({ institution, customInstitution, title });
-  }, [institution, customInstitution, title, onChange]);
 
   return (
     <Form layout="vertical">
       <Title level={4}>Титульный лист программы</Title>
       <Form.Item label="Учреждение">
         <Select
-          value={institution}
-          onChange={setInstitution}
+          value={value.institution}
+          onChange={(v) => {onChange({ institution: v, customInstitution: '' });}}
           placeholder="Выберите учреждение"
         >
           {institutionList?.map((inst) => (
@@ -40,19 +31,19 @@ const ConstructorStep2: React.FC<Props> = ({ value, onChange }) => {
           <Option value="other">Иное</Option>
         </Select>
       </Form.Item>
-      {institution === "other" && (
+      {value.institution === "other" && (
         <Form.Item label="Ваше учреждение">
           <Input
-            value={customInstitution}
-            onChange={(e) => setCustomInstitution(e.target.value)}
+            value={value.customInstitution}
+            onChange={(e) => onChange({ customInstitution: e.target.value })}
             placeholder="Введите наименование учреждения"
           />
         </Form.Item>
       )}
       <Form.Item label="Название программы">
         <Input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          value={value.title}
+          onChange={(e) => onChange({ title: e.target.value })}
           placeholder="Введите название программы"
         />
       </Form.Item>

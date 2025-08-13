@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Table, Button, Input, Form, Typography, Space, Popconfirm } from "antd";
 import type { CreateProgramForm, Abbreviation } from "../../types/program";
 
@@ -12,14 +12,11 @@ interface Props {
 const ConstructorStep4: React.FC<Props> = ({ value, onChange }) => {
   const [form] = Form.useForm();
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [abbreviations, setAbbreviations] = useState<Abbreviation[]>(value.abbreviations || []);
 
-  useEffect(() => {
-    onChange({ abbreviations });
-  }, [abbreviations]);
+  const abbreviations = value.abbreviations || [];
 
   const handleAdd = (values: Abbreviation) => {
-    setAbbreviations((prev) => [...prev, values]);
+    onChange({ abbreviations: [...abbreviations, values] });
     form.resetFields();
   };
 
@@ -29,13 +26,19 @@ const ConstructorStep4: React.FC<Props> = ({ value, onChange }) => {
   };
 
   const handleSaveEdit = (values: Abbreviation) => {
-    setAbbreviations((prev) => prev.map((item, idx) => (idx === editingIndex ? values : item)));
+    onChange({
+      abbreviations: abbreviations.map((item, idx) =>
+        idx === editingIndex ? values : item
+      ),
+    });
     setEditingIndex(null);
     form.resetFields();
   };
 
   const handleDelete = (index: number) => {
-    setAbbreviations((prev) => prev.filter((_, idx) => idx !== index));
+    onChange({
+      abbreviations: abbreviations.filter((_, idx) => idx !== index),
+    });
   };
 
   return (
@@ -64,12 +67,19 @@ const ConstructorStep4: React.FC<Props> = ({ value, onChange }) => {
             {editingIndex === null ? "Добавить" : "Сохранить"}
           </Button>
           {editingIndex !== null && (
-            <Button style={{ marginLeft: 8 }} onClick={() => { setEditingIndex(null); form.resetFields(); }}>
+            <Button
+              style={{ marginLeft: 8 }}
+              onClick={() => {
+                setEditingIndex(null);
+                form.resetFields();
+              }}
+            >
               Отмена
             </Button>
           )}
         </Form.Item>
       </Form>
+
       <Table
         dataSource={abbreviations}
         rowKey={(_, i) => String(i)}
@@ -81,9 +91,13 @@ const ConstructorStep4: React.FC<Props> = ({ value, onChange }) => {
             title: "Действия",
             render: (_, __, idx) => (
               <Space>
-                <Button size="small" onClick={() => handleEdit(idx)}>Изменить</Button>
+                <Button size="small" onClick={() => handleEdit(idx)}>
+                  Изменить
+                </Button>
                 <Popconfirm title="Удалить?" onConfirm={() => handleDelete(idx)}>
-                  <Button size="small" danger>Удалить</Button>
+                  <Button size="small" danger>
+                    Удалить
+                  </Button>
                 </Popconfirm>
               </Space>
             ),
@@ -94,4 +108,4 @@ const ConstructorStep4: React.FC<Props> = ({ value, onChange }) => {
   );
 };
 
-export default ConstructorStep4; 
+export default ConstructorStep4;

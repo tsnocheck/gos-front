@@ -1,11 +1,9 @@
 import { Text } from "@react-pdf/renderer";
 import type { FC } from "react";
-import type { CreateProgramForm } from "../../../../types";
+import type { ProgramPDFProps } from "@/types";
 import { PDFPage } from "../../shared/ui/PDFPage";
 
-export const OrganizationPage: FC<{
-  program: CreateProgramForm;
-}> = ({ program }) => {
+export const OrganizationPage: FC<ProgramPDFProps> = ({ program }) => {
   return (
     <PDFPage title="Орг.-пед. условия">
       <Text>

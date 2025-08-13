@@ -1,12 +1,10 @@
 import { Text } from "@react-pdf/renderer";
 import type { FC } from "react";
-import type { CreateProgramForm } from "../../../../types";
+import type { ProgramPDFProps } from "@/types";
 import { PDFPage } from "../../shared/ui/PDFPage";
 import { PDFStyles } from "../../shared/utils";
 
-export const EvaluationPage: FC<{
-  program: CreateProgramForm;
-}> = ({ program }) => {
+export const EvaluationPage: FC<ProgramPDFProps> = ({ program }) => {
   return (
     <PDFPage title="Оценочные материалы">
       <Text style={PDFStyles.block}>Требования: {program.requirements}</Text>

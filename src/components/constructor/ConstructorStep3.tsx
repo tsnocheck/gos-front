@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo } from "react";
 import { Select, Form, Typography } from "antd";
 import type { CreateProgramForm } from "../../types/program";
 import { useAvailableAuthors } from "@/queries/programs";
@@ -14,20 +14,15 @@ interface Props {
 const ConstructorStep3: React.FC<Props> = ({ value, onChange }) => {
   const { data: authors = [], isLoading: loadingAuthors } = useAvailableAuthors();
 
-  const [author1, setAuthor1] = useState(value.author1 || "");
-  const [author2, setAuthor2] = useState(value.author2 || "");
-
-  useEffect(() => {
-    onChange({ author1, author2 });
-  }, [author1, author2, onChange]);
+  const omittedAuthors = useMemo(() => authors.filter(({id}) => value.author1Id !== id), [value.author1Id])
 
   return (
     <Form layout="vertical">
       <Title level={4}>Лист согласования</Title>
       <Form.Item label="Соавтор 1">
         <Select
-          value={author1}
-          onChange={setAuthor1}
+          value={value.author1Id}
+          onChange={(v) => onChange({ author1Id: v })}
           loading={loadingAuthors}
           placeholder="Выберите автора"
           allowClear
@@ -41,14 +36,14 @@ const ConstructorStep3: React.FC<Props> = ({ value, onChange }) => {
       </Form.Item>
       <Form.Item label="Соавтор 2">
         <Select
-          value={author2}
-          onChange={setAuthor2}
+          value={value.author2Id}
+          onChange={(v) => onChange({ author2Id: v })}
           loading={loadingAuthors}
-          disabled={!author1}
+          disabled={!value.author1Id}
           placeholder="Выберите второго автора"
           allowClear
         >
-          {authors.map((u) => (
+          {omittedAuthors.map((u) => (
             <Option key={u.id} value={u.id}>
               {u.lastName} {u.firstName} {u.middleName}
             </Option>

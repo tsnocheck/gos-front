@@ -123,7 +123,7 @@ export const programSection: {
     [ProgramSection.NPR]: "НПР",
     [ProgramSection.PMR]: "ПМР",
     [ProgramSection.VR]: "ВР",
-  }
+  },
 };
 
 export const attestationForms = ["Тест", "Практическая работа", "Кейс"];
@@ -150,6 +150,12 @@ export interface Attestation {
   practice: number; // Часы практики
   distant: number; // Часы дистанционного обучения
   form: string; // Форма аттестации
+
+  /** НОВОЕ!!! */
+  requirements?: string; // Описание требований к выполнению
+  criteria?: string; // Критерии оценивания
+  examples?: string; // Примеры заданий
+  attempts?: number; // Количество попыток
 }
 
 export interface Topic {
@@ -157,6 +163,19 @@ export interface Topic {
   lecture: number; // Часы лекций
   practice: number; // Часы практики
   distant: number; // Часы дистанционного обучения
+}
+
+  /** НОВОЕ!!! */
+export interface EducationModuleTopic {
+  topicName: string;
+  content: string[]; // Содержание практического занятия
+  forms: string[]; // Формы организации практического занятия
+  hours: number; // Кол-во часов
+}
+
+export interface EducationModule {
+  name: string;
+  topics: EducationModuleTopic[]
 }
 
 export interface NetworkOrg {
@@ -185,8 +204,9 @@ export interface CreateProgramForm {
   title: string; // Название программы
 
   // Шаг 3: Лист согласования
-  author1?: string; // ID первого соавтора (пользователь)
-  author2?: string; // ID второго соавтора (пользователь)
+  author?: User;
+  author1Id?: string; // ID первого соавтора (пользователь)
+  author2Id?: string; // ID второго соавтора (пользователь)
 
   // Шаг 4: Список сокращений
   abbreviations?: Abbreviation[]; // Массив сокращений (аббревиатура + расшифровка)
@@ -213,11 +233,11 @@ export interface CreateProgramForm {
   network?: NetworkOrg[]; // Организации для сетевой формы (таблица)
   networkEnabled?: boolean; // Используется ли сетевая форма
 
-  // Шаг 8: Формы аттестации и оценочные материалы
-  requirements?: string; // Описание требований к выполнению
-  criteria?: string; // Критерии оценивания
-  examples?: string; // Примеры заданий
-  attempts?: number; // Количество попыток
+  /** НОВОЕ!!! */
+  // Шаг 8: Содержание образовательного модуля:
+  lectureModule?: EducationModule; // Cодержание лекционных занятий образовательного модуля
+  practiceModule?: EducationModule; // Содержание практических занятий образовательного модуля
+  distantModule?: EducationModule; // Содержание самостоятельной работы в режиме дистанционного обучения образовательного модуля
 
   // Шаг 9: Организационно-педагогические условия
   orgPedConditions?: OrgPedConditions; // См. ниже
@@ -225,6 +245,6 @@ export interface CreateProgramForm {
 
 export interface ProgramPDFProps {
   program: Partial<CreateProgramForm>;
-  allAuthors: User[];
+  authors: User[];
   getDictionaryById: (id: string) => Dictionary | undefined;
 }

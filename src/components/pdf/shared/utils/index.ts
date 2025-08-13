@@ -85,6 +85,6 @@ export const PDFListStyles = StyleSheet.create({
 
 export const currentYear = new Date().getFullYear();
 
-export const calcWidth = (partOf: Exclude<number, 0>): StyleObject => ({
+export const calcWidth = (partOf: number): StyleObject => ({
   width: `${partOf * 100}%`,
 });

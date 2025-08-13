@@ -13,7 +13,6 @@ const ConstructorStep8: React.FC<Props> = ({ value, onChange }) => {
 
   useEffect(() => {
     onChange(form.getFieldsValue());
-    // eslint-disable-next-line
   }, [form]);
 
   return (

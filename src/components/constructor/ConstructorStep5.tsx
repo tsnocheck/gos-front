@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Form, Input, Select, Typography } from "antd";
 import { standards, type CreateProgramForm } from "@/types";
 import { useProgramDictionaries } from "@/hooks/useProgramDictionaries";
@@ -13,7 +13,6 @@ interface Props {
 
 const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
   const [form] = Form.useForm<Partial<CreateProgramForm>>();
-  const [standard, setStandard] = useState(value.standard || "");
 
   const selectedFunctions = Form.useWatch<string[] | undefined>(
     "functions",
@@ -29,15 +28,13 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
   );
 
   const handleValuesChange = useCallback(
-    (changedValues?: Partial<CreateProgramForm>) => {
-      if (changedValues?.functions) form.setFieldValue("actions", []);
+    (changedValues: Partial<CreateProgramForm>) => {
+      if (changedValues.functions) form.setFieldValue("actions", []);
 
       onChange(form.getFieldsValue());
     },
-    [form, functions, onChange, selectedFunctions]
+    [form, onChange]
   );
-
-  useEffect(() => handleValuesChange(), []);
 
   return (
     <Form
@@ -47,22 +44,27 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
       onValuesChange={handleValuesChange}
     >
       <Title level={4}>Характеристика программы</Title>
+
       <Form.Item name="relevance" label="Актуальность разработки программы">
         <Input.TextArea rows={2} />
       </Form.Item>
+
       <Form.Item name="goal" label="Цель реализации программы">
         <Input.TextArea rows={2} />
       </Form.Item>
+
       <Form.Item name="standard" label="Проф. стандарт/ЕКС">
-        <Select onChange={setStandard} placeholder="Выберите стандарт">
-          {Object.entries(standards).map(([value, label]) => (
-            <Option key={value} value={value}>
+        <Select placeholder="Выберите стандарт">
+          {Object.entries(standards).map(([val, label]) => (
+            <Option key={val} value={val}>
               {label}
             </Option>
           ))}
         </Select>
       </Form.Item>
-      {(standard === "professional-standard" || standard === "both") && (
+
+      {(value.standard === "professional-standard" ||
+        value.standard === "both") && (
         <div style={{ display: "flex", width: "100%", gap: 20 }}>
           <Form.Item
             name="functions"
@@ -93,7 +95,8 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
           </Form.Item>
         </div>
       )}
-      {(standard === "eks" || standard === "both") && (
+
+      {(value.standard === "eks" || value.standard === "both") && (
         <Form.Item name="duties" label="Должностные обязанности">
           <Select
             mode="multiple"
@@ -101,17 +104,21 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
           />
         </Form.Item>
       )}
+
       <Form.Item name="know" label="Знать">
         <Input.TextArea rows={2} />
       </Form.Item>
+
       <Form.Item name="can" label="Уметь">
         <Input.TextArea rows={2} />
       </Form.Item>
+
       <Form.Item name="category" label="Категория слушателей">
         <Select
           options={categories?.map((c) => ({ value: c.id, label: c.value }))}
         />
       </Form.Item>
+
       <Form.Item name="educationForm" label="Форма обучения">
         <Select
           options={educationForms?.map((f) => ({
@@ -120,6 +127,7 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
           }))}
         />
       </Form.Item>
+
       <Form.Item name="term" label="Срок освоения программы (часы)">
         <Input type="number" min={1} style={{ width: 120 }} />
       </Form.Item>

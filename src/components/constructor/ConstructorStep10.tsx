@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import type { CreateProgramForm } from "../../types";
 import ProgramPDFViewer from "../pdf/program/ProgramPDFViewer";
 
@@ -7,10 +7,6 @@ interface Props {
 }
 
 const ConstructorStep10: React.FC<Props> = ({ value }) => {
-  useEffect(() => {
-    console.log(value);
-  }, [value]);
-
   return (
     <div>
       <ProgramPDFViewer program={value} />
