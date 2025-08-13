@@ -228,10 +228,6 @@ export interface CreateProgramForm {
   know?: string; // Что должен знать слушатель
   can?: string; // Что должен уметь слушатель
   
-  // стало
-  know?: string[]; // Что должен знать слушатель
-  can?: string[]; // Что должен уметь слушатель
-  
 
   category?: string; // Категория слушателей
   educationForm?: string; // Форма обучения (очная, заочная и т.д.)
