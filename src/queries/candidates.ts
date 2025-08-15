@@ -18,9 +18,6 @@ export const useCandidates = () => {
   return useQuery({
     queryKey: candidateKeys.list(),
     queryFn: candidateService.getCandidates,
-    retry: false,
-    refetchOnWindowFocus: false,
-    staleTime: 2 * 60 * 1000,
   });
 };
 
@@ -29,9 +26,6 @@ export const useCandidate = (id: string) => {
     queryKey: candidateKeys.detail(id),
     queryFn: () => candidateService.getCandidateById(id),
     enabled: !!id,
-    retry: false,
-    refetchOnWindowFocus: false,
-    staleTime: 2 * 60 * 1000,
   });
 };
 
