@@ -6,7 +6,7 @@ import type {
 } from "../services/programService";
 import { useNavigate } from "react-router-dom";
 import { adminKeys } from "./admin";
-import { ProgramStatus } from "@/types";
+import { ExpertiseStatus, ProgramStatus } from "@/types";
 
 // Query keys
 export const programKeys = {
@@ -177,7 +177,7 @@ export const getStatusColor = (status: ProgramStatus) => {
   }
 };
 
-export const getStatusText = (status: ProgramStatus) => {
+export const getStatusText = (status: ProgramStatus | ExpertiseStatus) => {
   switch (status) {
     case ProgramStatus.DRAFT:
       return "Черновик";

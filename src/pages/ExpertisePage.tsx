@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Card,
   Table,
@@ -10,61 +10,50 @@ import {
   Space,
   message,
   Tag,
+  Checkbox,
+  Rate,
 } from "antd";
 import { EyeOutlined, EditOutlined } from "@ant-design/icons";
-import { type Program, ProgramStatus } from "../types";
-import {
-  getStatusColor,
-  getStatusText,
-  useProgram,
-} from "../queries/programs.ts";
-import {
-  useAvailablePrograms,
-  useCreateExpertise,
-} from "../queries/expertises.ts";
-import { useAuth } from "../hooks/useAuth.ts";
+import { ExpertiseStatus, type Expertise } from "../types";
+import { useMyExpertises, useUpdateExpertise } from "../queries/expertises.ts";
 import { ProgramPDFViewer } from "@/components/pdf/program/ProgramPDFViewer";
 
-const { Title, Text } = Typography;
-const { TextArea } = Input;
-// const { Option } = Select;
-
-const criteriaNames = {
-  "1": "Актуальность программы",
-  "2": "Соответствие нормативным требованиям",
-  "3": "Качество содержания",
-  "4": "Методическая обоснованность",
-  "5": "Практическая направленность",
-  "6": "Инновационность",
-  "7": "Ресурсное обеспечение",
-  "8": "Технологичность",
-  "9": "Оценочные материалы",
-  "10": "Структурированность",
-  "11": "Логическая последовательность",
-  "12": "Завершенность",
-  "13": "Применимость результатов",
+const statusMap: Record<ExpertiseStatus, { text: string; color: string }> = {
+  [ExpertiseStatus.PENDING]: { text: "Ожидает экспертизы", color: "default" },
+  [ExpertiseStatus.IN_PROGRESS]: { text: "В процессе", color: "blue" },
+  [ExpertiseStatus.COMPLETED]: { text: "Завершена", color: "purple" },
+  [ExpertiseStatus.APPROVED]: { text: "Одобрено", color: "green" },
+  [ExpertiseStatus.REJECTED]: { text: "Отклонено", color: "red" },
 };
 
+const { Title, Text } = Typography;
+// const { Option } = Select;
+
 export const ExpertisePage: React.FC = () => {
-  const [selectedProgram, setSelectedProgram] = useState<string | null>(null);
-  const [isExpertiseModalOpen, setIsExpertiseModalOpen] = useState(false);
+  const [selectedExpertiseId, setSelectedExpertiseId] = useState<string | null>(
+    null
+  );
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [form] = Form.useForm();
 
-  const { user } = useAuth();
+  const { data: expertises, isLoading } = useMyExpertises();
+  const updateExpertiseMutation = useUpdateExpertise();
 
-  const { data: programs, isLoading } = useAvailablePrograms();
-  const { data: currentProgram } = useProgram(selectedProgram || "");
-  const submitExpertiseMutation = useCreateExpertise();
+  const selectedExpertise = useMemo(
+    () => expertises?.data.find((e) => e.id === selectedExpertiseId),
+    [expertises, selectedExpertiseId]
+  );
 
   const columns = [
     {
       title: "Название программы",
       dataIndex: ["program", "title"],
       key: "title",
-      render: (_: string, record: Program) => (
+      render: (_: string, record: Expertise) => (
         <div>
-          <div>{record.title}</div>
-          <Text type="secondary">{record.author?.email}</Text>
+          <div>{record.program?.title}</div>
+          <Text type="secondary">{record.program?.author?.email}</Text>
         </div>
       ),
     },
@@ -72,48 +61,69 @@ export const ExpertisePage: React.FC = () => {
       title: "Номер программы",
       dataIndex: ["program", "programCode"],
       key: "programCode",
-      render: (code: string) => code,
+      render: (_: string, record: Expertise) =>
+        record.program?.programCode ?? "-",
     },
     {
       title: "Длительность",
       dataIndex: ["program", "duration"],
       key: "duration",
-      render: (_: number, record: Program) => `${record?.duration ?? "-"} ч.`,
+      render: (_: number, record: Expertise) =>
+        `${record.program?.duration ?? "-"} ч.`,
     },
     {
-      title: "Статус",
-      dataIndex: "status",
-      key: "status",
-      render: (status: ProgramStatus) => {
-        return (
-          <Tag color={getStatusColor(status)}>{getStatusText(status)}</Tag>
-        );
-      },
-    },
+  title: "Статус экспертизы",
+  dataIndex: "status",
+  key: "status",
+  render: (status: Expertise["status"]) => {
+    const { text, color } = statusMap[status as ExpertiseStatus] || { text: status, color: "default" };
+    return <Tag color={color}>{text}</Tag>;
+  },
+},
     {
-      title: "Дата подачи",
-      dataIndex: ["program", "submittedAt"],
-      key: "submittedAt",
-      render: (_: string, record: Program) =>
-        record?.submittedAt
-          ? new Date(record.submittedAt).toLocaleDateString("ru-RU")
+      title: "Создана",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (_: string, record: Expertise) =>
+        record.createdAt
+          ? new Date(record.createdAt as unknown as string).toLocaleDateString(
+              "ru-RU"
+            )
           : "-",
     },
     {
       title: "Действия",
       key: "actions",
-      render: (_: unknown, record: Program) => (
+      render: (_: unknown, record: Expertise) => (
         <Space>
           <Button
             icon={<EyeOutlined />}
-            onClick={() => handleViewProgram(record?.id || "")}
+            onClick={() => {
+              setSelectedExpertiseId(record.id);
+              setIsPreviewOpen(true);
+            }}
           >
             Просмотр
           </Button>
           <Button
             type="primary"
             icon={<EditOutlined />}
-            onClick={() => handleStartExpertise(record?.id || "")}
+            onClick={() => {
+              setSelectedExpertiseId(record.id);
+              setIsEditOpen(true);
+              form.setFieldsValue({
+                generalFeedback: record.generalFeedback,
+                recommendations: record.recommendations,
+                conclusion: record.conclusion,
+                relevanceScore: record.relevanceScore,
+                contentQualityScore: record.contentQualityScore,
+                methodologyScore: record.methodologyScore,
+                practicalValueScore: record.practicalValueScore,
+                innovationScore: record.innovationScore,
+                expertComments: record.expertComments,
+                isRecommendedForApproval: record.isRecommendedForApproval,
+              });
+            }}
           >
             Экспертиза
           </Button>
@@ -122,107 +132,111 @@ export const ExpertisePage: React.FC = () => {
     },
   ];
 
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  function handleViewProgram(programId: string) {
-    setSelectedProgram(programId);
-    setIsPreviewOpen(true);
-  }
-
-  function handleStartExpertise(programId: string) {
-    setSelectedProgram(programId);
-    setIsExpertiseModalOpen(true);
-  }
-
-  type FormValues = {
-    criteria: Record<string, { score: number; comment?: string }>;
-    recommendations?: string;
-    conclusion: string;
-  };
-  const handleSubmitExpertise = async (values: FormValues) => {
+  const handleUpdateExpertise = async (values: Record<string, unknown>) => {
+    if (!selectedExpertise) return;
     try {
-      const expertiseData = {
-        criteriaEvaluation: values.criteria,
-        additionalRecommendations: values.recommendations,
-        conclusion: values.conclusion,
-      };
-
-      await submitExpertiseMutation.mutateAsync({
-        programId: currentProgram?.id,
-        ...expertiseData,
-        expertId: user.id,
+      await updateExpertiseMutation.mutateAsync({
+        id: selectedExpertise.id,
+        data: values,
       });
-      message.success("Экспертиза успешно отправлена!");
-      setIsExpertiseModalOpen(false);
-      form.resetFields();
+      message.success("Изменения сохранены");
+      setIsEditOpen(false);
     } catch {
-      message.error("Ошибка при отправке экспертизы");
+      message.error("Не удалось сохранить изменения");
     }
   };
 
-  // Форма критериев будет добавлена при реализации шага завершения экспертизы
-
   return (
     <div style={{ padding: 24 }}>
-      <Title level={2}>Экспертиза программ ДПП ПК</Title>
+      <Title level={2}>Мои экспертизы</Title>
       <Card>
         <Table
           columns={columns}
-          dataSource={(programs as unknown as Program[]) || []}
+          dataSource={expertises?.data || []}
           loading={isLoading}
           rowKey="id"
           pagination={{
+            total: expertises?.total,
+            pageSize: expertises?.limit,
+            current: expertises?.page,
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (total, range) =>
-              `${range[0]}-${range[1]} из ${total} программ`,
+              `${range[0]}-${range[1]} из ${total} экспертиз`,
           }}
         />
       </Card>
 
       {/* Модальное окно предпросмотра PDF */}
       <Modal
-        title={`Просмотр программы: ${
-          currentProgram?.title ?? ""}`}
-        open={isPreviewOpen && !!currentProgram}
+        title={`Просмотр программы: ${selectedExpertise?.program?.title ?? ""}`}
+        open={isPreviewOpen && !!selectedExpertise}
         onCancel={() => setIsPreviewOpen(false)}
         footer={null}
         width="90vw"
       >
-        {currentProgram && <ProgramPDFViewer program={currentProgram} />}
+        {selectedExpertise?.program && (
+          <ProgramPDFViewer program={selectedExpertise.program} />
+        )}
       </Modal>
 
-      {/* Модальное окно создания экспертизы (назначение себе) */}
+      {/* Модальное окно редактирования экспертизы */}
       <Modal
-        title={`Экспертиза программы: ${currentProgram?.title}`}
-        open={isExpertiseModalOpen}
-        onCancel={() => {
-          setIsExpertiseModalOpen(false);
-          form.resetFields();
-        }}
+        title={`Экспертиза: ${selectedExpertise?.program?.title ?? ""}`}
+        open={isEditOpen}
+        onCancel={() => setIsEditOpen(false)}
         width={800}
         footer={null}
       >
-        <Form form={form} layout="vertical" onFinish={handleSubmitExpertise}>
-          <Form.Item name="recommendations" label="Комментарий (необязательно)">
-            <TextArea
-              rows={4}
-              placeholder="Комментарий к назначению экспертизы..."
-            />
+        <Form form={form} layout="vertical" onFinish={handleUpdateExpertise}>
+          <Form.Item name="generalFeedback" label="Общий отзыв">
+            <Input.TextArea rows={3} />
           </Form.Item>
+          <Form.Item name="recommendations" label="Рекомендации">
+            <Input.TextArea rows={3} />
+          </Form.Item>
+          <Form.Item name="conclusion" label="Заключение">
+            <Input.TextArea rows={3} />
+          </Form.Item>
+          <Form.Item name="expertComments" label="Комментарии эксперта">
+            <Input.TextArea rows={3} />
+          </Form.Item>
+
+          <div
+            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+          >
+            <Form.Item name="relevanceScore" label="Актуальность (0-10)">
+              <Rate count={10} />
+            </Form.Item>
+            <Form.Item
+              name="contentQualityScore"
+              label="Качество содержания (0-10)"
+            >
+              <Rate count={10} />
+            </Form.Item>
+            <Form.Item name="methodologyScore" label="Методология (0-10)">
+              <Rate count={10} />
+            </Form.Item>
+            <Form.Item
+              name="practicalValueScore"
+              label="Практическая ценность (0-10)"
+            >
+              <Rate count={10} />
+            </Form.Item>
+            <Form.Item name="innovationScore" label="Инновационность (0-10)">
+              <Rate count={10} />
+            </Form.Item>
+            <Form.Item name="isRecommendedForApproval" valuePropName="checked">
+              <Checkbox>Рекомендуется к одобрению</Checkbox>
+            </Form.Item>
+          </div>
 
           <Form.Item>
             <Space>
               <Button type="primary" htmlType="submit">
-                Назначить экспертизу
+                Сохранить
               </Button>
-              <Button
-                onClick={() => {
-                  setIsExpertiseModalOpen(false);
-                  form.resetFields();
-                }}
-              >
-                Отмена
-              </Button>
+              <Button onClick={() => setIsEditOpen(false)}>Закрыть</Button>
             </Space>
           </Form.Item>
         </Form>
