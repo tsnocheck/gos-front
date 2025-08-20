@@ -275,12 +275,26 @@ export const ExpertisePage: React.FC = () => {
 
           <Form.Item>
             <Space>
-              <Button type="primary" onClick={() => handleUpdateExpertise(form.getFieldsValue())}>
-                Сохранить
-              </Button>
-              <Button type="primary" variant="solid" color="green" onClick={() => handleCompleteExpertise(form.getFieldsValue())}>
-                Завершить экспертизу
-              </Button>
+              {selectedExpertise?.status !== ExpertiseStatus.APPROVED && (
+                <>
+                  <Button
+                    type="primary"
+                    onClick={() => handleUpdateExpertise(form.getFieldsValue())}
+                  >
+                    Сохранить
+                  </Button>
+                  <Button
+                    type="primary"
+                    variant="solid"
+                    color="green"
+                    onClick={() =>
+                      handleCompleteExpertise(form.getFieldsValue())
+                    }
+                  >
+                    Завершить экспертизу
+                  </Button>
+                </>
+              )}
               <Button onClick={() => setIsEditOpen(false)}>Закрыть</Button>
             </Space>
           </Form.Item>
