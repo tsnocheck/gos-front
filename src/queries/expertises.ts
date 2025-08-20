@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { expertiseService } from "../services/expertiseService";
-import type { Expertise } from "../types";
+import type { Expertise, CreateExpertiseDto, UpdateExpertiseDto, CompleteExpertiseDto } from "../types";
 import type { ExpertiseCriteriaDto, ExpertTableFilters } from "../types/expertise";
 
 // Query keys
@@ -61,7 +61,7 @@ export const useExpertiseStatistics = () => {
 export const useCreateExpertise = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: expertiseService.createExpertise,
+    mutationFn: (data: CreateExpertiseDto) => expertiseService.createExpertise(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expertiseKeys.lists() });
     },
@@ -71,7 +71,7 @@ export const useCreateExpertise = () => {
 export const useUpdateExpertise = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<Expertise> }) =>
+    mutationFn: ({ id, data }: { id: string; data: UpdateExpertiseDto }) =>
       expertiseService.updateExpertise(id, data),
     onSuccess: (_, variables) => {
       const { id } = variables;
@@ -84,7 +84,7 @@ export const useUpdateExpertise = () => {
 export const useCompleteExpertise = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => expertiseService.completeExpertise(id),
+    mutationFn: ({ id, data }: { id: string; data: CompleteExpertiseDto }) => expertiseService.completeExpertise(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expertiseKeys.lists() });
     },

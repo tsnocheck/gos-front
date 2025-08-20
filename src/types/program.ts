@@ -146,11 +146,19 @@ export interface Module {
   topics?: Topic[]; // Темы учебно-тематического плана (таблица)
   network?: NetworkOrg[]; // Организации для сетевой формы (таблица)
   networkEnabled?: boolean; // Используется ли сетевая форма
+}
 
-  // Шаг 8: Содержание образовательного модуля:
-  lectureModule?: EducationModule; // Cодержание лекционных занятий образовательного модуля
-  practiceModule?: EducationModule; // Содержание практических занятий образовательного модуля
-  distantModule?: EducationModule; // Содержание самостоятельной работы в режиме дистанционного обучения образовательного модуля
+export interface Topic {
+  name: string; // Название темы
+  lecture?: TopicContent;
+  practice?: TopicContent;
+  distant?: TopicContent;
+}
+
+export interface TopicContent {
+  content: string[];
+  forms: string[];
+  hours: number;
 }
 
 export interface Attestation {
@@ -166,26 +174,6 @@ export interface Attestation {
   criteria?: string; // Критерии оценивания
   examples?: string; // Примеры заданий
   attempts?: number; // Количество попыток
-}
-
-export interface Topic {
-  name: string; // Название темы
-  lecture: number; // Часы лекций
-  practice: number; // Часы практики
-  distant: number; // Часы дистанционного обучения
-}
-
-/** НОВОЕ!!! */
-export interface EducationModuleTopic {
-  topicName: string;
-  content: string[]; // Содержание практического занятия
-  forms: string[]; // Формы организации практического занятия
-  hours: number; // Кол-во часов
-}
-
-export interface EducationModule {
-  name: string;
-  topics: EducationModuleTopic[];
 }
 
 export interface NetworkOrg {
@@ -208,21 +196,16 @@ export interface OrgPedConditions {
 }
 
 export interface CreateProgramForm {
-  // Шаг 2: Титульный лист
   institution?: string; // Краткое название выбранного учреждения (например, "КОИРО")
   customInstitution?: string; // Название учреждения, если выбран вариант "Иное"
   title: string; // Название программы
-
-  // Шаг 3: Лист согласования
+  
   author?: User;
 
-  // стало
   coAuthorIds: string[]; // ID соавторов
 
-  // Шаг 4: Список сокращений
   abbreviations?: Abbreviation[]; // Массив сокращений (аббревиатура + расшифровка)
 
-  // Шаг 5: Пояснительная записка
   relevance?: string; // Актуальность разработки программы
   goal?: string; // Цель реализации программы
   standard?: Standard; // Выбранный стандарт: "professional-standard", "eks" или "both"
@@ -230,7 +213,6 @@ export interface CreateProgramForm {
   actions?: string[]; // Трудовые действия (если выбран проф. стандарт)
   duties?: string[]; // Должностные обязанности (если выбран ЕКС)
 
-  // было
   know?: string[]; // Что должен знать слушатель
   can?: string[]; // Что должен уметь слушатель
 
@@ -238,21 +220,9 @@ export interface CreateProgramForm {
   educationForm?: string; // Форма обучения (очная, заочная и т.д.)
   term?: number; // Срок освоения программы (часы)
 
-  // Шаг 6: Учебный план
-  modules?: Module[]; // Модули программы (таблица)
-  attestations?: Attestation[]; // Аттестации (таблица)
+  modules?: Module[];
+  attestations?: Attestation[];
 
-  // Шаг 7: Учебно-тематический план
-  topics?: Topic[]; // Темы учебно-тематического плана (таблица)
-  network?: NetworkOrg[]; // Организации для сетевой формы (таблица)
-  networkEnabled?: boolean; // Используется ли сетевая форма
-
-  // Шаг 8: Содержание образовательного модуля:
-  lectureModule?: EducationModule; // Cодержание лекционных занятий образовательного модуля
-  practiceModule?: EducationModule; // Содержание практических занятий образовательного модуля
-  distantModule?: EducationModule; // Содержание самостоятельной работы в режиме дистанционного обучения образовательного модуля
-
-  // Шаг 9: Организационно-педагогические условия
   orgPedConditions: OrgPedConditions; // См. ниже
 }
 

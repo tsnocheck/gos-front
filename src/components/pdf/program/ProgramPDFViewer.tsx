@@ -38,10 +38,9 @@ const pages = [
   SyllabusPage,
   CalendarPage,
   ThematicPage,
-  EvaluationPage,
+  AttestationExamplesPage,
   RegulatoryPage,
   LiteraturePage,
-  AttestationExamplesPage
 ];
 
 // Генератор PDF-документа по шагам

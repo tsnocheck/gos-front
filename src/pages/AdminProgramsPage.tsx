@@ -6,8 +6,6 @@ import {
   Typography,
   Space,
   Modal,
-  Descriptions,
-  Tooltip,
   Tag,
 } from "antd";
 import { EyeOutlined, DeleteOutlined, InboxOutlined } from "@ant-design/icons";
@@ -23,34 +21,26 @@ import {
   ProgramStatus,
 } from "../types/program";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAssignExpertToProgram } from "../queries/expertises";
 import { useUsers } from "../queries/admin";
+import { ProgramPDFViewer } from "@/components/pdf/program/ProgramPDFViewer";
+import type { ColumnsType } from "antd/es/table";
 
 const { Title } = Typography;
 
 export const AdminProgramsPage: React.FC = () => {
   const { data: programs, isLoading } = usePrograms();
-  const assignExpertToProgramMutation = useAssignExpertToProgram();
   const { data: users = [] } = useUsers();
 
   const queryClient = useQueryClient();
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [viewProgram, setViewProgram] = useState<Program | null>(null);
+  const [viewProgram, setViewProgram] = useState<Partial<CreateProgramForm> | null>(null);
 
   const getUserById = useCallback(
     (id: string) => users.find((user) => user.id === id),
     [users]
   );
 
-  const handleAssignExpertToProgram = async () => {
-    if (!viewProgram) return;
-
-    await assignExpertToProgramMutation.mutateAsync({
-      programId: viewProgram.id,
-      expertId: "",
-    });
-  };
 
   // Архивирование и разархивирование
   const handleArchiveToggle = async (program: Program, checked: boolean) => {
@@ -73,7 +63,7 @@ export const AdminProgramsPage: React.FC = () => {
     setSelectedRowKeys([]);
   };
 
-  const columns = [
+  const columns: ColumnsType<Partial<CreateProgramForm>> = [
     {
       title: "Название",
       dataIndex: "title",
@@ -88,13 +78,13 @@ export const AdminProgramsPage: React.FC = () => {
       title: "Автор",
       dataIndex: ["author"],
       key: "author",
-      render: (author: any) =>
+      render: (author?: Program["author"]) =>
         author ? `${author.lastName || ""} ${author.firstName || ""}` : "-",
     },
     {
       title: "Соавторы",
       key: "coauthors",
-      render: (_: any, { coAuthorIds }: Partial<CreateProgramForm>) => {
+      render: (_, { coAuthorIds }: Partial<CreateProgramForm>) => {
         const authors = (coAuthorIds ?? []).map((id) => getUserById(id));
 
         return authors.reduce(
@@ -119,7 +109,7 @@ export const AdminProgramsPage: React.FC = () => {
     {
       title: "Действия",
       key: "actions",
-      render: (_: any, record: Program) => (
+      render: (_, record: Program) => (
         <Button
           icon={<EyeOutlined />}
           size="small"
@@ -171,9 +161,6 @@ export const AdminProgramsPage: React.FC = () => {
           rowSelection={{
             selectedRowKeys,
             onChange: setSelectedRowKeys,
-            getCheckboxProps: (record: Program) => ({
-              checked: record.status === ProgramStatus.ARCHIVED,
-            }),
           }}
           pagination={{
             total: programs?.total,
@@ -190,48 +177,12 @@ export const AdminProgramsPage: React.FC = () => {
         onCancel={() => setViewProgram(null)}
         title={viewProgram?.title}
         footer={null}
-        width={800}
+        width="90vw"
       >
         {viewProgram && (
-          <Descriptions bordered column={1} size="small">
-            <Descriptions.Item label="Номер">
-              {viewProgram.programCode}
-            </Descriptions.Item>
-            <Descriptions.Item label="Название">
-              {viewProgram.title}
-            </Descriptions.Item>
-            <Descriptions.Item label="Предмет">
-              {viewProgram.competencies || "-"}
-            </Descriptions.Item>
-            <Descriptions.Item label="Версия">
-              {viewProgram.version}
-            </Descriptions.Item>
-            <Descriptions.Item label="Автор">
-              {viewProgram.author?.lastName} {viewProgram.author?.firstName}
-            </Descriptions.Item>
-            <Descriptions.Item label="Соавторы">-</Descriptions.Item>
-            <Descriptions.Item label="Экспертизы">
-              {viewProgram.expertises && viewProgram.expertises.length > 0 ? (
-                <ul>
-                  {viewProgram.expertises.map((exp) => (
-                    <li key={exp.id}>
-                      <b>
-                        {exp.expert?.lastName} {exp.expert?.firstName}:
-                      </b>{" "}
-                      {exp.conclusion || "-"}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                "Нет данных"
-              )}
-            </Descriptions.Item>
-            <Descriptions.Item label="PDF">
-              <Tooltip title="Скачивание PDF пока не реализовано">
-                <Button disabled>Скачать PDF</Button>
-              </Tooltip>
-            </Descriptions.Item>
-          </Descriptions>
+          <ProgramPDFViewer
+            program={viewProgram}
+          />
         )}
       </Modal>
     </div>

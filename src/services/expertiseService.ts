@@ -4,10 +4,13 @@ import type {
   Expertise,
   ExpertiseCriteriaDto,
   ExpertTableFilters,
+  CreateExpertiseDto,
+  UpdateExpertiseDto,
+  CompleteExpertiseDto,
 } from "../types";
 
 export const expertiseService = {
-  async createExpertise(data: Expertise) {
+  async createExpertise(data: CreateExpertiseDto) {
     return apiClient.post<Expertise>("/expertise", data);
   },
 
@@ -23,7 +26,7 @@ export const expertiseService = {
     return apiClient.get<Expertise>(`/expertise/${id}`);
   },
 
-  async updateExpertise(id: string, data: Partial<Expertise>) {
+  async updateExpertise(id: string, data: UpdateExpertiseDto) {
     return apiClient.patch<Expertise>(`/expertise/${id}`, data);
   },
 
@@ -31,8 +34,8 @@ export const expertiseService = {
     return apiClient.get("/expertise/statistics");
   },
 
-  async completeExpertise(id: string) {
-    return apiClient.post(`/expertise/${id}/complete`);
+  async completeExpertise(id: string, data: CompleteExpertiseDto) {
+    return apiClient.post(`/expertise/${id}/complete`, data);
   },
 
   async assignExpertToProgram(programId: string, data: { expertId: string }) {

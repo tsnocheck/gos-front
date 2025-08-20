@@ -10,7 +10,7 @@ import ConstructorStep8 from "../components/constructor/ConstructorStep8";
 import ConstructorStep9 from "../components/constructor/ConstructorStep9";
 import ConstructorStep10 from "../components/constructor/ConstructorStep10";
 import type { CreateProgramForm } from "../types/program";
-import { useCreateProgram, useProgram } from "@/queries/programs";
+import { useCreateProgram, useProgram, useUpdateProgram } from "@/queries/programs";
 import { useParams } from "react-router-dom";
 
 const steps = [
@@ -35,6 +35,7 @@ const ProgramsConstructorPage: React.FC = () => {
     title: "",
   });
   const createProgram = useCreateProgram();
+  const updateProgram = useUpdateProgram()
   const { data: programData, isSuccess } = useProgram(params.id ?? "");
 
   const StepComponent = useMemo(
@@ -55,8 +56,8 @@ const ProgramsConstructorPage: React.FC = () => {
 
   const handleFinish = async () => {
     try {
-      console.log(formData)
-      createProgram.mutate(formData);
+      if (!params.id) await createProgram.mutateAsync(formData);
+      else await updateProgram.mutateAsync({ id: params.id, data: formData })
       message.success("Программа успешно сохранена")
     } catch {
       message.error("Ошибка при отправке формы");

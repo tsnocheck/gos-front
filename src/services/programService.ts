@@ -25,7 +25,7 @@ export const programService = {
   },
 
   async getProgramById(id: string) {
-    return apiClient.get<CreateProgramForm>(`/programs/id/${id}`);
+    return apiClient.get<Partial<CreateProgramForm>>(`/programs/id/${id}`);
   },
 
   async getProgramVersions(id: string) {

@@ -121,14 +121,18 @@ export const useCreateProgram = (onSuccessCallback?: () => void) => {
 
 export const useUpdateProgram = () => {
   const queryClient = useQueryClient();
-
+  const navigate = useNavigate();
+  
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateProgramData }) =>
       programService.updateProgram(id, data),
     onSuccess: (_, { id }) => {
+      
       queryClient.invalidateQueries({ queryKey: programKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: programKeys.lists() });
       queryClient.invalidateQueries({ queryKey: programKeys.myPrograms() });
+      
+      navigate("/programs");
     },
   });
 };

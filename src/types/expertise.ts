@@ -96,6 +96,39 @@ export interface ExpertiseCriteriaDto {
   generalComment?: string;
 }
 
+// DTOs aligned with backend
+export interface CreateExpertiseDto {
+  programId: string;
+  expertId: string;
+  initialComments?: string;
+}
+
+export interface UpdateExpertiseDto {
+  generalFeedback?: string;
+  recommendations?: string;
+  conclusion?: string;
+  relevanceScore?: number; // 0-10
+  contentQualityScore?: number; // 0-10
+  methodologyScore?: number; // 0-10
+  practicalValueScore?: number; // 0-10
+  innovationScore?: number; // 0-10
+  expertComments?: string;
+  isRecommendedForApproval?: boolean;
+}
+
+export interface CompleteExpertiseDto {
+  generalFeedback: string;
+  conclusion: string;
+  relevanceScore: number; // 0-10
+  contentQualityScore: number; // 0-10
+  methodologyScore: number; // 0-10
+  practicalValueScore: number; // 0-10
+  innovationScore: number; // 0-10
+  isRecommendedForApproval: boolean;
+  recommendations?: string;
+  expertComments?: string;
+}
+
 export interface ExpertTableFilters {
   status?: ExpertiseStatus;
   programTitle?: string;

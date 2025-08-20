@@ -1,29 +1,48 @@
-import React, { useState } from 'react';
-import { Card, Table, Button, Modal, Form, Input, Select, Rate, Typography, Space, message, Tag, Row, Col } from 'antd';
-import { EyeOutlined, EditOutlined } from '@ant-design/icons';
-import {type ExpertiseForm, ExpertiseStatus, type Program, ProgramStatus} from '../types';
-import {getStatusColor, getStatusText, useProgram, usePrograms} from "../queries/programs.ts";
-import {useAvailablePrograms, useCreateExpertise, useMyExpertises} from "../queries/expertises.ts";
-import {useAuth} from "../hooks/useAuth.ts";
+import React, { useState } from "react";
+import {
+  Card,
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Typography,
+  Space,
+  message,
+  Tag,
+} from "antd";
+import { EyeOutlined, EditOutlined } from "@ant-design/icons";
+import { type Program, ProgramStatus } from "../types";
+import {
+  getStatusColor,
+  getStatusText,
+  useProgram,
+} from "../queries/programs.ts";
+import {
+  useAvailablePrograms,
+  useCreateExpertise,
+} from "../queries/expertises.ts";
+import { useAuth } from "../hooks/useAuth.ts";
+import { ProgramPDFViewer } from "@/components/pdf/program/ProgramPDFViewer";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
-const { Option } = Select;
+// const { Option } = Select;
 
 const criteriaNames = {
-  '1': 'Актуальность программы',
-  '2': 'Соответствие нормативным требованиям',
-  '3': 'Качество содержания',
-  '4': 'Методическая обоснованность',
-  '5': 'Практическая направленность',
-  '6': 'Инновационность',
-  '7': 'Ресурсное обеспечение',
-  '8': 'Технологичность',
-  '9': 'Оценочные материалы',
-  '10': 'Структурированность',
-  '11': 'Логическая последовательность',
-  '12': 'Завершенность',
-  '13': 'Применимость результатов'
+  "1": "Актуальность программы",
+  "2": "Соответствие нормативным требованиям",
+  "3": "Качество содержания",
+  "4": "Методическая обоснованность",
+  "5": "Практическая направленность",
+  "6": "Инновационность",
+  "7": "Ресурсное обеспечение",
+  "8": "Технологичность",
+  "9": "Оценочные материалы",
+  "10": "Структурированность",
+  "11": "Логическая последовательность",
+  "12": "Завершенность",
+  "13": "Применимость результатов",
 };
 
 export const ExpertisePage: React.FC = () => {
@@ -31,17 +50,17 @@ export const ExpertisePage: React.FC = () => {
   const [isExpertiseModalOpen, setIsExpertiseModalOpen] = useState(false);
   const [form] = Form.useForm();
 
-  const { user } = useAuth()
+  const { user } = useAuth();
 
   const { data: programs, isLoading } = useAvailablePrograms();
-  const { data: currentProgram } = useProgram(selectedProgram || '');
-  const submitExpertiseMutation = useCreateExpertise()
+  const { data: currentProgram } = useProgram(selectedProgram || "");
+  const submitExpertiseMutation = useCreateExpertise();
 
   const columns = [
     {
-      title: 'Название программы',
-      dataIndex: ['program', 'title'],
-      key: 'title',
+      title: "Название программы",
+      dataIndex: ["program", "title"],
+      key: "title",
       render: (_: string, record: Program) => (
         <div>
           <div>{record.title}</div>
@@ -50,21 +69,21 @@ export const ExpertisePage: React.FC = () => {
       ),
     },
     {
-      title: 'Номер программы',
-      dataIndex: ['program', 'programCode'],
-      key: 'programCode',
+      title: "Номер программы",
+      dataIndex: ["program", "programCode"],
+      key: "programCode",
       render: (code: string) => code,
     },
     {
-      title: 'Длительность',
-      dataIndex: ['program', 'duration'],
-      key: 'duration',
-      render: (_: number, record: Program) => `${record?.duration ?? '-'} ч.`,
+      title: "Длительность",
+      dataIndex: ["program", "duration"],
+      key: "duration",
+      render: (_: number, record: Program) => `${record?.duration ?? "-"} ч.`,
     },
     {
-      title: 'Статус',
-      dataIndex: 'status',
-      key: 'status',
+      title: "Статус",
+      dataIndex: "status",
+      key: "status",
       render: (status: ProgramStatus) => {
         return (
           <Tag color={getStatusColor(status)}>{getStatusText(status)}</Tag>
@@ -72,26 +91,29 @@ export const ExpertisePage: React.FC = () => {
       },
     },
     {
-      title: 'Дата подачи',
-      dataIndex: ['program', 'submittedAt'],
-      key: 'submittedAt',
-      render: (_: string, record: Program) => record?.submittedAt ? new Date(record.submittedAt).toLocaleDateString('ru-RU') : '-',
+      title: "Дата подачи",
+      dataIndex: ["program", "submittedAt"],
+      key: "submittedAt",
+      render: (_: string, record: Program) =>
+        record?.submittedAt
+          ? new Date(record.submittedAt).toLocaleDateString("ru-RU")
+          : "-",
     },
     {
-      title: 'Действия',
-      key: 'actions',
+      title: "Действия",
+      key: "actions",
       render: (_: unknown, record: Program) => (
         <Space>
-          <Button 
-            icon={<EyeOutlined />} 
-            onClick={() => handleViewProgram(record?.id || '')}
+          <Button
+            icon={<EyeOutlined />}
+            onClick={() => handleViewProgram(record?.id || "")}
           >
             Просмотр
           </Button>
-          <Button 
+          <Button
             type="primary"
-            icon={<EditOutlined />} 
-            onClick={() => handleStartExpertise(record?.id || '')}
+            icon={<EditOutlined />}
+            onClick={() => handleStartExpertise(record?.id || "")}
           >
             Экспертиза
           </Button>
@@ -100,9 +122,10 @@ export const ExpertisePage: React.FC = () => {
     },
   ];
 
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   function handleViewProgram(programId: string) {
     setSelectedProgram(programId);
-    // Открыть модальное окно просмотра программы
+    setIsPreviewOpen(true);
   }
 
   function handleStartExpertise(programId: string) {
@@ -110,52 +133,33 @@ export const ExpertisePage: React.FC = () => {
     setIsExpertiseModalOpen(true);
   }
 
-  const handleSubmitExpertise = async (values: any) => {
+  type FormValues = {
+    criteria: Record<string, { score: number; comment?: string }>;
+    recommendations?: string;
+    conclusion: string;
+  };
+  const handleSubmitExpertise = async (values: FormValues) => {
     try {
-      const expertiseData: ExpertiseForm = {
+      const expertiseData = {
         criteriaEvaluation: values.criteria,
         additionalRecommendations: values.recommendations,
-        conclusion: values.conclusion
+        conclusion: values.conclusion,
       };
 
-      await submitExpertiseMutation.mutateAsync({ programId: currentProgram.id, ...expertiseData, expertId: user.id });
-      message.success('Экспертиза успешно отправлена!');
+      await submitExpertiseMutation.mutateAsync({
+        programId: currentProgram?.id,
+        ...expertiseData,
+        expertId: user.id,
+      });
+      message.success("Экспертиза успешно отправлена!");
       setIsExpertiseModalOpen(false);
       form.resetFields();
     } catch {
-      message.error('Ошибка при отправке экспертизы');
+      message.error("Ошибка при отправке экспертизы");
     }
-  }
-
-  const renderCriteriaForm = () => {
-    return Object.entries(criteriaNames).map(([key, name]) => (
-      <Card key={key} size="small" style={{ marginBottom: 16 }}>
-        <Row gutter={16} align="middle">
-          <Col span={16}>
-            <Text strong>{name}</Text>
-          </Col>
-          <Col span={8}>
-            <Form.Item
-              name={['criteria', key, 'score']}
-              rules={[{ required: true, message: 'Оцените критерий' }]}
-              style={{ margin: 0 }}
-            >
-              <Rate />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Form.Item
-          name={['criteria', key, 'comment']}
-          style={{ marginTop: 8, marginBottom: 0 }}
-        >
-          <TextArea
-            placeholder="Комментарий по критерию (необязательно)"
-            rows={2}
-          />
-        </Form.Item>
-      </Card>
-    ));
   };
+
+  // Форма критериев будет добавлена при реализации шага завершения экспертизы
 
   return (
     <div style={{ padding: 24 }}>
@@ -163,7 +167,7 @@ export const ExpertisePage: React.FC = () => {
       <Card>
         <Table
           columns={columns}
-          dataSource={programs || []}
+          dataSource={(programs as unknown as Program[]) || []}
           loading={isLoading}
           rowKey="id"
           pagination={{
@@ -175,7 +179,19 @@ export const ExpertisePage: React.FC = () => {
         />
       </Card>
 
-      {/* Модальное окно экспертизы */}
+      {/* Модальное окно предпросмотра PDF */}
+      <Modal
+        title={`Просмотр программы: ${
+          currentProgram?.title ?? ""}`}
+        open={isPreviewOpen && !!currentProgram}
+        onCancel={() => setIsPreviewOpen(false)}
+        footer={null}
+        width="90vw"
+      >
+        {currentProgram && <ProgramPDFViewer program={currentProgram} />}
+      </Modal>
+
+      {/* Модальное окно создания экспертизы (назначение себе) */}
       <Modal
         title={`Экспертиза программы: ${currentProgram?.title}`}
         open={isExpertiseModalOpen}
@@ -186,52 +202,20 @@ export const ExpertisePage: React.FC = () => {
         width={800}
         footer={null}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmitExpertise}
-        >
-          <Title level={4}>Оценка по критериям</Title>
-          <Text type="secondary">
-            Оцените каждый критерий по 5-балльной шкале и при необходимости оставьте комментарии.
-          </Text>
-          
-          <div style={{ marginTop: 16, marginBottom: 24 }}>
-            {renderCriteriaForm()}
-          </div>
-
-          <Form.Item
-            name="recommendations"
-            label="Дополнительные рекомендации"
-          >
+        <Form form={form} layout="vertical" onFinish={handleSubmitExpertise}>
+          <Form.Item name="recommendations" label="Комментарий (необязательно)">
             <TextArea
               rows={4}
-              placeholder="Общие рекомендации по улучшению программы..."
+              placeholder="Комментарий к назначению экспертизы..."
             />
-          </Form.Item>
-
-          <Form.Item
-            name="conclusion"
-            label="Заключение"
-            rules={[{ required: true, message: 'Выберите заключение' }]}
-          >
-            <Select placeholder="Выберите итоговое заключение">
-              <Option value="approved">Одобрить программу</Option>
-              <Option value="approved_with_conditions">Одобрить с условиями</Option>
-              <Option value="requires_revision">Требует доработки</Option>
-              <Option value="rejected">Отклонить</Option>
-            </Select>
           </Form.Item>
 
           <Form.Item>
             <Space>
-              <Button 
-                type="primary" 
-                htmlType="submit"
-              >
-                Отправить экспертизу
+              <Button type="primary" htmlType="submit">
+                Назначить экспертизу
               </Button>
-              <Button 
+              <Button
                 onClick={() => {
                   setIsExpertiseModalOpen(false);
                   form.resetFields();

@@ -34,13 +34,15 @@ export const PDFTableStyles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: "#000",
     marginTop: 4,
-    display: 'flex',
-    flexDirection: 'column'
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
   },
   row: {
     display: "flex",
     flexDirection: "row",
     alignItems: "stretch",
+    width: "100%",
   },
   col: {
     borderRightWidth: 1,
@@ -50,8 +52,12 @@ export const PDFTableStyles = StyleSheet.create({
     paddingHorizontal: 10,
     fontSize: 11,
     lineHeight: 1.25,
+    flexShrink: 1,
   },
-  header: {
+  headerCell: {
+    backgroundColor: "#fff",
+  },
+  headerText: {
     fontWeight: "bold",
     textAlign: "center",
   },
