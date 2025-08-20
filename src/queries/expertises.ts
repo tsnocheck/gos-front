@@ -86,7 +86,7 @@ export const useCompleteExpertise = () => {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: CompleteExpertiseDto }) => expertiseService.completeExpertise(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: expertiseKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: expertiseKeys.my() });
     },
   });
 };

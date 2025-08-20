@@ -13,9 +13,17 @@ import {
   Checkbox,
   Rate,
 } from "antd";
-import { EyeOutlined, EditOutlined } from "@ant-design/icons";
-import { ExpertiseStatus, type Expertise } from "../types";
-import { useMyExpertises, useUpdateExpertise } from "../queries/expertises.ts";
+import { EyeOutlined, EditOutlined, CheckOutlined } from "@ant-design/icons";
+import {
+  ExpertiseStatus,
+  type CompleteExpertiseDto,
+  type Expertise,
+} from "../types";
+import {
+  useCompleteExpertise,
+  useMyExpertises,
+  useUpdateExpertise,
+} from "../queries/expertises.ts";
 import { ProgramPDFViewer } from "@/components/pdf/program/ProgramPDFViewer";
 
 const statusMap: Record<ExpertiseStatus, { text: string; color: string }> = {
@@ -29,6 +37,22 @@ const statusMap: Record<ExpertiseStatus, { text: string; color: string }> = {
 const { Title, Text } = Typography;
 // const { Option } = Select;
 
+const criteriaNames = {
+  "1": "Актуальность программы",
+  "2": "Соответствие нормативным требованиям",
+  "3": "Качество содержания",
+  "4": "Методическая обоснованность",
+  "5": "Практическая направленность",
+  "6": "Инновационность",
+  "7": "Ресурсное обеспечение",
+  "8": "Технологичность",
+  "9": "Оценочные материалы",
+  "10": "Структурированность",
+  "11": "Логическая последовательность",
+  "12": "Завершенность",
+  "13": "Применимость результатов",
+};
+
 export const ExpertisePage: React.FC = () => {
   const [selectedExpertiseId, setSelectedExpertiseId] = useState<string | null>(
     null
@@ -39,6 +63,7 @@ export const ExpertisePage: React.FC = () => {
 
   const { data: expertises, isLoading } = useMyExpertises();
   const updateExpertiseMutation = useUpdateExpertise();
+  const completeExpertiseMutation = useCompleteExpertise();
 
   const selectedExpertise = useMemo(
     () => expertises?.data.find((e) => e.id === selectedExpertiseId),
@@ -72,14 +97,17 @@ export const ExpertisePage: React.FC = () => {
         `${record.program?.duration ?? "-"} ч.`,
     },
     {
-  title: "Статус экспертизы",
-  dataIndex: "status",
-  key: "status",
-  render: (status: Expertise["status"]) => {
-    const { text, color } = statusMap[status as ExpertiseStatus] || { text: status, color: "default" };
-    return <Tag color={color}>{text}</Tag>;
-  },
-},
+      title: "Статус экспертизы",
+      dataIndex: "status",
+      key: "status",
+      render: (status: Expertise["status"]) => {
+        const { text, color } = statusMap[status as ExpertiseStatus] || {
+          text: status,
+          color: "default",
+        };
+        return <Tag color={color}>{text}</Tag>;
+      },
+    },
     {
       title: "Создана",
       dataIndex: "createdAt",
@@ -143,6 +171,20 @@ export const ExpertisePage: React.FC = () => {
       setIsEditOpen(false);
     } catch {
       message.error("Не удалось сохранить изменения");
+    }
+  };
+
+  const handleCompleteExpertise = async (values: CompleteExpertiseDto) => {
+    if (!selectedExpertise) return;
+    try {
+      await completeExpertiseMutation.mutateAsync({
+        id: selectedExpertise.id,
+        data: values,
+      });
+      message.success("Экспертиза завершена");
+      setIsEditOpen(false);
+    } catch {
+      message.error("Не удалось завершить экспертизу");
     }
   };
 
@@ -233,8 +275,11 @@ export const ExpertisePage: React.FC = () => {
 
           <Form.Item>
             <Space>
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" onClick={() => handleUpdateExpertise(form.getFieldsValue())}>
                 Сохранить
+              </Button>
+              <Button type="primary" variant="solid" color="green" onClick={() => handleCompleteExpertise(form.getFieldsValue())}>
+                Завершить экспертизу
               </Button>
               <Button onClick={() => setIsEditOpen(false)}>Закрыть</Button>
             </Space>
