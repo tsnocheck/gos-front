@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Card, Table, Button, Modal, Form, Input, Select, Rate, Typography, Space, message, Tag, Row, Col } from 'antd';
 import { EyeOutlined, EditOutlined } from '@ant-design/icons';
-import {type ExpertiseForm, ExpertiseStatus, type Program} from '../types';
-import {useProgram, usePrograms} from "../queries/programs.ts";
+import {type ExpertiseForm, ExpertiseStatus, type Program, ProgramStatus} from '../types';
+import {getStatusColor, getStatusText, useProgram, usePrograms} from "../queries/programs.ts";
 import {useAvailablePrograms, useCreateExpertise, useMyExpertises} from "../queries/expertises.ts";
 import {useAuth} from "../hooks/useAuth.ts";
 
@@ -65,17 +65,10 @@ export const ExpertisePage: React.FC = () => {
       title: 'Статус',
       dataIndex: 'status',
       key: 'status',
-      render: (status: ExpertiseStatus) => {
-        const statusMap = {
-          'draft': { color: 'default', text: 'Черновик' },
-          [ExpertiseStatus.PENDING]: { color: 'warning', text: 'Ожидает экспертизы' },
-          [ExpertiseStatus.IN_PROGRESS]: { color: 'processing', text: 'В процессе экспертизы' },
-          [ExpertiseStatus.COMPLETED]: { color: 'success', text: 'Завершена' },
-          [ExpertiseStatus.APPROVED]: { color: 'success', text: 'Одобрена' },
-          [ExpertiseStatus.REJECTED]: { color: 'error', text: 'Отклонена' },
-        };
-        const statusInfo = statusMap[status] || { color: 'default', text: status };
-        return <Tag color={statusInfo.color}>{statusInfo.text}</Tag>;
+      render: (status: ProgramStatus) => {
+        return (
+          <Tag color={getStatusColor(status)}>{getStatusText(status)}</Tag>
+        );
       },
     },
     {
@@ -170,13 +163,10 @@ export const ExpertisePage: React.FC = () => {
       <Card>
         <Table
           columns={columns}
-          dataSource={programs?.data || []}
+          dataSource={programs || []}
           loading={isLoading}
           rowKey="id"
           pagination={{
-            total: programs?.total,
-            pageSize: programs?.limit,
-            current: programs?.page,
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (total, range) =>

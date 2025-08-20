@@ -1,9 +1,10 @@
 import { type FC } from "react";
 import { ProgramSection, programSection, type ProgramPDFProps } from "@/types";
 import { PDFPage } from "../../shared/ui/PDFPage";
-import { calcWidth } from "../../shared/utils";
+import { calcWidth, PDFStyles } from "../../shared/utils";
 import { PDFTable } from "../../shared";
 import React from "react";
+import { Text } from "@react-pdf/renderer";
 
 const TOTAL_COLS = 8;
 
@@ -108,7 +109,7 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program }) => {
   };
 
   const SectionRow: FC<{ section: ProgramSection }> = ({ section }) => {
-    console.log(section)
+    console.log(section);
 
     return (
       <React.Fragment>
@@ -124,7 +125,11 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program }) => {
   };
 
   return (
-    <PDFPage title="Учебный план">
+    <PDFPage title="Учебный план" ui={{ title: { marginBottom: 0 } }}>
+      <Text style={{ lineHeight: 1, textAlign: 'center' }}>
+        дополнительной профессиональной программы повышения квалификации {"\n"}
+        <Text style={PDFStyles.italic}>«{program.title ?? 'Название программы'}»</Text>
+      </Text>
       <PDFTable.Self>
         <PDFTable.Tr>
           <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}>
@@ -157,8 +162,8 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program }) => {
           </PDFTable.Th>
         </PDFTable.Tr>
 
-        {attestationsByModule("none")?.length && (
-          <AttestationRows moduleCode="none" />
+        {attestationsByModule("open")?.length && (
+          <AttestationRows moduleCode="open" />
         )}
 
         {(modulesBySection(ProgramSection.NPR) ?? []).length > 0 && (
@@ -169,6 +174,10 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program }) => {
         )}
         {(modulesBySection(ProgramSection.VR) ?? []).length > 0 && (
           <SectionRow section={ProgramSection.VR} />
+        )}
+
+        {attestationsByModule("close")?.length && (
+          <AttestationRows moduleCode="close" />
         )}
 
         <TotalRow />

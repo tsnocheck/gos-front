@@ -1,5 +1,10 @@
 import { useCallback, type FC } from "react";
-import { programSection, type Module, type ProgramPDFProps } from "@/types";
+import {
+  programSection,
+  type Attestation,
+  type Module,
+  type ProgramPDFProps,
+} from "@/types";
 import { PDFPage } from "../../shared/ui/PDFPage";
 import { calcWidth } from "../../shared/utils";
 import { PDFTable } from "../../shared";
@@ -8,14 +13,34 @@ import { Text } from "@react-pdf/renderer";
 const TOTAL_COLS = 9;
 
 export const CalendarPage: FC<ProgramPDFProps> = ({ program }) => {
-  const calcModuleTime = useCallback(
-    (module: Module) => {
+  const calcTime = useCallback(
+    (module: Module | Attestation) => {
       return module.lecture + module.distant + module.practice;
     },
     [program]
   );
 
+  const attestationByModule = (moduleCode: string) =>
+    program.attestations?.find(
+      (attestation) => attestation.moduleCode === moduleCode
+    );
+
   const TotalRow: FC = () => {
+    const attestation = attestationByModule("close");
+
+    const initialValues = {
+      lecture: attestation?.lecture ?? 0,
+      practice: attestation?.practice ?? 0,
+      distant: attestation?.distant ?? 0,
+      kad: 0,
+    };
+
+    const initialWithTotal = {
+      ...initialValues,
+      total:
+        initialValues.lecture + initialValues.practice + initialValues.distant,
+    };
+
     const total = (program.modules ?? []).reduce(
       (acc, { lecture, distant, practice, kad }) => {
         acc.lecture += lecture;
@@ -26,13 +51,7 @@ export const CalendarPage: FC<ProgramPDFProps> = ({ program }) => {
 
         return acc;
       },
-      {
-        total: 0,
-        lecture: 0,
-        practice: 0,
-        distant: 0,
-        kad: 0,
-      }
+      initialWithTotal
     );
 
     return (
@@ -55,7 +74,7 @@ export const CalendarPage: FC<ProgramPDFProps> = ({ program }) => {
           {total.distant || "-"}
         </PDFTable.Td>
         <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>
-        {total.kad || "-"}
+          {total.kad || "-"}
         </PDFTable.Td>
       </PDFTable.Tr>
     );
@@ -72,7 +91,7 @@ export const CalendarPage: FC<ProgramPDFProps> = ({ program }) => {
             {module.name}
           </PDFTable.Th>
           <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>
-            {calcModuleTime(module) || "-"}
+            {calcTime(module) || "-"}
           </PDFTable.Td>
           <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>
             {module.lecture || "-"}
@@ -91,6 +110,35 @@ export const CalendarPage: FC<ProgramPDFProps> = ({ program }) => {
     ));
   };
 
+  const AttestationRow: FC = () => {
+    const attestation = attestationByModule("close");
+
+    return (
+      attestation && (
+        <PDFTable.Tr>
+          <PDFTable.Th
+            style={{ ...calcWidth(4 / TOTAL_COLS), textAlign: "left" }}
+          >
+            {attestation.name}
+          </PDFTable.Th>
+          <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>
+            {calcTime(attestation) || "-"}
+          </PDFTable.Td>
+          <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>
+            {attestation.lecture || "-"}
+          </PDFTable.Td>
+          <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>
+            {attestation.practice || "-"}
+          </PDFTable.Td>
+          <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>
+            {attestation.distant || "-"}
+          </PDFTable.Td>
+          <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}></PDFTable.Td>
+        </PDFTable.Tr>
+      )
+    );
+  };
+
   return (
     <PDFPage
       title="Календарный учебный график"
@@ -99,7 +147,7 @@ export const CalendarPage: FC<ProgramPDFProps> = ({ program }) => {
       <Text style={{ textAlign: "center", marginBottom: 4 }}>
         дополнительной профессиональной программы повышения квалификации {"\n"}
         <Text style={{ fontStyle: "italic" }}>
-          "{program.title ?? "Название программы"}"
+          «{program.title ?? "Название программы"}»
         </Text>
       </Text>
 
@@ -136,6 +184,7 @@ export const CalendarPage: FC<ProgramPDFProps> = ({ program }) => {
           </PDFTable.Th>
         </PDFTable.Tr>
         <ModuleRows />
+        {attestationByModule("close") && <AttestationRow />}
         <TotalRow />
       </PDFTable.Self>
     </PDFPage>

@@ -17,7 +17,7 @@ export const ExplanatoryPage: FC<ProgramPDFProps> = ({
   );
 
   const getValueFromDictionary = useCallback(
-    (id: string) => getDictionaryById(id)?.value ?? "",
+    (id: string) => getDictionaryById(id)?.value ?? id,
     [getDictionaryById]
   );
 
@@ -47,7 +47,7 @@ export const ExplanatoryPage: FC<ProgramPDFProps> = ({
   }, [program, getValueFromDictionary]);
 
   return (
-    <PDFPage title="Характеристика программы">
+    <PDFPage title="Пояснительная записка">
       <Text style={PDFStyles.block}>
         <Text style={PDFStyles.bold}>Актуальность разработки программы:</Text>{" "}
         {program.relevance}
@@ -94,10 +94,14 @@ export const ExplanatoryPage: FC<ProgramPDFProps> = ({
 
         <PDFTable.Tr>
           {program.know && (
-            <PDFTable.Td style={{ flex: 1 }}>{program.know}</PDFTable.Td>
+            <PDFTable.Td style={{ flex: 1 }}>
+              <PDFList items={program.know} />
+            </PDFTable.Td>
           )}
           {program.can && (
-            <PDFTable.Td style={{ flex: 1 }}>{program.can}</PDFTable.Td>
+            <PDFTable.Td style={{ flex: 1 }}>
+              <PDFList items={program.can} />
+            </PDFTable.Td>
           )}
         </PDFTable.Tr>
       </PDFTable.Self>

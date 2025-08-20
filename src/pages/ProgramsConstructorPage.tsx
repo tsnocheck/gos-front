@@ -55,6 +55,7 @@ const ProgramsConstructorPage: React.FC = () => {
 
   const handleFinish = async () => {
     try {
+      console.log(formData)
       createProgram.mutate(formData);
       message.success("Программа успешно сохранена")
     } catch {

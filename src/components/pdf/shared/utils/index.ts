@@ -11,8 +11,8 @@ export const PDFStyles = StyleSheet.create({
     fontFamily: "Times-New-Roman",
   },
   sectionTitle: {
-    fontSize: 16,
-    marginBottom: 30,
+    fontSize: 14,
+    marginBottom: 10,
     fontWeight: "bold",
     textAlign: "center",
     textTransform: "uppercase",

@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
-import { Select, Form, Typography } from "antd";
+import { Select, Form, Typography, Button, Space } from "antd";
+import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import type { CreateProgramForm } from "../../types/program";
 import { useAvailableAuthors } from "@/queries/programs";
 
@@ -12,46 +13,77 @@ interface Props {
 }
 
 const ConstructorStep3: React.FC<Props> = ({ value, onChange }) => {
-  const { data: authors = [], isLoading: loadingAuthors } = useAvailableAuthors();
+  const { data: authors = [], isLoading: loadingAuthors } =
+    useAvailableAuthors();
 
-  const omittedAuthors = useMemo(() => authors.filter(({id}) => value.author1Id !== id), [value.author1Id])
+  const availableAuthors = useMemo(() => {
+    return authors.filter((author) => !value.coAuthorIds?.includes(author.id));
+  }, [authors, value]);
+
+  const getAuthorNameById = (id: string) => {
+    const author = authors.find((author) => author.id === id);
+    return `${author?.lastName ?? ""} ${author?.firstName ?? ""} ${
+      author?.middleName ?? ""
+    }`;
+  };
+
+  const addCoAuthor = () =>
+    onChange({ coAuthorIds: [...(value.coAuthorIds ?? []), ""] });
+
+  const removeCoAuthor = (index: number) =>
+    onChange({ coAuthorIds: value.coAuthorIds?.filter((_, i) => i !== index) });
+
+  const updateCoAuthor = (index: number, authorId: string) =>
+    onChange({
+      coAuthorIds: value.coAuthorIds?.map((id, i) => (i === index ? authorId : id)),
+    });
 
   return (
     <Form layout="vertical">
       <Title level={4}>Лист согласования</Title>
-      <Form.Item label="Соавтор 1">
-        <Select
-          value={value.author1Id}
-          onChange={(v) => onChange({ author1Id: v })}
-          loading={loadingAuthors}
-          placeholder="Выберите автора"
-          allowClear
-        >
-          {authors?.map((u) => (
-            <Option key={u.id} value={u.id}>
-              {u.lastName} {u.firstName} {u.middleName}
-            </Option>
+      {/* Соавторы */}
+      <Form.Item label="Соавторы">
+        <Space direction="vertical" style={{ width: "100%" }}>
+          {value.coAuthorIds?.map((authorId, index) => (
+            <Space key={index} style={{ width: "100%" }}>
+              <Select
+                value={getAuthorNameById(authorId)}
+                onChange={(v) => updateCoAuthor(index, v)}
+                loading={loadingAuthors}
+                placeholder={`Выберите соавтора ${index + 1}`}
+                style={{ flex: 1, minWidth: 400 }}
+                allowClear
+              >
+                {availableAuthors.map((u) => (
+                  <Option key={u.id} value={u.id}>
+                    {u.lastName} {u.firstName} {u.middleName}
+                  </Option>
+                ))}
+              </Select>
+              <Button
+                type="text"
+                danger
+                icon={<MinusCircleOutlined />}
+                onClick={() => removeCoAuthor(index)}
+              />
+            </Space>
           ))}
-        </Select>
-      </Form.Item>
-      <Form.Item label="Соавтор 2">
-        <Select
-          value={value.author2Id}
-          onChange={(v) => onChange({ author2Id: v })}
-          loading={loadingAuthors}
-          disabled={!value.author1Id}
-          placeholder="Выберите второго автора"
-          allowClear
-        >
-          {omittedAuthors.map((u) => (
-            <Option key={u.id} value={u.id}>
-              {u.lastName} {u.firstName} {u.middleName}
-            </Option>
-          ))}
-        </Select>
+
+          <Button
+            type="dashed"
+            onClick={addCoAuthor}
+            {...{ icon: availableAuthors.length && <PlusOutlined /> }}
+            style={{ width: "100%" }}
+            disabled={!availableAuthors.length}
+          >
+            {availableAuthors.length
+              ? "Добавить соавтора"
+              : "Нет доступных авторов"}
+          </Button>
+        </Space>
       </Form.Item>
     </Form>
   );
 };
 
-export default ConstructorStep3; 
+export default ConstructorStep3;

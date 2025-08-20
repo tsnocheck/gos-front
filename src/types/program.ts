@@ -206,12 +206,8 @@ export interface CreateProgramForm {
   // Шаг 3: Лист согласования
   author?: User;
 
-  // было
-  author1Id?: string; // ID первого соавтора (пользователь)
-  author2Id?: string; // ID второго соавтора (пользователь)
-  
   // стало
-  coAuthors: string[]; // ID соавторов
+  coAuthorIds: string[]; // ID соавторов
 
   // Шаг 4: Список сокращений
   abbreviations?: Abbreviation[]; // Массив сокращений (аббревиатура + расшифровка)
@@ -225,10 +221,9 @@ export interface CreateProgramForm {
   duties?: string[]; // Должностные обязанности (если выбран ЕКС)
   
   // было
-  know?: string; // Что должен знать слушатель
-  can?: string; // Что должен уметь слушатель
+  know?: string[]; // Что должен знать слушатель
+  can?: string[]; // Что должен уметь слушатель
   
-
   category?: string; // Категория слушателей
   educationForm?: string; // Форма обучения (очная, заочная и т.д.)
   term?: number; // Срок освоения программы (часы)
@@ -242,14 +237,14 @@ export interface CreateProgramForm {
   network?: NetworkOrg[]; // Организации для сетевой формы (таблица)
   networkEnabled?: boolean; // Используется ли сетевая форма
 
-  /** НОВОЕ!!! */
+  
   // Шаг 8: Содержание образовательного модуля:
   lectureModule?: EducationModule; // Cодержание лекционных занятий образовательного модуля
   practiceModule?: EducationModule; // Содержание практических занятий образовательного модуля
   distantModule?: EducationModule; // Содержание самостоятельной работы в режиме дистанционного обучения образовательного модуля
 
   // Шаг 9: Организационно-педагогические условия
-  orgPedConditions?: OrgPedConditions; // См. ниже
+  orgPedConditions: OrgPedConditions; // См. ниже
 }
 
 export interface ProgramPDFProps {

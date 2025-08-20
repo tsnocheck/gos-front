@@ -1,10 +1,9 @@
 import React, { useCallback, useMemo } from "react";
-import { Form, Input, Select, Typography } from "antd";
+import { Form, Input, Select, Table, Typography } from "antd";
 import { standards, type CreateProgramForm } from "@/types";
 import { useProgramDictionaries } from "@/hooks/useProgramDictionaries";
 
 const { Title } = Typography;
-const { Option } = Select;
 
 interface Props {
   value: Partial<CreateProgramForm>;
@@ -19,8 +18,14 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
     form
   );
 
-  const { functions, getActions, categories, educationForms, duties } =
-    useProgramDictionaries();
+  const {
+    functions,
+    getActions,
+    categories,
+    educationForms,
+    duties,
+    getDictionaryById,
+  } = useProgramDictionaries();
 
   const actions = useMemo(
     () => getActions(selectedFunctions ?? []),
@@ -54,13 +59,13 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
       </Form.Item>
 
       <Form.Item name="standard" label="Проф. стандарт/ЕКС">
-        <Select placeholder="Выберите стандарт">
-          {Object.entries(standards).map(([val, label]) => (
-            <Option key={val} value={val}>
-              {label}
-            </Option>
-          ))}
-        </Select>
+        <Select
+          placeholder="Выберите стандарт"
+          options={Object.entries(standards).map(([value, label]) => ({
+            value,
+            label,
+          }))}
+        />
       </Form.Item>
 
       {(value.standard === "professional-standard" ||
@@ -72,7 +77,7 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
             style={{ flex: 1 }}
           >
             <Select
-              mode="multiple"
+              mode="tags"
               options={functions?.map((f) => ({
                 value: f.id,
                 label: f.value,
@@ -85,7 +90,7 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
             style={{ flex: 1 }}
           >
             <Select
-              mode="multiple"
+              mode="tags"
               options={actions?.map((a) => ({
                 value: a.id,
                 label: a.value,
@@ -99,19 +104,75 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
       {(value.standard === "eks" || value.standard === "both") && (
         <Form.Item name="duties" label="Должностные обязанности">
           <Select
-            mode="multiple"
+            mode="tags"
             options={duties?.map((d) => ({ value: d.id, label: d.value }))}
           />
         </Form.Item>
       )}
 
       <Form.Item name="know" label="Знать">
-        <Input.TextArea rows={2} />
+        <Select
+          mode="tags"
+          style={{ width: "100%" }}
+          placeholder="Введите знания"
+        />
       </Form.Item>
 
       <Form.Item name="can" label="Уметь">
-        <Input.TextArea rows={2} />
+        <Select
+          mode="tags"
+          style={{ width: "100%" }}
+          placeholder="Введите умения"
+        />
       </Form.Item>
+
+      <Table
+        bordered
+        pagination={false}
+        style={{ marginBottom: 10 }}
+        columns={[
+          ...(value.standard === "professional-standard" ||
+          value.standard === "both"
+            ? [
+                { title: "Трудовые функции", dataIndex: "functions" },
+                { title: "Трудовые действия", dataIndex: "actions" },
+              ]
+            : []),
+
+          ...(value.standard === "eks" || value.standard === "both"
+            ? [{ title: "Должностные обязанности", dataIndex: "duties" }]
+            : []),
+
+          { title: "Знать", dataIndex: "know" },
+          { title: "Уметь", dataIndex: "can" },
+        ]}
+        dataSource={[
+          {
+            key: 1,
+            functions: value.functions?.map((id) => (
+              <p style={{ marginBottom: 1 }}>
+                &bull; {getDictionaryById(id)?.value ?? id}
+              </p>
+            )),
+            actions: value.actions?.map((id) => (
+              <p style={{ marginBottom: 1 }}>
+                &bull; {getDictionaryById(id)?.value ?? id}
+              </p>
+            )),
+            duties: value.duties?.map((id) => (
+              <p style={{ marginBottom: 1 }}>
+                &bull; {getDictionaryById(id)?.value ?? id}
+              </p>
+            )),
+            know: value.know?.map((value) => (
+              <p style={{ marginBottom: 1 }}>&bull; {value}</p>
+            )),
+            can: value.can?.map((value) => (
+              <p style={{ marginBottom: 1 }}>&bull; {value}</p>
+            )),
+          },
+        ]}
+      />
 
       <Form.Item name="category" label="Категория слушателей">
         <Select

@@ -94,10 +94,8 @@ export const AdminProgramsPage: React.FC = () => {
     {
       title: "Соавторы",
       key: "coauthors",
-      render: (_: any, record: CreateProgramForm) => {
-        const authors = [record.author1Id, record.author2Id].map((id) =>
-          getUserById(id || "")
-        );
+      render: (_: any, { coAuthorIds }: Partial<CreateProgramForm>) => {
+        const authors = (coAuthorIds ?? []).map((id) => getUserById(id));
 
         return authors.reduce(
           (acc, author) =>
