@@ -141,6 +141,16 @@ export interface Module {
   practice: number; // Часы практики
   distant: number; // Часы дистанционного обучения
   kad: number; // Количество аудиторных дней
+
+  // Шаг 7: Учебно-тематический план
+  topics?: Topic[]; // Темы учебно-тематического плана (таблица)
+  network?: NetworkOrg[]; // Организации для сетевой формы (таблица)
+  networkEnabled?: boolean; // Используется ли сетевая форма
+
+  // Шаг 8: Содержание образовательного модуля:
+  lectureModule?: EducationModule; // Cодержание лекционных занятий образовательного модуля
+  practiceModule?: EducationModule; // Содержание практических занятий образовательного модуля
+  distantModule?: EducationModule; // Содержание самостоятельной работы в режиме дистанционного обучения образовательного модуля
 }
 
 export interface Attestation {
@@ -165,7 +175,7 @@ export interface Topic {
   distant: number; // Часы дистанционного обучения
 }
 
-  /** НОВОЕ!!! */
+/** НОВОЕ!!! */
 export interface EducationModuleTopic {
   topicName: string;
   content: string[]; // Содержание практического занятия
@@ -175,7 +185,7 @@ export interface EducationModuleTopic {
 
 export interface EducationModule {
   name: string;
-  topics: EducationModuleTopic[]
+  topics: EducationModuleTopic[];
 }
 
 export interface NetworkOrg {
@@ -219,11 +229,11 @@ export interface CreateProgramForm {
   functions?: string[]; // Трудовые функции (если выбран проф. стандарт)
   actions?: string[]; // Трудовые действия (если выбран проф. стандарт)
   duties?: string[]; // Должностные обязанности (если выбран ЕКС)
-  
+
   // было
   know?: string[]; // Что должен знать слушатель
   can?: string[]; // Что должен уметь слушатель
-  
+
   category?: string; // Категория слушателей
   educationForm?: string; // Форма обучения (очная, заочная и т.д.)
   term?: number; // Срок освоения программы (часы)
@@ -237,7 +247,6 @@ export interface CreateProgramForm {
   network?: NetworkOrg[]; // Организации для сетевой формы (таблица)
   networkEnabled?: boolean; // Используется ли сетевая форма
 
-  
   // Шаг 8: Содержание образовательного модуля:
   lectureModule?: EducationModule; // Cодержание лекционных занятий образовательного модуля
   practiceModule?: EducationModule; // Содержание практических занятий образовательного модуля
