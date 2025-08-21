@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Table, Button, Input, Form, Typography, Space, Popconfirm } from "antd";
-import type { CreateProgramForm, Abbreviation } from "../../types/program";
+import type { ExtendedProgram, Abbreviation } from "../../types/program";
 
 const { Title } = Typography;
 
 interface Props {
-  value: Partial<CreateProgramForm>;
-  onChange: (data: Partial<CreateProgramForm>) => void;
+  value: ExtendedProgram;
+  onChange: (data: ExtendedProgram) => void;
 }
 
 const ConstructorStep4: React.FC<Props> = ({ value, onChange }) => {

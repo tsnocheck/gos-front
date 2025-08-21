@@ -1,9 +1,9 @@
 import React from "react";
-import type { CreateProgramForm } from "../../types";
+import type { ExtendedProgram } from "../../types";
 import ProgramPDFViewer from "../pdf/program/ProgramPDFViewer";
 
 interface Props {
-  value: CreateProgramForm;
+  value: ExtendedProgram;
 }
 
 const ConstructorStep10: React.FC<Props> = ({ value }) => {

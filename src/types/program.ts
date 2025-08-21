@@ -30,70 +30,6 @@ export enum ProgramSection {
   VR = "vr",
 }
 
-/** Программа */
-export interface Program {
-  /** Идентификатор */
-  id: string;
-  /** Название программы */
-  title: string;
-  /** Описание программы */
-  description?: string;
-  /** Статус программы */
-  status: ProgramStatus;
-  /** Код программы */
-  programCode?: string;
-  /** Продолжительность в часах */
-  duration?: number;
-  /** Целевая аудитория */
-  targetAudience?: string;
-  /** Компетенции */
-  competencies?: string;
-  /** Результаты обучения */
-  learningOutcomes?: string;
-  /** Содержание программы */
-  content?: string;
-  /** Методология */
-  methodology?: string;
-  /** Оценка результатов */
-  assessment?: string;
-  /** Учебные материалы */
-  materials?: string;
-  /** Требования к участникам */
-  requirements?: string;
-  /** Нормативно-правовой раздел */
-  nprContent?: string;
-  /** Предметно-методический раздел */
-  pmrContent?: string;
-  /** Вариативный раздел */
-  vrContent?: string;
-  /** Версия программы */
-  version: number;
-  /** ID родительской версии */
-  parentId?: string;
-  /** Дата отправки на экспертизу */
-  submittedAt?: string | Date;
-  /** Дата одобрения */
-  approvedAt?: string | Date;
-  /** Дата архивирования */
-  archivedAt?: string | Date;
-  /** Причина отклонения */
-  rejectionReason?: string;
-  /** Автор программы */
-  author: User;
-  /** ID автора */
-  authorId: string;
-  /** Одобривший пользователь */
-  approvedBy?: User;
-  /** ID одобрившего */
-  approvedById?: string;
-  /** Экспертизы по программе */
-  expertises?: Expertise[];
-  /** Дата создания */
-  createdAt: string | Date;
-  /** Дата обновления */
-  updatedAt: string | Date;
-}
-
 export enum Equipment {
   COMPUTER = "computer",
   PROJECTOR = "projector",
@@ -195,11 +131,68 @@ export interface OrgPedConditions {
   personnelProvision?: string; // Кадровое обеспечение
 }
 
-export interface CreateProgramForm {
+export interface Program {
+  /** Идентификатор */
+  id: string;
+  /** Описание программы */
+  description?: string;
+  /** Статус программы */
+  status: ProgramStatus;
+  /** Код программы */
+  programCode?: string;
+  /** Продолжительность в часах */
+  duration?: number;
+  /** Целевая аудитория */
+  targetAudience?: string;
+  /** Компетенции */
+  competencies?: string;
+  /** Результаты обучения */
+  learningOutcomes?: string;
+  /** Содержание программы */
+  content?: string;
+  /** Методология */
+  methodology?: string;
+  /** Оценка результатов */
+  assessment?: string;
+  /** Учебные материалы */
+  materials?: string;
+  /** Требования к участникам */
+  requirements?: string;
+  /** Нормативно-правовой раздел */
+  nprContent?: string;
+  /** Предметно-методический раздел */
+  pmrContent?: string;
+  /** Вариативный раздел */
+  vrContent?: string;
+  /** Версия программы */
+  version: number;
+  /** ID родительской версии */
+  parentId?: string;
+  /** Дата отправки на экспертизу */
+  submittedAt?: string | Date;
+  /** Дата одобрения */
+  approvedAt?: string | Date;
+  /** Дата архивирования */
+  archivedAt?: string | Date;
+  /** Причина отклонения */
+  rejectionReason?: string;
+  /** ID автора */
+  authorId: string;
+  /** Одобривший пользователь */
+  approvedBy?: User;
+  /** ID одобрившего */
+  approvedById?: string;
+  /** Экспертизы по программе */
+  expertises?: Expertise[];
+  /** Дата создания */
+  createdAt: string | Date;
+  /** Дата обновления */
+  updatedAt: string | Date;
+
   institution?: string; // Краткое название выбранного учреждения (например, "КОИРО")
   customInstitution?: string; // Название учреждения, если выбран вариант "Иное"
   title: string; // Название программы
-  
+
   author?: User;
 
   coAuthorIds: string[]; // ID соавторов
@@ -227,7 +220,9 @@ export interface CreateProgramForm {
 }
 
 export interface ProgramPDFProps {
-  program: Partial<CreateProgramForm>;
+  program: Partial<Program>;
   authors: User[];
   getDictionaryById: (id: string) => Dictionary | undefined;
 }
+
+export type ExtendedProgram = Partial<Program>;

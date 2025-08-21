@@ -1,17 +1,17 @@
 import React, { useCallback, useMemo } from "react";
 import { Form, Input, Select, Table, Typography } from "antd";
-import { standards, type CreateProgramForm } from "@/types";
+import { standards, type ExtendedProgram } from "@/types";
 import { useProgramDictionaries } from "@/hooks/useProgramDictionaries";
 
 const { Title } = Typography;
 
 interface Props {
-  value: Partial<CreateProgramForm>;
-  onChange: (data: Partial<CreateProgramForm>) => void;
+  value: ExtendedProgram;
+  onChange: (data: ExtendedProgram) => void;
 }
 
 const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
-  const [form] = Form.useForm<Partial<CreateProgramForm>>();
+  const [form] = Form.useForm<ExtendedProgram>();
 
   const selectedFunctions = Form.useWatch<string[] | undefined>(
     "functions",
@@ -33,7 +33,7 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
   );
 
   const handleValuesChange = useCallback(
-    (changedValues: Partial<CreateProgramForm>) => {
+    (changedValues: ExtendedProgram) => {
       if (changedValues.functions) form.setFieldValue("actions", []);
 
       onChange(form.getFieldsValue());

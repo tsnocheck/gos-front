@@ -1,6 +1,6 @@
 import React from "react";
 import { Document, PDFViewer, Font } from "@react-pdf/renderer";
-import { type CreateProgramForm, type Dictionary, type User } from "@/types";
+import { type ExtendedProgram, type Dictionary, type User } from "@/types";
 import TimesNewRoman from "@/assets/times.ttf";
 import TimesNewRomanBold from "@/assets/times_bold.ttf";
 import TimesNewRomanItalic from "@/assets/times-new-roman-italic.ttf";
@@ -10,7 +10,6 @@ import {
   AbbreviationPage,
   ApprovalPage,
   CalendarPage,
-  EvaluationPage,
   ExplanatoryPage,
   SyllabusPage,
   ThematicPage,
@@ -45,7 +44,7 @@ const pages = [
 
 // Генератор PDF-документа по шагам
 const ProgramPDF: React.FC<{
-  program: Partial<CreateProgramForm>;
+  program: ExtendedProgram;
   authors: User[];
   user?: User;
   getDictionaryById: (id: string) => Dictionary | undefined;
@@ -60,7 +59,7 @@ const ProgramPDF: React.FC<{
 };
 
 export const ProgramPDFViewer: React.FC<{
-  program: Partial<CreateProgramForm>;
+  program: ExtendedProgram;
 }> = ({ program }) => {
   const { getDictionaryById } = useProgramDictionaries();
   const { data: users = [] } = useAvailableAuthors();

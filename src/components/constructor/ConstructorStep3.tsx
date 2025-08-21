@@ -1,15 +1,15 @@
 import React, { useMemo } from "react";
 import { Select, Form, Typography, Button, Space } from "antd";
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
-import type { CreateProgramForm } from "../../types/program";
+import type { ExtendedProgram } from "../../types/program";
 import { useAvailableAuthors } from "@/queries/programs";
 
 const { Option } = Select;
 const { Title } = Typography;
 
 interface Props {
-  value: Partial<CreateProgramForm>;
-  onChange: (data: Partial<CreateProgramForm>) => void;
+  value: ExtendedProgram;
+  onChange: (data: ExtendedProgram) => void;
 }
 
 const ConstructorStep3: React.FC<Props> = ({ value, onChange }) => {

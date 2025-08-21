@@ -1,14 +1,14 @@
 import React from "react";
 import { Input, Select, Form, Typography } from "antd";
-import type { CreateProgramForm } from "../../types/program";
+import type { ExtendedProgram } from "../../types/program";
 import { useProgramDictionaries } from "@/hooks/useProgramDictionaries";
 
 const { Option } = Select;
 const { Title } = Typography;
 
 interface Props {
-  value: Partial<CreateProgramForm>;
-  onChange: (data: Partial<CreateProgramForm>) => void;
+  value: ExtendedProgram;
+  onChange: (data: ExtendedProgram) => void;
 }
 
 const ConstructorStep2: React.FC<Props> = ({ value, onChange }) => {

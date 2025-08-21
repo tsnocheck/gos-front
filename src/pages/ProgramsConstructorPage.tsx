@@ -9,8 +9,12 @@ import ConstructorStep7 from "../components/constructor/ConstructorStep7";
 import ConstructorStep8 from "../components/constructor/ConstructorStep8";
 import ConstructorStep9 from "../components/constructor/ConstructorStep9";
 import ConstructorStep10 from "../components/constructor/ConstructorStep10";
-import type { CreateProgramForm } from "../types/program";
-import { useCreateProgram, useProgram, useUpdateProgram } from "@/queries/programs";
+import type { ExtendedProgram } from "../types/program";
+import {
+  useCreateProgram,
+  useProgram,
+  useUpdateProgram,
+} from "@/queries/programs";
 import { useParams } from "react-router-dom";
 
 const steps = [
@@ -31,11 +35,9 @@ const ProgramsConstructorPage: React.FC = () => {
   const params = useParams();
 
   const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState<Partial<CreateProgramForm>>({
-    title: "",
-  });
+  const [formData, setFormData] = useState<ExtendedProgram>({ title: "" });
   const createProgram = useCreateProgram();
-  const updateProgram = useUpdateProgram()
+  const updateProgram = useUpdateProgram();
   const { data: programData, isSuccess } = useProgram(params.id ?? "");
 
   const StepComponent = useMemo(
@@ -50,15 +52,15 @@ const ProgramsConstructorPage: React.FC = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 0));
   };
 
-  const handleChange = useCallback((data: Partial<CreateProgramForm>) => {
+  const handleChange = useCallback((data: ExtendedProgram) => {
     setFormData((prev) => ({ ...prev, ...data }));
   }, []);
 
   const handleFinish = async () => {
     try {
       if (!params.id) await createProgram.mutateAsync(formData);
-      else await updateProgram.mutateAsync({ id: params.id, data: formData })
-      message.success("Программа успешно сохранена")
+      else await updateProgram.mutateAsync({ id: params.id, data: formData });
+      message.success("Программа успешно сохранена");
     } catch {
       message.error("Ошибка при отправке формы");
     }
@@ -94,13 +96,18 @@ const ProgramsConstructorPage: React.FC = () => {
         <Button onClick={handlePrev} disabled={currentStep === 0}>
           Назад
         </Button>
-        <div style={{ display: 'flex', gap: 10 }}>
+        <div style={{ display: "flex", gap: 10 }}>
           {currentStep < steps.length - 1 && (
             <Button type="primary" onClick={handleNext}>
               Далее
             </Button>
           )}
-          <Button type="primary" variant="solid" color="green" onClick={handleFinish}>
+          <Button
+            type="primary"
+            variant="solid"
+            color="green"
+            onClick={handleFinish}
+          >
             Сохранить программу
           </Button>
         </div>

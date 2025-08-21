@@ -1,5 +1,5 @@
 import { apiClient } from '../lib/api';
-import type { Program, ProgramStatus, CreateProgramForm, PaginatedResponse, User } from '../types';
+import type { Program, ProgramStatus, ExtendedProgram, PaginatedResponse, User } from '../types';
 
 export interface ProgramQueryParams {
   page?: number;
@@ -11,13 +11,11 @@ export interface ProgramQueryParams {
   sortOrder?: 'asc' | 'desc';
 }
 
-export interface UpdateProgramData extends Partial<CreateProgramForm> {
-  status?: ProgramStatus;
-}
+export type UpdateProgramData = ExtendedProgram
 
 export const programService = {
   async getPrograms(params?: ProgramQueryParams) {
-    return apiClient.get<PaginatedResponse<Program>>(`/programs`, { params });
+    return apiClient.get<PaginatedResponse<ExtendedProgram>>(`/programs`, { params });
   },
 
   async getMyPrograms(params?: ProgramQueryParams) {
@@ -25,14 +23,14 @@ export const programService = {
   },
 
   async getProgramById(id: string) {
-    return apiClient.get<Partial<CreateProgramForm>>(`/programs/id/${id}`);
+    return apiClient.get<ExtendedProgram>(`/programs/id/${id}`);
   },
 
   async getProgramVersions(id: string) {
     return apiClient.get<Program[]>(`/programs/${id}/versions`);
   },
 
-  async createProgram(data: Partial<CreateProgramForm>) {
+  async createProgram(data: ExtendedProgram) {
     return apiClient.post<Program>(`/programs`, data);
   },
 

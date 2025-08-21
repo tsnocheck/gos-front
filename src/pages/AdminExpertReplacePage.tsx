@@ -106,7 +106,7 @@ export const AdminExpertReplacePage: React.FC = () => {
       <Card>
         <Table
           columns={columns}
-          dataSource={expertises || []}
+          dataSource={expertises as Expertise[] || []}
           loading={isLoading}
           rowKey="id"
           pagination={false}
@@ -117,10 +117,10 @@ export const AdminExpertReplacePage: React.FC = () => {
         onCancel={closeModal}
         title="Замена эксперта"
         onOk={handleReplace}
-        okButtonProps={{ disabled: !newExpertId || replaceExpertMutation.isLoading }}
+        okButtonProps={{ disabled: !newExpertId || replaceExpertMutation.isPending }}
         okText="Заменить"
         cancelText="Отмена"
-        confirmLoading={replaceExpertMutation.isLoading}
+        confirmLoading={replaceExpertMutation.isPending}
         destroyOnHidden
       >
         <Space direction="vertical" style={{ width: "100%" }}>
@@ -137,7 +137,7 @@ export const AdminExpertReplacePage: React.FC = () => {
               onChange={setNewExpertId}
               loading={isExpertsLoading}
               filterOption={(input, option) =>
-                (option?.children as string)?.toLowerCase().includes(input.toLowerCase())
+                String(option?.children ?? '').toLowerCase().includes(input.toLowerCase())
               }
             >
               {experts?.filter((u: User) => u.id !== selectedExpertise?.expertId).map((user: User) => (

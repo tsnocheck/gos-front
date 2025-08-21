@@ -2,7 +2,7 @@ import React from "react";
 import { Table, Button, Input, Typography, Checkbox, Select, Tabs } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type {
-  CreateProgramForm,
+  ExtendedProgram,
   NetworkOrg,
   Topic,
   Module,
@@ -13,8 +13,8 @@ import { programSection } from "@/types";
 const { Title } = Typography;
 
 interface Props {
-  value: Partial<CreateProgramForm>;
-  onChange: (data: Partial<CreateProgramForm>) => void;
+  value: ExtendedProgram;
+  onChange: (data: ExtendedProgram) => void;
 }
 
 const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {

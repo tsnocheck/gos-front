@@ -5,7 +5,6 @@ export { ExplanatoryPage } from "./ExplanatoryPage";
 export { SyllabusPage } from "./SyllabusPage";
 export { CalendarPage } from "./CalendarPage";
 export { ThematicPage } from "./ThematicPage";
-export { EvaluationPage } from "./EvaluationPage";
 export { RegulatoryPage } from "./RegulatoryPage";
 export { LiteraturePage } from "./LiteraturePage";
 export { AttestationExamplesPage } from "./AttestationExamplesPage";

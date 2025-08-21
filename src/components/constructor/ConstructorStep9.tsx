@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
-import { Form, Input, Typography, Checkbox, Tabs } from "antd";
+import { Form, Input, Typography, Checkbox } from "antd";
 import {
   DistanceEquipment,
   Equipment,
-  type CreateProgramForm,
+  type ExtendedProgram,
 } from "../../types";
 import WYSIWYGEditor from "../shared/WYSIWYGEditor";
 
@@ -35,14 +35,14 @@ const distanceEquipmentList: { value: DistanceEquipment; label: string }[] = [
 ];
 
 interface Props {
-  value: Partial<CreateProgramForm>;
-  onChange: (data: Partial<CreateProgramForm>) => void;
+  value: ExtendedProgram;
+  onChange: (data: ExtendedProgram) => void;
 }
 
 const ConstructorStep9: React.FC<Props> = ({ value, onChange }) => {
   const update = useCallback((
-    field: keyof CreateProgramForm["orgPedConditions"],
-    newValue: CreateProgramForm["orgPedConditions"][typeof field]
+    field: keyof Required<ExtendedProgram>["orgPedConditions"],
+    newValue: Required<ExtendedProgram>["orgPedConditions"][typeof field]
   ) => {
     onChange({
       ...value,

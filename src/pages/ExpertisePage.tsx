@@ -13,7 +13,7 @@ import {
   Checkbox,
   Rate,
 } from "antd";
-import { EyeOutlined, EditOutlined, CheckOutlined } from "@ant-design/icons";
+import { EyeOutlined, EditOutlined } from "@ant-design/icons";
 import {
   ExpertiseStatus,
   type CompleteExpertiseDto,
@@ -37,21 +37,21 @@ const statusMap: Record<ExpertiseStatus, { text: string; color: string }> = {
 const { Title, Text } = Typography;
 // const { Option } = Select;
 
-const criteriaNames = {
-  "1": "Актуальность программы",
-  "2": "Соответствие нормативным требованиям",
-  "3": "Качество содержания",
-  "4": "Методическая обоснованность",
-  "5": "Практическая направленность",
-  "6": "Инновационность",
-  "7": "Ресурсное обеспечение",
-  "8": "Технологичность",
-  "9": "Оценочные материалы",
-  "10": "Структурированность",
-  "11": "Логическая последовательность",
-  "12": "Завершенность",
-  "13": "Применимость результатов",
-};
+// const criteriaNames = {
+//   "1": "Актуальность программы",
+//   "2": "Соответствие нормативным требованиям",
+//   "3": "Качество содержания",
+//   "4": "Методическая обоснованность",
+//   "5": "Практическая направленность",
+//   "6": "Инновационность",
+//   "7": "Ресурсное обеспечение",
+//   "8": "Технологичность",
+//   "9": "Оценочные материалы",
+//   "10": "Структурированность",
+//   "11": "Логическая последовательность",
+//   "12": "Завершенность",
+//   "13": "Применимость результатов",
+// };
 
 export const ExpertisePage: React.FC = () => {
   const [selectedExpertiseId, setSelectedExpertiseId] = useState<string | null>(

@@ -68,9 +68,6 @@ export const DashboardPage: React.FC = () => {
     total: 0,
   };
 
-  const shouldShowMockData =
-    !myPrograms && user?.roles?.includes(UserRole.AUTHOR);
-
   const displayStats = programStats || mockStats;
   const displayPrograms = mockPrograms;
 

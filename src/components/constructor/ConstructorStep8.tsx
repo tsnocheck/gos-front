@@ -1,13 +1,13 @@
 import React from "react";
 import { Input, Typography, Card } from "antd";
-import type { Attestation, CreateProgramForm } from "@/types";
+import type { Attestation, ExtendedProgram } from "@/types";
 import WYSIWYGEditor from "../shared/WYSIWYGEditor";
 
 const { Title } = Typography;
 
 interface Props {
-  value: Partial<CreateProgramForm>;
-  onChange: (data: Partial<CreateProgramForm>) => void;
+  value: ExtendedProgram;
+  onChange: (data: ExtendedProgram) => void;
 }
 
 const ConstructorStep8: React.FC<Props> = ({ value, onChange }) => {

@@ -16,7 +16,7 @@ import {
 } from "../queries/programs";
 import { programService } from "../services/programService";
 import {
-  type CreateProgramForm,
+  type ExtendedProgram,
   type Program,
   ProgramStatus,
 } from "../types/program";
@@ -34,7 +34,7 @@ export const AdminProgramsPage: React.FC = () => {
   const queryClient = useQueryClient();
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [viewProgram, setViewProgram] = useState<Partial<CreateProgramForm> | null>(null);
+  const [viewProgram, setViewProgram] = useState<ExtendedProgram | null>(null);
 
   const getUserById = useCallback(
     (id: string) => users.find((user) => user.id === id),
@@ -43,11 +43,11 @@ export const AdminProgramsPage: React.FC = () => {
 
 
   // Архивирование и разархивирование
-  const handleArchiveToggle = async (program: Program, checked: boolean) => {
+  const handleArchiveToggle = async (program: ExtendedProgram, checked: boolean) => {
     if (checked) {
-      await programService.archiveProgram(program.id);
+      await programService.archiveProgram(program.id!);
     } else {
-      await programService.unarchiveProgram(program.id);
+      await programService.unarchiveProgram(program.id!);
     }
     await queryClient.invalidateQueries();
   };
@@ -63,7 +63,7 @@ export const AdminProgramsPage: React.FC = () => {
     setSelectedRowKeys([]);
   };
 
-  const columns: ColumnsType<Partial<CreateProgramForm>> = [
+  const columns: ColumnsType<ExtendedProgram> = [
     {
       title: "Название",
       dataIndex: "title",
@@ -84,7 +84,7 @@ export const AdminProgramsPage: React.FC = () => {
     {
       title: "Соавторы",
       key: "coauthors",
-      render: (_, { coAuthorIds }: Partial<CreateProgramForm>) => {
+      render: (_, { coAuthorIds }) => {
         const authors = (coAuthorIds ?? []).map((id) => getUserById(id));
 
         return authors.reduce(
@@ -109,7 +109,7 @@ export const AdminProgramsPage: React.FC = () => {
     {
       title: "Действия",
       key: "actions",
-      render: (_, record: Program) => (
+      render: (_, record) => (
         <Button
           icon={<EyeOutlined />}
           size="small"

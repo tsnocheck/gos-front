@@ -5,7 +5,7 @@ import {
   programSection,
   ProgramSection,
   type Attestation,
-  type CreateProgramForm,
+  type ExtendedProgram,
   type Module,
 } from "@/types";
 
@@ -13,8 +13,8 @@ const { Title } = Typography;
 const { Option } = Select;
 
 interface Props {
-  value: Partial<CreateProgramForm>;
-  onChange: (data: Partial<CreateProgramForm>) => void;
+  value: ExtendedProgram;
+  onChange: (data: ExtendedProgram) => void;
 }
 
 const emptyModule: Module = {
@@ -44,7 +44,7 @@ const fieldsTranslate: Record<string, string> = {
 
 const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
   const handleAdd = useCallback(
-    <T,>(field: keyof CreateProgramForm, item: T) => {
+    <T,>(field: keyof ExtendedProgram, item: T) => {
       onChange({
         [field]: [...((value[field] as T[]) || []), item],
       });
@@ -53,7 +53,7 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
   );
 
   const handleRemove = useCallback(
-    <T,>(field: keyof CreateProgramForm, idx: number) => {
+    <T,>(field: keyof ExtendedProgram, idx: number) => {
       onChange({
         [field]: ((value[field] as T[]) || []).filter((_, i) => i !== idx),
       });
@@ -63,7 +63,7 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
 
   const handleUpdate = useCallback(
     <T,>(
-      field: keyof CreateProgramForm,
+      field: keyof ExtendedProgram,
       idx: number,
       key: keyof T,
       val: any
