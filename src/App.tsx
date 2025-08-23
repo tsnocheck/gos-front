@@ -5,31 +5,49 @@ import {
   Navigate,
 } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, Spin } from "antd";
 import ruRU from "antd/locale/ru_RU";
+import { Suspense, lazy, type JSX } from "react";
+import { UserRole } from "./types";
 
 // Components
 import { AppLayout } from "./components/AppLayout";
 
-// Pages
-import { LoginPage } from "./pages/LoginPage";
-import { RegisterPage } from "./pages/RegisterPage";
-import { DashboardPage } from "./pages/DashboardPage";
-import { ProgramsListPage } from "./pages/ProgramsListPage";
-import { ExpertisePage } from "./pages/ExpertisePage";
-import { AdminUsersPage } from "./pages/AdminUsersPage";
-import { ProfilePage } from "./pages/ProfilePage";
-import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
-import { AdminArchivePage } from "./pages/AdminArchivePage.tsx";
-import { ResetPasswordPage } from "./pages/ResetPasswordPage.tsx";
-import { AdminDictionariesPage } from "./pages/AdminDictionariesPage";
-import { AdminExpertReplacePage } from "./pages/AdminExpertReplacePage";
-import type { JSX } from "react";
-import { UserRole } from "./types";
-import { AdminProgramsPage } from "./pages/AdminProgramsPage.tsx";
-import { AdminCandidatesPage } from "./pages/AdminCandidatesPage.tsx";
-import AdminRecommendationsPage from "./pages/AdminRecommendationsPage.tsx";
-import ProgramsConstructorPage from "./pages/ProgramsConstructorPage.tsx";
+// Lazy loaded pages
+const LoginPage = lazy(() => import("./pages/LoginPage").then(module => ({ default: module.LoginPage })));
+const RegisterPage = lazy(() => import("./pages/RegisterPage").then(module => ({ default: module.RegisterPage })));
+const DashboardPage = lazy(() => import("./pages/DashboardPage").then(module => ({ default: module.DashboardPage })));
+const ProgramsListPage = lazy(() => import("./pages/ProgramsListPage").then(module => ({ default: module.ProgramsListPage })));
+const ExpertisePage = lazy(() => import("./pages/ExpertisePage").then(module => ({ default: module.ExpertisePage })));
+const AdminUsersPage = lazy(() => import("./pages/AdminUsersPage").then(module => ({ default: module.AdminUsersPage })));
+const ProfilePage = lazy(() => import("./pages/ProfilePage").then(module => ({ default: module.ProfilePage })));
+const ProtectedRoute = lazy(() => import("./components/ProtectedRoute.tsx").then(module => ({ default: module.ProtectedRoute })));
+const AdminArchivePage = lazy(() => import("./pages/AdminArchivePage.tsx").then(module => ({ default: module.AdminArchivePage })));
+const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage.tsx").then(module => ({ default: module.ResetPasswordPage })));
+const AdminDictionariesPage = lazy(() => import("./pages/AdminDictionariesPage").then(module => ({ default: module.AdminDictionariesPage })));
+const AdminExpertReplacePage = lazy(() => import("./pages/AdminExpertReplacePage").then(module => ({ default: module.AdminExpertReplacePage })));
+const AdminProgramsPage = lazy(() => import("./pages/AdminProgramsPage.tsx").then(module => ({ default: module.AdminProgramsPage })));
+const AdminCandidatesPage = lazy(() => import("./pages/AdminCandidatesPage.tsx").then(module => ({ default: module.AdminCandidatesPage })));
+const AdminRecommendationsPage = lazy(() => import("./pages/AdminRecommendationsPage.tsx"));
+const ProgramsConstructorPage = lazy(() => import("./pages/ProgramsConstructorPage.tsx"));
+
+// Loading component
+const PageLoader = () => (
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "100vh",
+      flexDirection: "column",
+    }}
+  >
+    <Spin size="large" />
+    <div style={{ marginTop: 16, fontSize: 16, color: '#666' }}>
+      Загрузка страницы...
+    </div>
+  </div>
+);
 
 // Create a client
 const queryClient = new QueryClient({
@@ -187,9 +205,11 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ConfigProvider locale={ruRU}>
         <Router>
-          <Routes>
-            {generateRoutes(routes)}
-          </Routes>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              {generateRoutes(routes)}
+            </Routes>
+          </Suspense>
         </Router>
       </ConfigProvider>
     </QueryClientProvider>

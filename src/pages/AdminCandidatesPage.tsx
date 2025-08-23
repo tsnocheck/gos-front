@@ -14,7 +14,6 @@ import {
 import {
   CheckOutlined,
   CloseOutlined,
-  MailOutlined,
   DeleteOutlined,
   EyeOutlined,
 } from "@ant-design/icons";
@@ -22,7 +21,6 @@ import {
   useCandidates,
   useApproveCandidate,
   useRejectCandidate,
-  useInviteCandidate,
   useDeleteCandidate,
 } from "../queries/candidates";
 import { CandidateStatus, type Candidate } from "../types/user";
@@ -46,7 +44,6 @@ export const AdminCandidatesPage: React.FC = () => {
   const [viewCandidate, setViewCandidate] = useState<Candidate | null>(null);
   const approveMutation = useApproveCandidate();
   const rejectMutation = useRejectCandidate();
-  const inviteMutation = useInviteCandidate();
   const deleteMutation = useDeleteCandidate();
 
   const handleApprove = async (id: string) => {
@@ -67,17 +64,6 @@ export const AdminCandidatesPage: React.FC = () => {
     } catch (e: any) {
       message.error(
         e?.response?.data?.message || "Ошибка при отклонении кандидата"
-      );
-    }
-  };
-
-  const handleInvite = async (id: string) => {
-    try {
-      await inviteMutation.mutateAsync(id);
-      message.success("Приглашение отправлено");
-    } catch (e: any) {
-      message.error(
-        e?.response?.data?.message || "Ошибка при отправке приглашения"
       );
     }
   };
@@ -166,14 +152,6 @@ export const AdminCandidatesPage: React.FC = () => {
             icon={<EyeOutlined />}
             onClick={() => setViewCandidate(record)}
           />
-          {record.status === "pending" && (
-            <Button
-              type="primary"
-              icon={<MailOutlined />}
-              loading={inviteMutation.isPending}
-              onClick={() => handleInvite(record.id)}
-            />
-          )}
           {record.status === "pending" && (
             <Button
               variant="solid"
