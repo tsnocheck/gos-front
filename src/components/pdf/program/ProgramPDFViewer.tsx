@@ -72,7 +72,7 @@ export const ProgramPDFViewer: React.FC<{
 
   return (
     <div style={{ height: "100vh" }}>
-      {program && users.length && (
+      {program && authors.length && (
         <PDFViewer width="100%" height="100%">
           <ProgramPDF {...{ program, authors, getDictionaryById }} />
         </PDFViewer>
