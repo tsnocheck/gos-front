@@ -1,4 +1,4 @@
-import { StyleSheet } from "@react-pdf/renderer";
+import { StyleSheet } from '@react-pdf/renderer';
 
 export type StyleObject = Parameters<typeof StyleSheet.create>[0][0];
 
@@ -8,18 +8,18 @@ export const PDFStyles = StyleSheet.create({
     paddingVertical: 60,
     fontSize: 12,
     lineHeight: 1.6,
-    fontFamily: "Times-New-Roman",
+    fontFamily: 'Times-New-Roman',
   },
   sectionTitle: {
     fontSize: 14,
     marginBottom: 10,
-    fontWeight: "bold",
-    textAlign: "center",
-    textTransform: "uppercase",
+    fontWeight: 'bold',
+    textAlign: 'center',
+    textTransform: 'uppercase',
   },
   paragraph: { marginBottom: 10 },
-  bold: { fontWeight: "bold" },
-  italic: { fontStyle: "italic" },
+  bold: { fontWeight: 'bold' },
+  italic: { fontStyle: 'italic' },
   block: {
     marginBottom: 10,
   },
@@ -32,22 +32,22 @@ export const PDFTableStyles = StyleSheet.create({
   self: {
     borderLeftWidth: 1,
     borderTopWidth: 1,
-    borderColor: "#000",
+    borderColor: '#000',
     marginTop: 4,
-    display: "flex",
-    flexDirection: "column",
-    width: "100%",
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
   },
   row: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "stretch",
-    width: "100%",
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    width: '100%',
   },
   col: {
     borderRightWidth: 1,
     borderBottomWidth: 1,
-    borderColor: "#000",
+    borderColor: '#000',
     paddingVertical: 6,
     paddingHorizontal: 10,
     fontSize: 11,
@@ -55,24 +55,24 @@ export const PDFTableStyles = StyleSheet.create({
     flexShrink: 1,
   },
   headerCell: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
   headerText: {
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   center: {
-    textAlign: "center",
+    textAlign: 'center',
   },
   italic: {
-    fontStyle: "italic",
+    fontStyle: 'italic',
   },
 });
 
 export const PDFListStyles = StyleSheet.create({
   list: {
-    display: "flex",
-    flexDirection: "column",
+    display: 'flex',
+    flexDirection: 'column',
     marginTop: 8,
     marginBottom: 8,
   },

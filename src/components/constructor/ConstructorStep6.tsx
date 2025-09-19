@@ -1,5 +1,5 @@
-import React, { useCallback } from "react";
-import { Table, Button, Input, Typography, Select, message } from "antd";
+import React, { useCallback } from 'react';
+import { Table, Button, Input, Typography, Select, message } from 'antd';
 import {
   attestationForms,
   programSection,
@@ -7,7 +7,7 @@ import {
   type Attestation,
   type ExtendedProgram,
   type Module,
-} from "@/types";
+} from '@/types';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -19,8 +19,8 @@ interface Props {
 
 const emptyModule: Module = {
   section: ProgramSection.NPR,
-  code: "",
-  name: "",
+  code: '',
+  name: '',
   lecture: 0,
   practice: 0,
   distant: 0,
@@ -28,18 +28,18 @@ const emptyModule: Module = {
 };
 
 const emptyAttestation: Attestation = {
-  moduleCode: "none",
-  name: "",
+  moduleCode: 'none',
+  name: '',
   lecture: 0,
   practice: 0,
   distant: 0,
-  form: "",
+  form: '',
 };
 
 const fieldsTranslate: Record<string, string> = {
-  lecture: "Лекц. ",
-  practice: "Практ. ",
-  distant: "Дист. ",
+  lecture: 'Лекц. ',
+  practice: 'Практ. ',
+  distant: 'Дист. ',
 };
 
 const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
@@ -49,7 +49,7 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
         [field]: [...((value[field] as T[]) || []), item],
       });
     },
-    [onChange, value]
+    [onChange, value],
   );
 
   const handleRemove = useCallback(
@@ -58,36 +58,29 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
         [field]: ((value[field] as T[]) || []).filter((_, i) => i !== idx),
       });
     },
-    [onChange, value]
+    [onChange, value],
   );
 
   const handleUpdate = useCallback(
-    <T,>(
-      field: keyof ExtendedProgram,
-      idx: number,
-      key: keyof T,
-      val: any
-    ) => {
-      if (field === "modules") {
+    <T,>(field: keyof ExtendedProgram, idx: number, key: keyof T, val: any) => {
+      if (field === 'modules') {
         const current = value.modules?.[idx];
         const updatedModule = { ...current, [key]: val } as Module;
         const duplicate = value.modules?.some(
           (m, i) =>
-            i !== idx &&
-            m.section === updatedModule.section &&
-            m.code === updatedModule.code
+            i !== idx && m.section === updatedModule.section && m.code === updatedModule.code,
         );
         if (duplicate) {
-          message.warning("Модуль с таким разделом и кодом уже существует");
+          message.warning('Модуль с таким разделом и кодом уже существует');
           return;
         }
       }
 
-      if (field === "attestations" && key === "moduleCode") {
-        let name = "Промежуточная аттестация";
+      if (field === 'attestations' && key === 'moduleCode') {
+        let name = 'Промежуточная аттестация';
 
-        if (val === "open") name = "Входной контроль в форме самодиагностики";
-        else if (val === "close") name = "Итоговая аттестация";
+        if (val === 'open') name = 'Входной контроль в форме самодиагностики';
+        else if (val === 'close') name = 'Итоговая аттестация';
 
         onChange({
           attestations: (value.attestations ?? []).map((attestation, id) =>
@@ -97,7 +90,7 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
                   name,
                   moduleCode: val,
                 }
-              : attestation
+              : attestation,
           ),
         });
 
@@ -106,21 +99,21 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
 
       onChange({
         [field]: ((value[field] as T[]) || []).map((item, i) =>
-          i === idx ? { ...item, [key]: val } : item
+          i === idx ? { ...item, [key]: val } : item,
         ),
       });
     },
-    [onChange, value]
+    [onChange, value],
   );
 
   const moduleColumns = [
     {
-      title: "Раздел",
-      dataIndex: "section",
+      title: 'Раздел',
+      dataIndex: 'section',
       render: (v: string, _: Module, i: number) => (
         <Select
           value={v}
-          onChange={(val) => handleUpdate<Module>("modules", i, "section", val)}
+          onChange={(val) => handleUpdate<Module>('modules', i, 'section', val)}
           style={{ width: 200 }}
         >
           {Object.entries(programSection.full).map(([key, label]) => (
@@ -132,58 +125,44 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
       ),
     },
     {
-      title: "Код",
-      dataIndex: "code",
+      title: 'Код',
+      dataIndex: 'code',
       render: (v: string, _: Module, i: number) => (
         <Input
           style={{ width: 40 }}
           value={v}
-          onChange={(e) =>
-            handleUpdate<Module>("modules", i, "code", e.target.value)
-          }
+          onChange={(e) => handleUpdate<Module>('modules', i, 'code', e.target.value)}
         />
       ),
     },
     {
-      title: "Название модуля",
-      dataIndex: "name",
+      title: 'Название модуля',
+      dataIndex: 'name',
       render: (v: string, _: Module, i: number) => (
         <Input
           value={v}
           style={{ minWidth: 400 }}
-          onChange={(e) =>
-            handleUpdate<Module>("modules", i, "name", e.target.value)
-          }
+          onChange={(e) => handleUpdate<Module>('modules', i, 'name', e.target.value)}
         />
       ),
     },
-    ...["lecture", "practice", "distant", "kad"].map((field) => ({
-      title:
-        field === "kad" ? "Кол-во ауд. дней" : `${fieldsTranslate[field]}ч.`,
+    ...['lecture', 'practice', 'distant', 'kad'].map((field) => ({
+      title: field === 'kad' ? 'Кол-во ауд. дней' : `${fieldsTranslate[field]}ч.`,
       dataIndex: field,
       render: (v: number, _: Module, i: number) => (
         <Input
           type="number"
           value={v}
           onChange={(e) =>
-            handleUpdate<Module>(
-              "modules",
-              i,
-              field as keyof Module,
-              Number(e.target.value)
-            )
+            handleUpdate<Module>('modules', i, field as keyof Module, Number(e.target.value))
           }
         />
       ),
     })),
     {
-      title: "",
+      title: '',
       render: (_: any, __: Module, i: number) => (
-        <Button
-          danger
-          size="small"
-          onClick={() => handleRemove<Module>("modules", i)}
-        >
+        <Button danger size="small" onClick={() => handleRemove<Module>('modules', i)}>
           Удалить
         </Button>
       ),
@@ -192,20 +171,18 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
 
   const attestationColumns = [
     {
-      title: "Модуль",
-      dataIndex: "moduleCode",
+      title: 'Модуль',
+      dataIndex: 'moduleCode',
       render: (v: string, _: Attestation, i: number) => {
         const selected = value.attestations?.map((a) => a.moduleCode) || [];
 
-        const disableOpen = selected.includes("open") && v !== "open";
-        const disableClose = selected.includes("close") && v !== "close";
+        const disableOpen = selected.includes('open') && v !== 'open';
+        const disableClose = selected.includes('close') && v !== 'close';
 
         return (
           <Select
             value={v}
-            onChange={(val) =>
-              handleUpdate<Attestation>("attestations", i, "moduleCode", val)
-            }
+            onChange={(val) => handleUpdate<Attestation>('attestations', i, 'moduleCode', val)}
             style={{ width: 200 }}
           >
             <Option value="open" disabled={disableOpen}>
@@ -224,19 +201,17 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
       },
     },
     {
-      title: "Название аттестации",
-      dataIndex: "name",
+      title: 'Название аттестации',
+      dataIndex: 'name',
       render: (v: string, _: Attestation, i: number) => (
         <Input
           value={v}
           style={{ width: 300 }}
-          onChange={(e) =>
-            handleUpdate<Attestation>("attestations", i, "name", e.target.value)
-          }
+          onChange={(e) => handleUpdate<Attestation>('attestations', i, 'name', e.target.value)}
         />
       ),
     },
-    ...["lecture", "practice", "distant"].map((field) => ({
+    ...['lecture', 'practice', 'distant'].map((field) => ({
       title: `${fieldsTranslate[field]}ч.`,
       dataIndex: field,
       render: (v: number, _: Attestation, i: number) => (
@@ -245,37 +220,31 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
           value={v}
           onChange={(e) =>
             handleUpdate<Attestation>(
-              "attestations",
+              'attestations',
               i,
               field as keyof Attestation,
-              Number(e.target.value)
+              Number(e.target.value),
             )
           }
         />
       ),
     })),
     {
-      title: "Форма",
-      dataIndex: "form",
+      title: 'Форма',
+      dataIndex: 'form',
       render: (v: string, _: Attestation, i: number) => (
         <Select
           value={v}
-          onChange={(val) =>
-            handleUpdate<Attestation>("attestations", i, "form", val)
-          }
+          onChange={(val) => handleUpdate<Attestation>('attestations', i, 'form', val)}
           options={attestationForms.map((value) => ({ value }))}
           style={{ width: 200 }}
         />
       ),
     },
     {
-      title: "",
+      title: '',
       render: (_: any, __: Attestation, i: number) => (
-        <Button
-          danger
-          size="small"
-          onClick={() => handleRemove<Attestation>("attestations", i)}
-        >
+        <Button danger size="small" onClick={() => handleRemove<Attestation>('attestations', i)}>
           Удалить
         </Button>
       ),
@@ -286,7 +255,7 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
     <div>
       <Title level={4}>Учебный план</Title>
       <Button
-        onClick={() => handleAdd<Module>("modules", emptyModule)}
+        onClick={() => handleAdd<Module>('modules', emptyModule)}
         style={{ marginBottom: 12 }}
       >
         Добавить модуль
@@ -301,12 +270,9 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
 
       <Title level={5}>Аттестации</Title>
       <Button
-        onClick={() => handleAdd<Attestation>("attestations", emptyAttestation)}
+        onClick={() => handleAdd<Attestation>('attestations', emptyAttestation)}
         style={{ marginBottom: 12 }}
-        disabled={
-          (value.modules?.length ?? 0) < 1 &&
-          (value.attestations?.length ?? 0) >= 2
-        }
+        disabled={(value.modules?.length ?? 0) < 1 && (value.attestations?.length ?? 0) >= 2}
       >
         Добавить аттестацию
       </Button>

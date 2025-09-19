@@ -136,4 +136,15 @@ export interface ExpertTableFilters {
   dateFrom?: string | Date;
   dateTo?: string | Date;
   result?: 'positive' | 'negative';
-} 
+}
+
+export interface ExpertiseForRevisionDto {
+  revisionComments: string; // Комментарии с замечаниями для доработки
+  generalFeedback?: string; // Общий отзыв эксперта
+  recommendations?: string; // Рекомендации по улучшению
+}
+
+export interface ResubmitAfterRevisionDto {
+  revisionNotes: string; // Заметки автора о внесенных изменениях
+  changesSummary?: string; // Краткое описание изменений
+}

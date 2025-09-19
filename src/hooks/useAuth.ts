@@ -1,14 +1,18 @@
-import {useCurrentUser, useLogin, useLogout} from "../queries/auth.ts";
-import {UserRole} from "../types";
+import { useCurrentUser, useLogin, useLogout } from '../queries/auth.ts';
+import { UserRole } from '@/types';
 
 export const useAuth = () => {
   const userQuery = useCurrentUser();
   const loginMutation = useLogin();
   const logoutMutation = useLogout();
 
+  const getToken = () => {
+    return localStorage.getItem('accessToken') ?? '';
+  };
+
   const checkPermission = (roles: UserRole[]) => {
-    return roles.some((role) => userQuery.data?.roles.includes(role))
-  }
+    return roles.some((role) => userQuery.data?.roles.includes(role));
+  };
 
   return {
     user: userQuery.data,
@@ -18,6 +22,7 @@ export const useAuth = () => {
     logout: logoutMutation.mutate,
     loginMutation,
     logoutMutation,
-    checkPermission
+    checkPermission,
+    getToken,
   };
 };

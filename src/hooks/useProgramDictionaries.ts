@@ -1,27 +1,29 @@
-import { useDictionaries } from "@/queries/dictionaries";
-import { DictionaryType, type TDictionaryType } from "@/types";
-import { useCallback } from "react";
+import { useDictionaries } from '@/queries/dictionaries';
+import { DictionaryType, type TDictionaryType } from '@/types';
+import { useCallback } from 'react';
 
 export const useProgramDictionaries = () => {
   const { data = [] } = useDictionaries();
 
-  const getDictionaryById = useCallback((id: string) => (data ?? []).find((dictionary) => dictionary.id === id), [data])
+  const getDictionaryById = useCallback(
+    (id: string) => (data ?? []).find((dictionary) => dictionary.id === id),
+    [data],
+  );
 
   const getDictionaryByTypes = useCallback(
     (types: TDictionaryType[]) => {
-      return (data?.filter((dictionary) => types.includes(dictionary.type)) ?? []);
+      return data?.filter((dictionary) => types.includes(dictionary.type)) ?? [];
     },
-    [data]
+    [data],
   );
 
   const getActions = useCallback(
     (functionIds: string[]) =>
       getDictionaryByTypes(
-        (functionIds.map(
-          (functionId) => `${functionId}--${DictionaryType.LABOR_ACTIONS}`
-        ) ?? []) as TDictionaryType[]
+        (functionIds.map((functionId) => `${functionId}--${DictionaryType.LABOR_ACTIONS}`) ??
+          []) as TDictionaryType[],
       ),
-    [getDictionaryByTypes]
+    [getDictionaryByTypes],
   );
 
   return {
@@ -32,6 +34,6 @@ export const useProgramDictionaries = () => {
     duties: getDictionaryByTypes([DictionaryType.JOB_RESPONSIBILITIES]),
 
     getActions,
-    getDictionaryById
+    getDictionaryById,
   };
 };

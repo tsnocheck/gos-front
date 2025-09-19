@@ -1,34 +1,41 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { expertiseService } from "../services/expertiseService";
-import type { Expertise, CreateExpertiseDto, UpdateExpertiseDto, CompleteExpertiseDto } from "../types";
-import type { ExpertiseCriteriaDto, ExpertTableFilters } from "../types/expertise";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { expertiseService } from '../services/expertiseService';
+import type {
+  Expertise,
+  CreateExpertiseDto,
+  UpdateExpertiseDto,
+  CompleteExpertiseDto,
+} from '../types';
+import type { ExpertiseCriteriaDto, ExpertTableFilters } from '../types/expertise';
+import type { ExpertiseQueryParams } from '@/services/expertiseService';
+import { programKeys } from './programs';
 
 // Query keys
 export const expertiseKeys = {
-  all: ["expertises"] as const,
-  lists: () => [...expertiseKeys.all, "list"] as const,
-  list: () => [...expertiseKeys.lists()] as const,
-  my: () => [...expertiseKeys.all, "my"] as const,
-  details: () => [...expertiseKeys.all, "detail"] as const,
+  all: ['expertises'] as const,
+  lists: () => [...expertiseKeys.all, 'list'] as const,
+  list: (params?: ExpertiseQueryParams) => [...expertiseKeys.lists(), params || {}] as const,
+  my: (params?: ExpertiseQueryParams) => [...expertiseKeys.all, 'my', params || {}] as const,
+  details: () => [...expertiseKeys.all, 'detail'] as const,
   detail: (id: string) => [...expertiseKeys.details(), id] as const,
-  stats: () => [...expertiseKeys.all, "stats"] as const,
+  stats: () => [...expertiseKeys.all, 'stats'] as const,
 };
 
 // Queries
-export const useExpertises = () => {
+export const useExpertises = (params?: ExpertiseQueryParams) => {
   return useQuery({
-    queryKey: expertiseKeys.list(),
-    queryFn: expertiseService.getExpertises,
+    queryKey: expertiseKeys.list(params),
+    queryFn: () => expertiseService.getExpertises(params),
     retry: false,
     refetchOnWindowFocus: false,
     staleTime: 2 * 60 * 1000,
   });
 };
 
-export const useMyExpertises = () => {
+export const useMyExpertises = (params?: ExpertiseQueryParams) => {
   return useQuery({
-    queryKey: expertiseKeys.my(),
-    queryFn: expertiseService.getMyExpertises,
+    queryKey: expertiseKeys.my(params),
+    queryFn: () => expertiseService.getMyExpertises(params),
     retry: false,
     refetchOnWindowFocus: false,
     staleTime: 2 * 60 * 1000,
@@ -38,8 +45,7 @@ export const useMyExpertises = () => {
 export const useExpertise = (id: string) => {
   return useQuery({
     queryKey: expertiseKeys.detail(id),
-    queryFn: async () =>
-      (await expertiseService.getExpertiseById(id)) as Expertise,
+    queryFn: async () => (await expertiseService.getExpertiseById(id)) as Expertise,
     enabled: !!id,
     retry: false,
     refetchOnWindowFocus: false,
@@ -84,7 +90,8 @@ export const useUpdateExpertise = () => {
 export const useCompleteExpertise = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: CompleteExpertiseDto }) => expertiseService.completeExpertise(id, data),
+    mutationFn: ({ id, data }: { id: string; data: CompleteExpertiseDto }) =>
+      expertiseService.completeExpertise(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expertiseKeys.my() });
     },
@@ -94,13 +101,8 @@ export const useCompleteExpertise = () => {
 export const useAssignExpertToProgram = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      programId,
-      expertId,
-    }: {
-      programId: string;
-      expertId: string;
-    }) => expertiseService.assignExpertToProgram(programId, { expertId }),
+    mutationFn: ({ programId, expertId }: { programId: string; expertId: string }) =>
+      expertiseService.assignExpertToProgram(programId, { expertId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expertiseKeys.lists() });
     },
@@ -119,7 +121,7 @@ export const useDeleteExpertise = () => {
 
 export const useMyPrograms = () => {
   return useQuery({
-    queryKey: [...expertiseKeys.all, "my-programs"],
+    queryKey: [...expertiseKeys.all, 'my-programs'],
     queryFn: expertiseService.getMyPrograms,
     retry: false,
     refetchOnWindowFocus: false,
@@ -129,7 +131,7 @@ export const useMyPrograms = () => {
 
 export const useExpertisesForReplacement = () => {
   return useQuery({
-    queryKey: [...expertiseKeys.all, "for-replacement"],
+    queryKey: [...expertiseKeys.all, 'for-replacement'],
     queryFn: expertiseService.getExpertisesForReplacement,
     retry: false,
     refetchOnWindowFocus: false,
@@ -150,7 +152,7 @@ export const useReplaceExpert = () => {
       newExpertId: string;
     }) => expertiseService.replaceExpert(expertiseId, oldExpertId, newExpertId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: expertiseKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: expertiseKeys.all });
     },
   });
 };
@@ -158,13 +160,7 @@ export const useReplaceExpert = () => {
 export const useReplaceExpertInAllExpertises = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      oldExpertId,
-      newExpertId,
-    }: {
-      oldExpertId: string;
-      newExpertId: string;
-    }) =>
+    mutationFn: ({ oldExpertId, newExpertId }: { oldExpertId: string; newExpertId: string }) =>
       expertiseService.replaceExpertInAllExpertises(oldExpertId, newExpertId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expertiseKeys.lists() });
@@ -174,7 +170,7 @@ export const useReplaceExpertInAllExpertises = () => {
 
 export const useAvailablePrograms = () => {
   return useQuery({
-    queryKey: [...expertiseKeys.all, "available-programs"],
+    queryKey: [...expertiseKeys.all, 'available-programs'],
     queryFn: expertiseService.getAvailablePrograms,
     retry: false,
     refetchOnWindowFocus: false,
@@ -184,7 +180,7 @@ export const useAvailablePrograms = () => {
 
 export const useProgramPdf = (programId: string) => {
   return useQuery({
-    queryKey: [...expertiseKeys.all, "program-pdf", programId],
+    queryKey: [...expertiseKeys.all, 'program-pdf', programId],
     queryFn: () => expertiseService.getProgramPdf(programId),
     enabled: !!programId,
     retry: false,
@@ -195,13 +191,8 @@ export const useProgramPdf = (programId: string) => {
 export const useCreateCriteriaConclusion = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      expertiseId,
-      data,
-    }: {
-      expertiseId: string;
-      data: ExpertiseCriteriaDto;
-    }) => expertiseService.createCriteriaConclusion(expertiseId, data),
+    mutationFn: ({ expertiseId, data }: { expertiseId: string; data: ExpertiseCriteriaDto }) =>
+      expertiseService.createCriteriaConclusion(expertiseId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expertiseKeys.lists() });
     },
@@ -210,7 +201,7 @@ export const useCreateCriteriaConclusion = () => {
 
 export const useExpertTable = (params: ExpertTableFilters) => {
   return useQuery({
-    queryKey: [...expertiseKeys.all, "expert-table", params],
+    queryKey: [...expertiseKeys.all, 'expert-table', params],
     queryFn: () => expertiseService.getExpertTable(params),
     retry: false,
     refetchOnWindowFocus: false,
@@ -220,10 +211,21 @@ export const useExpertTable = (params: ExpertTableFilters) => {
 
 export const useMyExpertisesList = (status?: string) => {
   return useQuery({
-    queryKey: [...expertiseKeys.all, "my-expertises", status],
+    queryKey: [...expertiseKeys.all, 'my-expertises', status],
     queryFn: () => expertiseService.getMyExpertisesList(status),
     retry: false,
     refetchOnWindowFocus: false,
     staleTime: 2 * 60 * 1000,
+  });
+};
+
+export const useSendForRevision = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: expertiseService.sendForRevision,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: expertiseKeys.all });
+      queryClient.invalidateQueries({ queryKey: programKeys.all });
+    },
   });
 };

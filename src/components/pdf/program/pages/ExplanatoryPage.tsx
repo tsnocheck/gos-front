@@ -1,38 +1,26 @@
-import { Text } from "@react-pdf/renderer";
-import { useCallback, type FC } from "react";
-import { Standard, standards, type ProgramPDFProps } from "@/types";
-import { PDFPage, PDFTable, PDFList, PDFStyles } from "../../shared";
+import { Text } from '@react-pdf/renderer';
+import { useCallback, type FC } from 'react';
+import { Standard, standards, type ProgramPDFProps } from '@/types';
+import { PDFPage, PDFTable, PDFList, PDFStyles } from '../../shared';
 
-export const ExplanatoryPage: FC<ProgramPDFProps> = ({
-  program,
-  getDictionaryById,
-}) => {
-  const isProfessionalStandard = [
-    Standard.PROFESSIONAL,
-    Standard.BOTH,
-  ].includes(program.standard!);
+export const ExplanatoryPage: FC<ProgramPDFProps> = ({ program, getDictionaryById }) => {
+  const isProfessionalStandard = [Standard.PROFESSIONAL, Standard.BOTH].includes(program.standard!);
 
-  const isEksStandard = [Standard.EKS, Standard.BOTH].includes(
-    program.standard!
-  );
+  const isEksStandard = [Standard.EKS, Standard.BOTH].includes(program.standard!);
 
   const getValueFromDictionary = useCallback(
     (id: string) => getDictionaryById(id)?.value ?? id,
-    [getDictionaryById]
+    [getDictionaryById],
   );
 
   const ProfessionalStandardCols: FC = useCallback(() => {
     return (
       <>
         <PDFTable.Td style={{ flex: 1 }}>
-          <PDFList
-            items={(program.functions ?? []).map(getValueFromDictionary)}
-          />
+          <PDFList items={(program.functions ?? []).map(getValueFromDictionary)} />
         </PDFTable.Td>
         <PDFTable.Td style={{ flex: 1 }}>
-          <PDFList
-            items={(program.actions ?? []).map(getValueFromDictionary)}
-          />
+          <PDFList items={(program.actions ?? []).map(getValueFromDictionary)} />
         </PDFTable.Td>
       </>
     );
@@ -49,22 +37,20 @@ export const ExplanatoryPage: FC<ProgramPDFProps> = ({
   return (
     <PDFPage title="Пояснительная записка">
       <Text style={PDFStyles.block}>
-        <Text style={PDFStyles.bold}>Актуальность разработки программы:</Text>{" "}
-        {program.relevance}
+        <Text style={PDFStyles.bold}>Актуальность разработки программы:</Text> {program.relevance}
       </Text>
       <Text style={PDFStyles.block}>
-        <Text style={PDFStyles.bold}>Цель реализации программы:</Text>{" "}
-        {program.goal}
+        <Text style={PDFStyles.bold}>Цель реализации программы:</Text> {program.goal}
       </Text>
 
       {program.educationForm && (
         <Text style={PDFStyles.block}>
-          <Text style={PDFStyles.bold}>Форма обучения:</Text>{" "}
+          <Text style={PDFStyles.bold}>Форма обучения:</Text>{' '}
           {getValueFromDictionary(program.educationForm)}
         </Text>
       )}
 
-      <Text style={PDFStyles.bold}>{standards[program.standard!] ?? ""}</Text>
+      <Text style={PDFStyles.bold}>{standards[program.standard!] ?? ''}</Text>
       <PDFTable.Self
         style={{
           marginBottom: 12,
@@ -77,9 +63,7 @@ export const ExplanatoryPage: FC<ProgramPDFProps> = ({
               <PDFTable.Th style={{ flex: 1 }}>Трудовые действия</PDFTable.Th>
             </>
           )}
-          {isEksStandard && (
-            <PDFTable.Th style={{ flex: 1 }}>Трудовые обязанности</PDFTable.Th>
-          )}
+          {isEksStandard && <PDFTable.Th style={{ flex: 1 }}>Трудовые обязанности</PDFTable.Th>}
         </PDFTable.Tr>
 
         <PDFTable.Tr>

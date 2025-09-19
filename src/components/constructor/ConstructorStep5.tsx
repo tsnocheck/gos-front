@@ -1,7 +1,7 @@
-import React, { useCallback, useMemo } from "react";
-import { Form, Input, Select, Table, Typography } from "antd";
-import { standards, type ExtendedProgram } from "@/types";
-import { useProgramDictionaries } from "@/hooks/useProgramDictionaries";
+import React, { useCallback, useMemo } from 'react';
+import { Form, Input, Select, Table, Typography } from 'antd';
+import { standards, type ExtendedProgram } from '@/types';
+import { useProgramDictionaries } from '@/hooks/useProgramDictionaries';
 
 const { Title } = Typography;
 
@@ -13,41 +13,24 @@ interface Props {
 const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
   const [form] = Form.useForm<ExtendedProgram>();
 
-  const selectedFunctions = Form.useWatch<string[] | undefined>(
-    "functions",
-    form
-  );
+  const selectedFunctions = Form.useWatch<string[] | undefined>('functions', form);
 
-  const {
-    functions,
-    getActions,
-    categories,
-    educationForms,
-    duties,
-    getDictionaryById,
-  } = useProgramDictionaries();
+  const { functions, getActions, categories, educationForms, duties, getDictionaryById } =
+    useProgramDictionaries();
 
-  const actions = useMemo(
-    () => getActions(selectedFunctions ?? []),
-    [selectedFunctions]
-  );
+  const actions = useMemo(() => getActions(selectedFunctions ?? []), [selectedFunctions]);
 
   const handleValuesChange = useCallback(
     (changedValues: ExtendedProgram) => {
-      if (changedValues.functions) form.setFieldValue("actions", []);
+      if (changedValues.functions) form.setFieldValue('actions', []);
 
       onChange(form.getFieldsValue());
     },
-    [form, onChange]
+    [form, onChange],
   );
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      initialValues={value}
-      onValuesChange={handleValuesChange}
-    >
+    <Form form={form} layout="vertical" initialValues={value} onValuesChange={handleValuesChange}>
       <Title level={4}>Характеристика программы</Title>
 
       <Form.Item name="relevance" label="Актуальность разработки программы">
@@ -68,14 +51,9 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
         />
       </Form.Item>
 
-      {(value.standard === "professional-standard" ||
-        value.standard === "both") && (
-        <div style={{ display: "flex", width: "100%", gap: 20 }}>
-          <Form.Item
-            name="functions"
-            label="Трудовые функции"
-            style={{ flex: 1 }}
-          >
+      {(value.standard === 'professional-standard' || value.standard === 'both') && (
+        <div style={{ display: 'flex', width: '100%', gap: 20 }}>
+          <Form.Item name="functions" label="Трудовые функции" style={{ flex: 1 }}>
             <Select
               mode="tags"
               options={functions?.map((f) => ({
@@ -84,11 +62,7 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
               }))}
             />
           </Form.Item>
-          <Form.Item
-            name="actions"
-            label="Трудовые действия"
-            style={{ flex: 1 }}
-          >
+          <Form.Item name="actions" label="Трудовые действия" style={{ flex: 1 }}>
             <Select
               mode="tags"
               options={actions?.map((a) => ({
@@ -101,29 +75,18 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
         </div>
       )}
 
-      {(value.standard === "eks" || value.standard === "both") && (
+      {(value.standard === 'eks' || value.standard === 'both') && (
         <Form.Item name="duties" label="Должностные обязанности">
-          <Select
-            mode="tags"
-            options={duties?.map((d) => ({ value: d.id, label: d.value }))}
-          />
+          <Select mode="tags" options={duties?.map((d) => ({ value: d.id, label: d.value }))} />
         </Form.Item>
       )}
 
       <Form.Item name="know" label="Знать">
-        <Select
-          mode="tags"
-          style={{ width: "100%" }}
-          placeholder="Введите знания"
-        />
+        <Select mode="tags" style={{ width: '100%' }} placeholder="Введите знания" />
       </Form.Item>
 
       <Form.Item name="can" label="Уметь">
-        <Select
-          mode="tags"
-          style={{ width: "100%" }}
-          placeholder="Введите умения"
-        />
+        <Select mode="tags" style={{ width: '100%' }} placeholder="Введите умения" />
       </Form.Item>
 
       <Table
@@ -131,53 +94,40 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
         pagination={false}
         style={{ marginBottom: 10 }}
         columns={[
-          ...(value.standard === "professional-standard" ||
-          value.standard === "both"
+          ...(value.standard === 'professional-standard' || value.standard === 'both'
             ? [
-                { title: "Трудовые функции", dataIndex: "functions" },
-                { title: "Трудовые действия", dataIndex: "actions" },
+                { title: 'Трудовые функции', dataIndex: 'functions' },
+                { title: 'Трудовые действия', dataIndex: 'actions' },
               ]
             : []),
 
-          ...(value.standard === "eks" || value.standard === "both"
-            ? [{ title: "Должностные обязанности", dataIndex: "duties" }]
+          ...(value.standard === 'eks' || value.standard === 'both'
+            ? [{ title: 'Должностные обязанности', dataIndex: 'duties' }]
             : []),
 
-          { title: "Знать", dataIndex: "know" },
-          { title: "Уметь", dataIndex: "can" },
+          { title: 'Знать', dataIndex: 'know' },
+          { title: 'Уметь', dataIndex: 'can' },
         ]}
         dataSource={[
           {
             key: 1,
             functions: value.functions?.map((id) => (
-              <p style={{ marginBottom: 1 }}>
-                &bull; {getDictionaryById(id)?.value ?? id}
-              </p>
+              <p style={{ marginBottom: 1 }}>&bull; {getDictionaryById(id)?.value ?? id}</p>
             )),
             actions: value.actions?.map((id) => (
-              <p style={{ marginBottom: 1 }}>
-                &bull; {getDictionaryById(id)?.value ?? id}
-              </p>
+              <p style={{ marginBottom: 1 }}>&bull; {getDictionaryById(id)?.value ?? id}</p>
             )),
             duties: value.duties?.map((id) => (
-              <p style={{ marginBottom: 1 }}>
-                &bull; {getDictionaryById(id)?.value ?? id}
-              </p>
+              <p style={{ marginBottom: 1 }}>&bull; {getDictionaryById(id)?.value ?? id}</p>
             )),
-            know: value.know?.map((value) => (
-              <p style={{ marginBottom: 1 }}>&bull; {value}</p>
-            )),
-            can: value.can?.map((value) => (
-              <p style={{ marginBottom: 1 }}>&bull; {value}</p>
-            )),
+            know: value.know?.map((value) => <p style={{ marginBottom: 1 }}>&bull; {value}</p>),
+            can: value.can?.map((value) => <p style={{ marginBottom: 1 }}>&bull; {value}</p>),
           },
         ]}
       />
 
       <Form.Item name="category" label="Категория слушателей">
-        <Select
-          options={categories?.map((c) => ({ value: c.id, label: c.value }))}
-        />
+        <Select options={categories?.map((c) => ({ value: c.id, label: c.value }))} />
       </Form.Item>
 
       <Form.Item name="educationForm" label="Форма обучения">

@@ -3,20 +3,6 @@
 import type { User } from './user';
 import type { Program } from './program';
 
-/** Тип рекомендации */
-export enum RecommendationType {
-  /** Общие рекомендации */
-  GENERAL = 'general',
-  /** По содержанию */
-  CONTENT = 'content',
-  /** По методологии */
-  METHODOLOGY = 'methodology',
-  /** По структуре */
-  STRUCTURE = 'structure',
-  /** По оценке */
-  ASSESSMENT = 'assessment',
-}
-
 /** Статус рекомендации */
 export enum RecommendationStatus {
   /** Активная */
@@ -38,7 +24,7 @@ export interface Recommendation {
   /** Содержание рекомендации */
   content: string;
   /** Тип рекомендации */
-  type: RecommendationType;
+  type: string;
   /** Статус рекомендации */
   status: RecommendationStatus;
   /** Приоритет (1-высокий, 2-средний, 3-низкий) */
@@ -67,4 +53,4 @@ export interface Recommendation {
   createdAt: string | Date;
   /** Дата обновления */
   updatedAt: string | Date;
-} 
+}

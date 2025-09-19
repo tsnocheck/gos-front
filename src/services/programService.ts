@@ -1,5 +1,6 @@
 import { apiClient } from '../lib/api';
-import type { Program, ProgramStatus, ExtendedProgram, PaginatedResponse, User } from '../types';
+import type { Program, ProgramStatus, ExtendedProgram, PaginatedResponse, User } from '@/types';
+import type { ResubmitAfterRevisionDto } from '@/types/expertise';
 
 export interface ProgramQueryParams {
   page?: number;
@@ -8,10 +9,10 @@ export interface ProgramQueryParams {
   authorId?: string;
   search?: string;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: 'ASC' | 'DESC';
 }
 
-export type UpdateProgramData = ExtendedProgram
+export type UpdateProgramData = ExtendedProgram;
 
 export const programService = {
   async getPrograms(params?: ProgramQueryParams) {
@@ -58,6 +59,10 @@ export const programService = {
     return apiClient.post<Program>(`/programs/${id}/reject`, { reason });
   },
 
+  async resubmitAfterRevision(id: string, data: ResubmitAfterRevisionDto): Promise<Program> {
+    return apiClient.post<Program>(`/expertise/${id}/resubmit-after-revision`, data);
+  },
+
   async archiveProgram(id: string): Promise<Program> {
     return apiClient.patch<Program>(`/programs/${id}/archive`);
   },
@@ -84,5 +89,5 @@ export const programService = {
 
   async availableCoAuthors() {
     return apiClient.get<User[]>('/programs/co-authors');
-  }
-}
+  },
+};

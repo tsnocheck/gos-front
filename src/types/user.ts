@@ -130,4 +130,4 @@ export interface Candidate {
   createdAt: string | Date;
   /** Дата обновления */
   updatedAt: string | Date;
-} 
+}

@@ -1,8 +1,8 @@
-import React, { useMemo } from "react";
-import { Select, Form, Typography, Button, Space } from "antd";
-import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
-import type { ExtendedProgram } from "../../types/program";
-import { useAvailableAuthors } from "@/queries/programs";
+import React, { useMemo } from 'react';
+import { Select, Form, Typography, Button, Space } from 'antd';
+import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
+import type { ExtendedProgram } from '../../types/program';
+import { useAvailableAuthors } from '@/queries/programs';
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -13,8 +13,7 @@ interface Props {
 }
 
 const ConstructorStep3: React.FC<Props> = ({ value, onChange }) => {
-  const { data: authors = [], isLoading: loadingAuthors } =
-    useAvailableAuthors();
+  const { data: authors = [], isLoading: loadingAuthors } = useAvailableAuthors();
 
   const availableAuthors = useMemo(() => {
     return authors.filter((author) => !value.coAuthorIds?.includes(author.id));
@@ -22,13 +21,10 @@ const ConstructorStep3: React.FC<Props> = ({ value, onChange }) => {
 
   const getAuthorNameById = (id: string) => {
     const author = authors.find((author) => author.id === id);
-    return `${author?.lastName ?? ""} ${author?.firstName ?? ""} ${
-      author?.middleName ?? ""
-    }`;
+    return `${author?.lastName ?? ''} ${author?.firstName ?? ''} ${author?.middleName ?? ''}`;
   };
 
-  const addCoAuthor = () =>
-    onChange({ coAuthorIds: [...(value.coAuthorIds ?? []), ""] });
+  const addCoAuthor = () => onChange({ coAuthorIds: [...(value.coAuthorIds ?? []), ''] });
 
   const removeCoAuthor = (index: number) =>
     onChange({ coAuthorIds: value.coAuthorIds?.filter((_, i) => i !== index) });
@@ -43,9 +39,9 @@ const ConstructorStep3: React.FC<Props> = ({ value, onChange }) => {
       <Title level={4}>Лист согласования</Title>
       {/* Соавторы */}
       <Form.Item label="Соавторы">
-        <Space direction="vertical" style={{ width: "100%" }}>
+        <Space direction="vertical" style={{ width: '100%' }}>
           {value.coAuthorIds?.map((authorId, index) => (
-            <Space key={index} style={{ width: "100%" }}>
+            <Space key={index} style={{ width: '100%' }}>
               <Select
                 value={getAuthorNameById(authorId)}
                 onChange={(v) => updateCoAuthor(index, v)}
@@ -73,12 +69,10 @@ const ConstructorStep3: React.FC<Props> = ({ value, onChange }) => {
             type="dashed"
             onClick={addCoAuthor}
             {...{ icon: availableAuthors.length && <PlusOutlined /> }}
-            style={{ width: "100%" }}
+            style={{ width: '100%' }}
             disabled={!availableAuthors.length}
           >
-            {availableAuthors.length
-              ? "Добавить соавтора"
-              : "Нет доступных авторов"}
+            {availableAuthors.length ? 'Добавить соавтора' : 'Нет доступных авторов'}
           </Button>
         </Space>
       </Form.Item>

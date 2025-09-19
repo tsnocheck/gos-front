@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState } from 'react';
 import {
   Card,
   Typography,
@@ -12,54 +12,54 @@ import {
   message,
   Select,
   Tag,
-} from "antd";
-import type { Dictionary } from "../types/dictionary";
-import { DictionaryType, DictionaryStatus } from "../types/dictionary";
+} from 'antd';
+import type { Dictionary } from '../types/dictionary';
+import { DictionaryType, DictionaryStatus } from '../types/dictionary';
 import {
   useDictionariesByType,
   useCreateDictionary,
   useUpdateDictionary,
   useDeleteDictionary,
   useActionsByFunctions,
-} from "../queries/dictionaries";
+} from '../queries/dictionaries';
 
 const { Title } = Typography;
 
 const DICTIONARY_LIST = [
-  { type: DictionaryType.INSTITUTIONS, label: "Справочник учреждений" },
-  { type: DictionaryType.SUBDIVISIONS, label: "Справочник подразделений" },
+  { type: DictionaryType.INSTITUTIONS, label: 'Справочник учреждений' },
+  { type: DictionaryType.SUBDIVISIONS, label: 'Справочник подразделений' },
   {
     type: DictionaryType.LABOR_FUNCTIONS,
-    label: "Справочник трудовых функций",
+    label: 'Справочник трудовых функций',
   },
-  { type: DictionaryType.LABOR_ACTIONS, label: "Справочник трудовых действий" },
+  { type: DictionaryType.LABOR_ACTIONS, label: 'Справочник трудовых действий' },
   {
     type: DictionaryType.JOB_RESPONSIBILITIES,
-    label: "Справочник должностных обязанностей",
+    label: 'Справочник должностных обязанностей',
   },
   {
     type: DictionaryType.STUDENT_CATEGORIES,
-    label: "Справочник категорий слушателей",
+    label: 'Справочник категорий слушателей',
   },
-  { type: DictionaryType.EDUCATION_FORMS, label: "Справочник форм обучения" },
-  { type: DictionaryType.SUBJECTS, label: "Справочник учебных предметов" },
+  { type: DictionaryType.EDUCATION_FORMS, label: 'Справочник форм обучения' },
+  { type: DictionaryType.SUBJECTS, label: 'Справочник учебных предметов' },
   {
     type: DictionaryType.EXPERT_ALGORITHMS,
-    label: "Справочник алгоритмов назначения экспертов",
+    label: 'Справочник алгоритмов назначения экспертов',
   },
   {
     type: DictionaryType.KOIRO_SUBDIVISIONS,
-    label: "Справочник подразделений КОИРО",
+    label: 'Справочник подразделений КОИРО',
   },
   {
     type: DictionaryType.KOIRO_MANAGERS,
-    label: "Справочник руководителей КОИРО",
+    label: 'Справочник руководителей КОИРО',
   },
 ];
 
 const laborActionType = {
   forGet: (type: string) => {
-    return type.split("--")[1];
+    return type.split('--')[1];
   },
   forSet: (laborFuncValue: string, type: string) => {
     return `${laborFuncValue}--${type}`;
@@ -92,7 +92,7 @@ export const AdminDictionariesPage: React.FC = () => {
 
   const functionsId = useMemo(
     () => laborFunctions.data?.map((v) => v.id) || [],
-    [laborFunctions.data]
+    [laborFunctions.data],
   );
 
   const isLaborActions = openType === DictionaryType.LABOR_ACTIONS;
@@ -102,9 +102,7 @@ export const AdminDictionariesPage: React.FC = () => {
   const generalDictionaries = useDictionariesByType(openType!);
 
   const data = isLaborActions ? actions.data : generalDictionaries.data;
-  const isLoading = isLaborActions
-    ? actions.isLoading
-    : generalDictionaries.isLoading;
+  const isLoading = isLaborActions ? actions.isLoading : generalDictionaries.isLoading;
 
   const createMutation = useCreateDictionary();
   const updateMutation = useUpdateDictionary();
@@ -136,9 +134,9 @@ export const AdminDictionariesPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteMutation.mutateAsync(id);
-      message.success("Запись удалена");
+      message.success('Запись удалена');
     } catch {
-      message.error("Ошибка при удалении");
+      message.error('Ошибка при удалении');
     }
   };
 
@@ -147,7 +145,7 @@ export const AdminDictionariesPage: React.FC = () => {
       const values = await form.validateFields();
       if (editing) {
         await updateMutation.mutateAsync({ id: editing.id, data: values });
-        message.success("Запись обновлена");
+        message.success('Запись обновлена');
       } else {
         const type =
           openType === DictionaryType.LABOR_ACTIONS
@@ -155,25 +153,25 @@ export const AdminDictionariesPage: React.FC = () => {
             : openType!;
 
         await createMutation.mutateAsync({ type, ...values });
-        message.success("Запись создана");
+        message.success('Запись создана');
       }
       setEditing(null);
       form.resetFields();
     } catch {
-      message.error("Ошибка при сохранении");
+      message.error('Ошибка при сохранении');
     }
   };
 
   // Колонки для таблицы справочников
   const mainColumns = [
     {
-      title: "Справочник",
-      dataIndex: "label",
-      key: "label",
+      title: 'Справочник',
+      dataIndex: 'label',
+      key: 'label',
     },
     {
-      title: "",
-      key: "actions",
+      title: '',
+      key: 'actions',
       render: (_: unknown, record: { type: DictionaryType }) => (
         <Button type="primary" onClick={() => handleOpen(record.type)}>
           Открыть
@@ -184,33 +182,30 @@ export const AdminDictionariesPage: React.FC = () => {
   ];
 
   // Колонки для модалки
-  const getColumns = (
-    _: DictionaryType,
-    onEdit: (record: Dictionary) => void
-  ) => {
+  const getColumns = (_: DictionaryType, onEdit: (record: Dictionary) => void) => {
     const columns = [
-      { title: "Значение", dataIndex: "value", key: "value" },
-      { title: "Описание", dataIndex: "description", key: "description" },
-      { title: "Порядок", dataIndex: "sortOrder", key: "sortOrder" },
+      { title: 'Значение', dataIndex: 'value', key: 'value' },
+      { title: 'Описание', dataIndex: 'description', key: 'description' },
+      { title: 'Порядок', dataIndex: 'sortOrder', key: 'sortOrder' },
       {
-        title: "Статус",
-        dataIndex: "status",
-        key: "status",
+        title: 'Статус',
+        dataIndex: 'status',
+        key: 'status',
         render: (status: string) => {
           const statusMap = {
-            active: { color: "green", text: "Активен" },
-            inactive: { color: "red", text: "Неактивен" },
+            active: { color: 'green', text: 'Активен' },
+            inactive: { color: 'red', text: 'Неактивен' },
           };
-          const info = statusMap[status as "active" | "inactive"] || {
-            color: "default",
+          const info = statusMap[status as 'active' | 'inactive'] || {
+            color: 'default',
             text: status,
           };
           return <Tag color={info.color}>{info.text}</Tag>;
         },
       },
       {
-        title: "Действия",
-        key: "actions",
+        title: 'Действия',
+        key: 'actions',
         render: (_: unknown, record: Dictionary) => (
           <Space>
             <Button onClick={() => onEdit(record)}>Редактировать</Button>
@@ -229,13 +224,11 @@ export const AdminDictionariesPage: React.FC = () => {
 
     if (openType === DictionaryType.LABOR_ACTIONS) {
       columns.unshift({
-        key: "function",
-        title: "Функция",
+        key: 'function',
+        title: 'Функция',
         render: (_: unknown, record) => (
           <>
-            {laborFunctions.data?.find(
-              (func) => func.id === record.type?.split("--")?.[0]
-            )?.value}
+            {laborFunctions.data?.find((func) => func.id === record.type?.split('--')?.[0])?.value}
           </>
         ),
       });
@@ -248,9 +241,9 @@ export const AdminDictionariesPage: React.FC = () => {
     <div style={{ padding: 24 }}>
       <div
         style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           marginBottom: 24,
         }}
       >
@@ -274,9 +267,9 @@ export const AdminDictionariesPage: React.FC = () => {
       >
         <div
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             marginBottom: 16,
           }}
         >
@@ -304,41 +297,31 @@ export const AdminDictionariesPage: React.FC = () => {
           layout="vertical"
           onFinish={handleOk}
           initialValues={{
-            value: "",
-            description: "",
+            value: '',
+            description: '',
             sortOrder: 0,
-            status: "active",
+            status: 'active',
           }}
         >
-          {openType === DictionaryType.LABOR_ACTIONS && (
-            <SelectLaborFunctionRender />
-          )}
+          {openType === DictionaryType.LABOR_ACTIONS && <SelectLaborFunctionRender />}
           <Form.Item name="value" label="Значение" required>
             <Input />
           </Form.Item>
           <Form.Item name="description" label="Описание">
             <Input />
           </Form.Item>
-          <Form.Item
-            getValueFromEvent={(e) => +e.target.value}
-            name="sortOrder"
-            label="Порядок"
-          >
+          <Form.Item getValueFromEvent={(e) => +e.target.value} name="sortOrder" label="Порядок">
             <Input type="number" />
           </Form.Item>
           <Form.Item name="status" label="Статус">
             <Select>
-              <Select.Option value={DictionaryStatus.ACTIVE}>
-                Активен
-              </Select.Option>
-              <Select.Option value={DictionaryStatus.INACTIVE}>
-                Неактивен
-              </Select.Option>
+              <Select.Option value={DictionaryStatus.ACTIVE}>Активен</Select.Option>
+              <Select.Option value={DictionaryStatus.INACTIVE}>Неактивен</Select.Option>
             </Select>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" style={{ marginRight: 8 }}>
-              {editing ? "Сохранить изменения" : "Добавить"}
+              {editing ? 'Сохранить изменения' : 'Добавить'}
             </Button>
             {editing && (
               <Button

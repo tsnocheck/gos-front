@@ -35,6 +35,8 @@ export interface GetUsersParams {
   role?: UserRole;
   status?: UserStatus;
   search?: string;
+  sortBy?: string;
+  sortOrder?: 'ASC' | 'DESC';
 }
 
 export interface GetExpertsTableParams {
@@ -139,5 +141,5 @@ export const adminService = {
     byRole: Record<UserRole, number>;
   }> {
     return apiClient.get('/admin/users/stats');
-  }
+  },
 };

@@ -1,10 +1,10 @@
-import { type FC } from "react";
-import { ProgramSection, programSection, type ProgramPDFProps } from "@/types";
-import { PDFPage } from "../../shared/ui/PDFPage";
-import { calcWidth, PDFStyles } from "../../shared/utils";
-import { PDFTable } from "../../shared";
-import React from "react";
-import { Text } from "@react-pdf/renderer";
+import { type FC } from 'react';
+import { ProgramSection, programSection, type ProgramPDFProps } from '@/types';
+import { PDFPage } from '../../shared/ui/PDFPage';
+import { calcWidth, PDFStyles } from '../../shared/utils';
+import { PDFTable } from '../../shared';
+import React from 'react';
+import { Text } from '@react-pdf/renderer';
 
 const TOTAL_COLS = 8;
 
@@ -13,15 +13,10 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program }) => {
     program.modules?.filter((module) => module.section === section);
 
   const attestationsByModule = (moduleCode: string) =>
-    program.attestations?.filter(
-      (attestation) => attestation.moduleCode === moduleCode
-    );
+    program.attestations?.filter((attestation) => attestation.moduleCode === moduleCode);
 
   const TotalRow: FC = () => {
-    const total = [
-      ...(program.modules ?? []),
-      ...(program.attestations ?? []),
-    ].reduce(
+    const total = [...(program.modules ?? []), ...(program.attestations ?? [])].reduce(
       (acc, { lecture, distant, practice }) => {
         acc.lecture += lecture;
         acc.distant += distant;
@@ -33,25 +28,17 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program }) => {
         lecture: 0,
         practice: 0,
         distant: 0,
-      }
+      },
     );
 
     return (
       <PDFTable.Tr>
-        <PDFTable.Th
-          style={{ textAlign: "left", ...calcWidth(3 / TOTAL_COLS) }}
-        >
+        <PDFTable.Th style={{ textAlign: 'left', ...calcWidth(3 / TOTAL_COLS) }}>
           ИТОГО:
         </PDFTable.Th>
-        <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>
-          {total.lecture || "-"}
-        </PDFTable.Td>
-        <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>
-          {total.practice || "-"}
-        </PDFTable.Td>
-        <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>
-          {total.distant || "-"}
-        </PDFTable.Td>
+        <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{total.lecture || '-'}</PDFTable.Td>
+        <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{total.practice || '-'}</PDFTable.Td>
+        <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{total.distant || '-'}</PDFTable.Td>
         <PDFTable.Td style={calcWidth(2 / TOTAL_COLS)}></PDFTable.Td>
       </PDFTable.Tr>
     );
@@ -60,23 +47,13 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program }) => {
   const AttestationRows: FC<{ moduleCode: string }> = ({ moduleCode }) => {
     return attestationsByModule(moduleCode)?.map((attestation, idx) => (
       <PDFTable.Tr key={idx}>
-        <PDFTable.Th
-          style={{ textAlign: "left", ...calcWidth(3 / TOTAL_COLS) }}
-        >
+        <PDFTable.Th style={{ textAlign: 'left', ...calcWidth(3 / TOTAL_COLS) }}>
           {attestation.name}
         </PDFTable.Th>
-        <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>
-          {attestation.lecture || "-"}
-        </PDFTable.Td>
-        <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>
-          {attestation.practice || "-"}
-        </PDFTable.Td>
-        <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>
-          {attestation.distant || "-"}
-        </PDFTable.Td>
-        <PDFTable.Td style={calcWidth(2 / TOTAL_COLS)}>
-          {attestation.form}
-        </PDFTable.Td>
+        <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{attestation.lecture || '-'}</PDFTable.Td>
+        <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{attestation.practice || '-'}</PDFTable.Td>
+        <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{attestation.distant || '-'}</PDFTable.Td>
+        <PDFTable.Td style={calcWidth(2 / TOTAL_COLS)}>{attestation.form}</PDFTable.Td>
       </PDFTable.Tr>
     ));
   };
@@ -86,20 +63,12 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program }) => {
       <React.Fragment key={idx}>
         <PDFTable.Tr>
           <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}>
-            {programSection.short[module.section] + " " + module.code}
+            {programSection.short[module.section] + ' ' + module.code}
           </PDFTable.Th>
-          <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}>
-            {module.name}
-          </PDFTable.Th>
-          <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>
-            {module.lecture || "-"}
-          </PDFTable.Td>
-          <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>
-            {module.practice || "-"}
-          </PDFTable.Td>
-          <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>
-            {module.distant || "-"}
-          </PDFTable.Td>
+          <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}>{module.name}</PDFTable.Th>
+          <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{module.lecture || '-'}</PDFTable.Td>
+          <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{module.practice || '-'}</PDFTable.Td>
+          <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{module.distant || '-'}</PDFTable.Td>
           <PDFTable.Td style={calcWidth(2 / TOTAL_COLS)}></PDFTable.Td>
         </PDFTable.Tr>
 
@@ -127,22 +96,20 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program }) => {
   return (
     <PDFPage title="Учебный план" ui={{ title: { marginBottom: 0 } }}>
       <Text style={{ lineHeight: 1, textAlign: 'center' }}>
-        дополнительной профессиональной программы повышения квалификации {"\n"}
+        дополнительной профессиональной программы повышения квалификации {'\n'}
         <Text style={PDFStyles.italic}>«{program.title ?? 'Название программы'}»</Text>
       </Text>
       <PDFTable.Self>
         <PDFTable.Tr>
-          <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}>
-            Шифр модуля
-          </PDFTable.Th>
+          <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}>Шифр модуля</PDFTable.Th>
           <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}>
             Структурный компонент программы / образовательный модуль
           </PDFTable.Th>
           <PDFTable.Tr
             style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
               ...calcWidth(3 / TOTAL_COLS),
             }}
           >
@@ -157,14 +124,10 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program }) => {
               <PDFTable.Td style={calcWidth(1 / 3)}>Дист. обучение</PDFTable.Td>
             </PDFTable.Tr>
           </PDFTable.Tr>
-          <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}>
-            Формы контроля
-          </PDFTable.Th>
+          <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}>Формы контроля</PDFTable.Th>
         </PDFTable.Tr>
 
-        {attestationsByModule("open")?.length && (
-          <AttestationRows moduleCode="open" />
-        )}
+        {attestationsByModule('open')?.length && <AttestationRows moduleCode="open" />}
 
         {(modulesBySection(ProgramSection.NPR) ?? []).length > 0 && (
           <SectionRow section={ProgramSection.NPR} />
@@ -176,9 +139,7 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program }) => {
           <SectionRow section={ProgramSection.VR} />
         )}
 
-        {attestationsByModule("close")?.length && (
-          <AttestationRows moduleCode="close" />
-        )}
+        {attestationsByModule('close')?.length && <AttestationRows moduleCode="close" />}
 
         <TotalRow />
       </PDFTable.Self>

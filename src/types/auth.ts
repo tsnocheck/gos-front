@@ -27,4 +27,4 @@ export interface AuthResponse {
 export interface UserIdentity {
   sessionKey: string;
   userId: string;
-} 
+}

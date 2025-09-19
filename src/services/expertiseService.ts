@@ -1,4 +1,4 @@
-import apiClient from "../lib/api";
+import apiClient from '../lib/api';
 import type {
   PaginatedResponse,
   Expertise,
@@ -7,19 +7,27 @@ import type {
   CreateExpertiseDto,
   UpdateExpertiseDto,
   CompleteExpertiseDto,
-} from "../types";
+  ExpertiseForRevisionDto,
+} from '@/types';
+
+export interface ExpertiseQueryParams {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: 'ASC' | 'DESC';
+}
 
 export const expertiseService = {
   async createExpertise(data: CreateExpertiseDto) {
-    return apiClient.post<Expertise>("/expertise", data);
+    return apiClient.post<Expertise>('/expertise', data);
   },
 
-  async getExpertises() {
-    return apiClient.get<PaginatedResponse<Expertise>>("/expertise");
+  async getExpertises(params?: ExpertiseQueryParams) {
+    return apiClient.get<PaginatedResponse<Expertise>>('/expertise', { params });
   },
 
-  async getMyExpertises() {
-    return apiClient.get<PaginatedResponse<Expertise>>("/expertise/my");
+  async getMyExpertises(params?: ExpertiseQueryParams) {
+    return apiClient.get<PaginatedResponse<Expertise>>('/expertise/my', { params });
   },
 
   async getExpertiseById(id: string) {
@@ -31,7 +39,7 @@ export const expertiseService = {
   },
 
   async getExpertiseStatistics() {
-    return apiClient.get("/expertise/statistics");
+    return apiClient.get('/expertise/statistics');
   },
 
   async completeExpertise(id: string, data: CompleteExpertiseDto) {
@@ -47,18 +55,14 @@ export const expertiseService = {
   },
 
   async getMyPrograms() {
-    return apiClient.get("/expertise/my-programs");
+    return apiClient.get('/expertise/my-programs');
   },
 
   async getExpertisesForReplacement() {
-    return apiClient.get("/expertise/for-replacement");
+    return apiClient.get('/expertise/for-replacement');
   },
 
-  async replaceExpert(
-    expertiseId: string,
-    oldExpertId: string,
-    newExpertId: string
-  ) {
+  async replaceExpert(expertiseId: string, oldExpertId: string, newExpertId: string) {
     return apiClient.put(`/expertise/${expertiseId}/replace-expert`, {
       oldExpertId,
       newExpertId,
@@ -66,36 +70,32 @@ export const expertiseService = {
   },
 
   async replaceExpertInAllExpertises(oldExpertId: string, newExpertId: string) {
-    return apiClient.put(
-      `/expertise/replace-expert-all/${oldExpertId}/${newExpertId}`
-    );
+    return apiClient.put(`/expertise/replace-expert-all/${oldExpertId}/${newExpertId}`);
   },
 
   async getAvailablePrograms() {
-    return apiClient.get("/expertise/available-programs");
+    return apiClient.get('/expertise/available-programs');
   },
 
   async getProgramPdf(programId: string) {
     return apiClient.get(`/expertise/program/${programId}/pdf`, {
-      responseType: "blob",
+      responseType: 'blob',
     });
   },
 
-  async createCriteriaConclusion(
-    expertiseId: string,
-    data: ExpertiseCriteriaDto
-  ) {
-    return apiClient.post(
-      `/expertise/${expertiseId}/criteria-conclusion`,
-      data
-    );
+  async createCriteriaConclusion(expertiseId: string, data: ExpertiseCriteriaDto) {
+    return apiClient.post(`/expertise/${expertiseId}/criteria-conclusion`, data);
   },
 
   async getExpertTable(params: ExpertTableFilters) {
-    return apiClient.get("/expertise/expert/my-table", { params });
+    return apiClient.get('/expertise/expert/my-table', { params });
   },
 
   async getMyExpertisesList(status?: string) {
-    return apiClient.get("/expertise/my-expertises", { params: { status } });
+    return apiClient.get('/expertise/my-expertises', { params: { status } });
+  },
+
+  async sendForRevision(data: { id: string; body: ExpertiseForRevisionDto }) {
+    return apiClient.post(`/expertise/${data.id}/send-for-revision`, data.body);
   },
 };

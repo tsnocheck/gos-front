@@ -1,14 +1,8 @@
-import React from "react";
-import { Table, Button, Input, Typography, Checkbox, Select, Tabs } from "antd";
-import type { ColumnsType } from "antd/es/table";
-import type {
-  ExtendedProgram,
-  NetworkOrg,
-  Topic,
-  Module,
-  TopicContent,
-} from "@/types";
-import { programSection } from "@/types";
+import React from 'react';
+import { Table, Button, Input, Typography, Checkbox, Select, Tabs } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+import type { ExtendedProgram, NetworkOrg, Topic, Module, TopicContent } from '@/types';
+import { programSection } from '@/types';
 
 const { Title } = Typography;
 
@@ -30,7 +24,7 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
   const addTopic = (moduleIndex: number) => {
     const current = modules[moduleIndex]?.topics ?? [];
     updateModule(moduleIndex, {
-      topics: [...current, { name: "" }],
+      topics: [...current, { name: '' }],
     });
   };
 
@@ -38,7 +32,7 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
     moduleIndex: number,
     idx: number,
     field: keyof Topic,
-    v: Topic[typeof field]
+    v: Topic[typeof field],
   ) => {
     const current = modules[moduleIndex]?.topics ?? [];
     updateModule(moduleIndex, {
@@ -57,10 +51,7 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
   const addNetwork = (moduleIndex: number) => {
     const current = modules[moduleIndex]?.network ?? [];
     updateModule(moduleIndex, {
-      network: [
-        ...current,
-        { org: "", participation: "", form: "" },
-      ],
+      network: [...current, { org: '', participation: '', form: '' }],
     });
   };
 
@@ -68,7 +59,7 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
     moduleIndex: number,
     idx: number,
     field: keyof NetworkOrg,
-    v: NetworkOrg[typeof field]
+    v: NetworkOrg[typeof field],
   ) => {
     const current = modules[moduleIndex]?.network ?? [];
     updateModule(moduleIndex, {
@@ -87,7 +78,7 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
   const ensureTopicContent = (
     moduleIndex: number,
     topicIndex: number,
-    key: keyof Pick<Topic, "lecture" | "practice" | "distant">
+    key: keyof Pick<Topic, 'lecture' | 'practice' | 'distant'>,
   ): TopicContent => {
     const topic = modules[moduleIndex]?.topics?.[topicIndex];
     const current = (topic?.[key] as TopicContent) ?? { content: [], forms: [], hours: 0 };
@@ -100,9 +91,9 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
   const updateTopicContent = (
     moduleIndex: number,
     topicIndex: number,
-    key: keyof Pick<Topic, "lecture" | "practice" | "distant">,
+    key: keyof Pick<Topic, 'lecture' | 'practice' | 'distant'>,
     field: keyof TopicContent,
-    value: TopicContent[typeof field]
+    value: TopicContent[typeof field],
   ) => {
     const base = ensureTopicContent(moduleIndex, topicIndex, key);
     const next = { ...base, [field]: value } as TopicContent;
@@ -112,7 +103,7 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
   const TopicContentEditor: React.FC<{
     moduleIndex: number;
     topicIndex: number;
-    kind: "lecture" | "practice" | "distant";
+    kind: 'lecture' | 'practice' | 'distant';
     title: string;
     hideForms?: boolean;
   }> = ({ moduleIndex, topicIndex, kind, title, hideForms }) => {
@@ -120,18 +111,20 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
     return (
       <div style={{ marginBottom: 12 }}>
         <Typography.Text strong>{title}</Typography.Text>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 120px", gap: 8, marginTop: 8 }}>
+        <div
+          style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 120px', gap: 8, marginTop: 8 }}
+        >
           <Select
             mode="tags"
             value={tc.content}
-            onChange={(val) => updateTopicContent(moduleIndex, topicIndex, kind, "content", val)}
+            onChange={(val) => updateTopicContent(moduleIndex, topicIndex, kind, 'content', val)}
             placeholder="Содержание"
           />
           {!hideForms ? (
             <Select
               mode="tags"
               value={tc.forms}
-              onChange={(val) => updateTopicContent(moduleIndex, topicIndex, kind, "forms", val)}
+              onChange={(val) => updateTopicContent(moduleIndex, topicIndex, kind, 'forms', val)}
               placeholder="Формы организации"
             />
           ) : (
@@ -140,7 +133,9 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
           <Input
             type="number"
             value={tc.hours}
-            onChange={(e) => updateTopicContent(moduleIndex, topicIndex, kind, "hours", Number(e.target.value))}
+            onChange={(e) =>
+              updateTopicContent(moduleIndex, topicIndex, kind, 'hours', Number(e.target.value))
+            }
             placeholder="Часы"
           />
         </div>
@@ -162,33 +157,51 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
           dataSource={module.topics}
           rowKey={(_, i) => i!}
           pagination={false}
-          columns={[
-            {
-              title: "Тема",
-              dataIndex: "name",
-              render: (v: string, _row: Topic, i: number) => (
-                <Input
-                  value={v}
-                  onChange={(e) => updateTopic(moduleIndex, i, "name", e.target.value)}
-                  style={{ minWidth: 400 }}
-                />
-              ),
-            },
-            {
-              title: "",
-              render: (_: unknown, __: Topic, i: number) => (
-                <Button danger size="small" onClick={() => removeTopic(moduleIndex, i)}>
-                  Удалить
-                </Button>
-              ),
-            },
-          ] as ColumnsType<Topic>}
+          columns={
+            [
+              {
+                title: 'Тема',
+                dataIndex: 'name',
+                render: (v: string, _row: Topic, i: number) => (
+                  <Input
+                    value={v}
+                    onChange={(e) => updateTopic(moduleIndex, i, 'name', e.target.value)}
+                    style={{ minWidth: 400 }}
+                  />
+                ),
+              },
+              {
+                title: '',
+                render: (_: unknown, __: Topic, i: number) => (
+                  <Button danger size="small" onClick={() => removeTopic(moduleIndex, i)}>
+                    Удалить
+                  </Button>
+                ),
+              },
+            ] as ColumnsType<Topic>
+          }
           expandable={{
             expandedRowRender: (_record: Topic, i: number) => (
-              <div style={{ background: "#fafafa", padding: 12 }}>
-                <TopicContentEditor moduleIndex={moduleIndex} topicIndex={i} kind="lecture" title="Лекционный" hideForms />
-                <TopicContentEditor moduleIndex={moduleIndex} topicIndex={i} kind="practice" title="Практический" />
-                <TopicContentEditor moduleIndex={moduleIndex} topicIndex={i} kind="distant" title="Дистанционный" />
+              <div style={{ background: '#fafafa', padding: 12 }}>
+                <TopicContentEditor
+                  moduleIndex={moduleIndex}
+                  topicIndex={i}
+                  kind="lecture"
+                  title="Лекционный"
+                  hideForms
+                />
+                <TopicContentEditor
+                  moduleIndex={moduleIndex}
+                  topicIndex={i}
+                  kind="practice"
+                  title="Практический"
+                />
+                <TopicContentEditor
+                  moduleIndex={moduleIndex}
+                  topicIndex={i}
+                  kind="distant"
+                  title="Дистанционный"
+                />
               </div>
             ),
           }}
@@ -203,55 +216,57 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
         </Checkbox>
         {module.networkEnabled && (
           <>
-            <Button onClick={() => addNetwork(moduleIndex)} style={{ margin: "12px 0" }}>
+            <Button onClick={() => addNetwork(moduleIndex)} style={{ margin: '12px 0' }}>
               Добавить организацию
             </Button>
             <Table<NetworkOrg>
               dataSource={module.network}
               rowKey={(_, i) => i!}
               pagination={false}
-              columns={[
-                {
-                  title: "Наименование организации",
-                  dataIndex: "org",
-                  render: (v: string, _r: NetworkOrg, i: number) => (
-                    <Input
-                      value={v}
-                      onChange={(e) => updateNetwork(moduleIndex, i, "org", e.target.value)}
-                    />
-                  ),
-                },
-                {
-                  title: "Участие в реализации",
-                  dataIndex: "participation",
-                  render: (v: string, _r: NetworkOrg, i: number) => (
-                    <Input
-                      value={v}
-                      onChange={(e) =>
-                        updateNetwork(moduleIndex, i, "participation", e.target.value)
-                      }
-                    />
-                  ),
-                },
-                {
-                  title: "Форма участия",
-                  dataIndex: "form",
-                  render: (v: string, _r: NetworkOrg, i: number) => (
-                    <Input
-                      value={v}
-                      onChange={(e) => updateNetwork(moduleIndex, i, "form", e.target.value)}
-                    />
-                  ),
-                },
-                {
-                  title: "",
-                  render: (_: unknown, __: NetworkOrg, i: number) => (
-                    <Button danger size="small" onClick={() => removeNetwork(moduleIndex, i)}>
-                      Удалить
-                    </Button>
-                  ),
-                },
-              ] as ColumnsType<NetworkOrg>}
+              columns={
+                [
+                  {
+                    title: 'Наименование организации',
+                    dataIndex: 'org',
+                    render: (v: string, _r: NetworkOrg, i: number) => (
+                      <Input
+                        value={v}
+                        onChange={(e) => updateNetwork(moduleIndex, i, 'org', e.target.value)}
+                      />
+                    ),
+                  },
+                  {
+                    title: 'Участие в реализации',
+                    dataIndex: 'participation',
+                    render: (v: string, _r: NetworkOrg, i: number) => (
+                      <Input
+                        value={v}
+                        onChange={(e) =>
+                          updateNetwork(moduleIndex, i, 'participation', e.target.value)
+                        }
+                      />
+                    ),
+                  },
+                  {
+                    title: 'Форма участия',
+                    dataIndex: 'form',
+                    render: (v: string, _r: NetworkOrg, i: number) => (
+                      <Input
+                        value={v}
+                        onChange={(e) => updateNetwork(moduleIndex, i, 'form', e.target.value)}
+                      />
+                    ),
+                  },
+                  {
+                    title: '',
+                    render: (_: unknown, __: NetworkOrg, i: number) => (
+                      <Button danger size="small" onClick={() => removeNetwork(moduleIndex, i)}>
+                        Удалить
+                      </Button>
+                    ),
+                  },
+                ] as ColumnsType<NetworkOrg>
+              }
             />
           </>
         )}

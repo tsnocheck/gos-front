@@ -1,6 +1,6 @@
-import React from "react";
-import type { ExtendedProgram } from "../../types";
-import ProgramPDFViewer from "../pdf/program/ProgramPDFViewer";
+import React from 'react';
+import type { ExtendedProgram } from '../../types';
+import ProgramPDFViewer from '../pdf/program/ProgramPDFViewer';
 
 interface Props {
   value: ExtendedProgram;

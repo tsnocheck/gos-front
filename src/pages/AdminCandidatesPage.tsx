@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Card,
   Table,
@@ -10,33 +10,27 @@ import {
   message,
   Descriptions,
   Popconfirm,
-} from "antd";
-import {
-  CheckOutlined,
-  CloseOutlined,
-  DeleteOutlined,
-  EyeOutlined,
-} from "@ant-design/icons";
+} from 'antd';
+import { CheckOutlined, CloseOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
 import {
   useCandidates,
   useApproveCandidate,
   useRejectCandidate,
   useDeleteCandidate,
-} from "../queries/candidates";
-import { CandidateStatus, type Candidate } from "../types/user";
+} from '../queries/candidates';
+import { CandidateStatus, type Candidate } from '../types/user';
 
 const { Title } = Typography;
 
 const getFullName = (candidate: Candidate) =>
-  [candidate.lastName, candidate.firstName, candidate.middleName]
-    .filter(Boolean)
-    .join(" ") || "не указано";
+  [candidate.lastName, candidate.firstName, candidate.middleName].filter(Boolean).join(' ') ||
+  'не указано';
 
 const statusMap: Record<CandidateStatus, { color: string; text: string }> = {
-  pending: { color: "warning", text: "Ожидает приглашения" },
-  invited: { color: "processing", text: "Приглашён" },
-  registered: { color: "success", text: "Зарегистрирован" },
-  rejected: { color: "error", text: "Отклонён" },
+  pending: { color: 'warning', text: 'Ожидает приглашения' },
+  invited: { color: 'processing', text: 'Приглашён' },
+  registered: { color: 'success', text: 'Зарегистрирован' },
+  rejected: { color: 'error', text: 'Отклонён' },
 };
 
 export const AdminCandidatesPage: React.FC = () => {
@@ -49,80 +43,74 @@ export const AdminCandidatesPage: React.FC = () => {
   const handleApprove = async (id: string) => {
     try {
       await approveMutation.mutateAsync(id);
-      message.success("Кандидат одобрен и создан пользователь");
+      message.success('Кандидат одобрен и создан пользователь');
     } catch (e: any) {
-      message.error(
-        e?.response?.data?.message || "Ошибка при одобрении кандидата"
-      );
+      message.error(e?.response?.data?.message || 'Ошибка при одобрении кандидата');
     }
   };
 
   const handleReject = async (id: string) => {
     try {
       await rejectMutation.mutateAsync(id);
-      message.success("Кандидат отклонён");
+      message.success('Кандидат отклонён');
     } catch (e: any) {
-      message.error(
-        e?.response?.data?.message || "Ошибка при отклонении кандидата"
-      );
+      message.error(e?.response?.data?.message || 'Ошибка при отклонении кандидата');
     }
   };
 
   const handleDelete = async (id: string) => {
     try {
       await deleteMutation.mutateAsync(id);
-      message.success("Кандидат удалён");
+      message.success('Кандидат удалён');
     } catch (e: any) {
-      message.error(
-        e?.response?.data?.message || "Ошибка при удалении кандидата"
-      );
+      message.error(e?.response?.data?.message || 'Ошибка при удалении кандидата');
     }
   };
 
   const columns = [
     {
-      title: "ФИО",
-      key: "fullName",
+      title: 'ФИО',
+      key: 'fullName',
       render: (_: unknown, record: Candidate) => getFullName(record),
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      render: (email: string) => email || "не указано",
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+      render: (email: string) => email || 'не указано',
     },
     {
-      title: "Телефон",
-      dataIndex: "phone",
-      key: "phone",
-      render: (phone: string) => phone || "не указано",
+      title: 'Телефон',
+      dataIndex: 'phone',
+      key: 'phone',
+      render: (phone: string) => phone || 'не указано',
     },
     {
-      title: "Учреждение",
-      dataIndex: "organization",
-      key: "organization",
-      render: (org: string) => org || "не указано",
+      title: 'Учреждение',
+      dataIndex: 'organization',
+      key: 'organization',
+      render: (org: string) => org || 'не указано',
     },
     {
-      title: "Должность",
-      dataIndex: "position",
-      key: "position",
-      render: (pos: string) => pos || "не указано",
+      title: 'Должность',
+      dataIndex: 'position',
+      key: 'position',
+      render: (pos: string) => pos || 'не указано',
     },
     {
-      title: "Роли",
-      dataIndex: "proposedRoles",
-      key: "proposedRoles",
+      title: 'Роли',
+      dataIndex: 'proposedRoles',
+      key: 'proposedRoles',
       render: (roles: string[]) => (
         <>
           {roles.map((role) => {
             const roleMap = {
-              admin: { color: "red", text: "Администратор" },
-              expert: { color: "blue", text: "Эксперт" },
-              author: { color: "green", text: "Автор" },
+              admin: { color: 'red', text: 'Администратор' },
+              expert: { color: 'blue', text: 'Эксперт' },
+              author: { color: 'green', text: 'Автор' },
             };
             const roleInfo = roleMap[role as keyof typeof roleMap] || {
-              color: "default",
+              color: 'default',
               text: role,
             };
             return (
@@ -135,24 +123,21 @@ export const AdminCandidatesPage: React.FC = () => {
       ),
     },
     {
-      title: "Статус",
-      dataIndex: "status",
-      key: "status",
+      title: 'Статус',
+      dataIndex: 'status',
+      key: 'status',
       render: (status: CandidateStatus) => {
-        const info = statusMap[status] || { color: "default", text: status };
+        const info = statusMap[status] || { color: 'default', text: status };
         return <Tag color={info.color}>{info.text}</Tag>;
       },
     },
     {
-      title: "Действия",
-      key: "actions",
+      title: 'Действия',
+      key: 'actions',
       render: (_: unknown, record: Candidate) => (
         <Space>
-          <Button
-            icon={<EyeOutlined />}
-            onClick={() => setViewCandidate(record)}
-          />
-          {record.status === "pending" && (
+          <Button icon={<EyeOutlined />} onClick={() => setViewCandidate(record)} />
+          {record.status === 'pending' && (
             <Button
               variant="solid"
               type="primary"
@@ -177,11 +162,7 @@ export const AdminCandidatesPage: React.FC = () => {
             okText="Да"
             cancelText="Нет"
           >
-            <Button
-              danger
-              icon={<DeleteOutlined />}
-              loading={deleteMutation.isPending}
-            />
+            <Button danger icon={<DeleteOutlined />} loading={deleteMutation.isPending} />
           </Popconfirm>
         </Space>
       ),
@@ -192,11 +173,11 @@ export const AdminCandidatesPage: React.FC = () => {
     <div style={{ padding: 24 }}>
       <div
         style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           gap: 16,
-          flexWrap: "wrap",
+          flexWrap: 'wrap',
           marginBottom: 24,
         }}
       >
@@ -214,43 +195,36 @@ export const AdminCandidatesPage: React.FC = () => {
       <Modal
         open={!!viewCandidate}
         onCancel={() => setViewCandidate(null)}
-        title={viewCandidate ? getFullName(viewCandidate) : "Кандидат"}
+        title={viewCandidate ? getFullName(viewCandidate) : 'Кандидат'}
         footer={null}
         width={600}
       >
         {viewCandidate && (
           <Descriptions bordered column={1} size="small">
-            <Descriptions.Item label="Email">
-              {viewCandidate.email}
-            </Descriptions.Item>
-            <Descriptions.Item label="Телефон">
-              {viewCandidate.phone || "-"}
-            </Descriptions.Item>
+            <Descriptions.Item label="Email">{viewCandidate.email}</Descriptions.Item>
+            <Descriptions.Item label="Телефон">{viewCandidate.phone || '-'}</Descriptions.Item>
             <Descriptions.Item label="Организация">
-              {viewCandidate.organization || "-"}
+              {viewCandidate.organization || '-'}
             </Descriptions.Item>
-            <Descriptions.Item label="Должность">
-              {viewCandidate.position || "-"}
-            </Descriptions.Item>
+            <Descriptions.Item label="Должность">{viewCandidate.position || '-'}</Descriptions.Item>
             <Descriptions.Item label="Роли">
-              {viewCandidate.proposedRoles &&
-              viewCandidate.proposedRoles.length > 0
+              {viewCandidate.proposedRoles && viewCandidate.proposedRoles.length > 0
                 ? viewCandidate.proposedRoles.map((r) => <Tag key={r}>{r}</Tag>)
-                : "-"}
+                : '-'}
             </Descriptions.Item>
             <Descriptions.Item label="Комментарий">
-              {viewCandidate.comment || "-"}
+              {viewCandidate.comment || '-'}
             </Descriptions.Item>
             <Descriptions.Item label="Статус">
-              <Tag color={statusMap[viewCandidate.status]?.color || "default"}>
+              <Tag color={statusMap[viewCandidate.status]?.color || 'default'}>
                 {statusMap[viewCandidate.status]?.text || viewCandidate.status}
               </Tag>
             </Descriptions.Item>
             <Descriptions.Item label="Создан">
-              {new Date(viewCandidate.createdAt).toLocaleString("ru-RU")}
+              {new Date(viewCandidate.createdAt).toLocaleString('ru-RU')}
             </Descriptions.Item>
             <Descriptions.Item label="Обновлён">
-              {new Date(viewCandidate.updatedAt).toLocaleString("ru-RU")}
+              {new Date(viewCandidate.updatedAt).toLocaleString('ru-RU')}
             </Descriptions.Item>
           </Descriptions>
         )}

@@ -1,11 +1,11 @@
-import React from "react";
-import { Document, PDFViewer, Font } from "@react-pdf/renderer";
-import { type ExtendedProgram, type Dictionary, type User } from "@/types";
-import TimesNewRoman from "@/assets/times.ttf";
-import TimesNewRomanBold from "@/assets/times_bold.ttf";
-import TimesNewRomanItalic from "@/assets/times-new-roman-italic.ttf";
-import { useAuth } from "@/hooks/useAuth";
-import { useProgramDictionaries } from "@/hooks/useProgramDictionaries";
+import React from 'react';
+import { Document, PDFViewer, Font } from '@react-pdf/renderer';
+import { type ExtendedProgram, type Dictionary, type User } from '@/types';
+import TimesNewRoman from '@/assets/times.ttf';
+import TimesNewRomanBold from '@/assets/times_bold.ttf';
+import TimesNewRomanItalic from '@/assets/times-new-roman-italic.ttf';
+import { useAuth } from '@/hooks/useAuth';
+import { useProgramDictionaries } from '@/hooks/useProgramDictionaries';
 import {
   AbbreviationPage,
   ApprovalPage,
@@ -16,16 +16,16 @@ import {
   TitlePage,
   RegulatoryPage,
   LiteraturePage,
-  AttestationExamplesPage
-} from "./pages";
-import { useAvailableAuthors } from "@/queries/programs";
+  AttestationExamplesPage,
+} from './pages';
+import { useAvailableAuthors } from '@/queries/programs';
 
 Font.register({
-  family: "Times-New-Roman",
+  family: 'Times-New-Roman',
   fonts: [
-    { src: TimesNewRoman, fontWeight: "normal" },
-    { src: TimesNewRomanBold, fontWeight: "bold" },
-    { src: TimesNewRomanItalic, fontStyle: "italic" },
+    { src: TimesNewRoman, fontWeight: 'normal' },
+    { src: TimesNewRomanBold, fontWeight: 'bold' },
+    { src: TimesNewRomanItalic, fontStyle: 'italic' },
   ],
 });
 
@@ -50,7 +50,7 @@ const ProgramPDF: React.FC<{
   getDictionaryById: (id: string) => Dictionary | undefined;
 }> = (props) => {
   return (
-    <Document title={props.program.title ?? "Программа"}>
+    <Document title={props.program.title ?? 'Программа'}>
       {pages.map((Page, index) => (
         <Page key={index} {...props}></Page>
       ))}
@@ -71,7 +71,7 @@ export const ProgramPDFViewer: React.FC<{
   ];
 
   return (
-    <div style={{ height: "100vh" }}>
+    <div style={{ height: '100vh' }}>
       {program && authors.length && (
         <PDFViewer width="100%" height="100%">
           <ProgramPDF {...{ program, authors, getDictionaryById }} />

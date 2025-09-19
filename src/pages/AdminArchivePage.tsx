@@ -1,9 +1,9 @@
 import React from 'react';
-import {Button, Card, Space, Table, Tag, Typography} from 'antd';
-import {CheckOutlined, DeleteOutlined} from '@ant-design/icons';
-import {type User, UserStatus} from '../types';
-import {useAdmin} from "../hooks/useAdmin.ts";
-import {useUsers} from "../queries/admin.ts";
+import { Button, Card, Space, Table, Tag, Typography } from 'antd';
+import { CheckOutlined, DeleteOutlined } from '@ant-design/icons';
+import { type User, UserStatus } from '../types';
+import { useAdmin } from '../hooks/useAdmin.ts';
+import { useUsers } from '../queries/admin.ts';
 
 const { Title } = Typography;
 
@@ -20,8 +20,9 @@ export const AdminArchivePage: React.FC = () => {
     {
       title: 'ФИО',
       key: 'fullName',
-      render: (record: User) => 
-        `${record.lastName || ''} ${record.firstName || ''} ${record.middleName || ''}`.trim() || 'Не указано',
+      render: (record: User) =>
+        `${record.lastName || ''} ${record.firstName || ''} ${record.middleName || ''}`.trim() ||
+        'Не указано',
     },
     {
       title: 'Роли',
@@ -29,14 +30,21 @@ export const AdminArchivePage: React.FC = () => {
       key: 'roles',
       render: (roles: string[]) => (
         <>
-          {roles.map(role => {
+          {roles.map((role) => {
             const roleMap = {
-              'admin': { color: 'red', text: 'Администратор' },
-              'expert': { color: 'blue', text: 'Эксперт' },
-              'author': { color: 'green', text: 'Автор' },
+              admin: { color: 'red', text: 'Администратор' },
+              expert: { color: 'blue', text: 'Эксперт' },
+              author: { color: 'green', text: 'Автор' },
             };
-            const roleInfo = roleMap[role as keyof typeof roleMap] || { color: 'default', text: role };
-            return <Tag key={role} color={roleInfo.color}>{roleInfo.text}</Tag>;
+            const roleInfo = roleMap[role as keyof typeof roleMap] || {
+              color: 'default',
+              text: role,
+            };
+            return (
+              <Tag key={role} color={roleInfo.color}>
+                {roleInfo.text}
+              </Tag>
+            );
           })}
         </>
       ),
@@ -47,11 +55,14 @@ export const AdminArchivePage: React.FC = () => {
       key: 'status',
       render: (status: string) => {
         const statusMap = {
-          'active': { color: 'success', text: 'Активен' },
-          'inactive': { color: 'warning', text: 'Неактивен' },
-          'archived': { color: 'default', text: 'Архивирован' },
+          active: { color: 'success', text: 'Активен' },
+          inactive: { color: 'warning', text: 'Неактивен' },
+          archived: { color: 'default', text: 'Архивирован' },
         };
-        const statusInfo = statusMap[status as keyof typeof statusMap] || { color: 'default', text: status };
+        const statusInfo = statusMap[status as keyof typeof statusMap] || {
+          color: 'default',
+          text: status,
+        };
         return <Tag color={statusInfo.color}>{statusInfo.text}</Tag>;
       },
     },
@@ -67,8 +78,8 @@ export const AdminArchivePage: React.FC = () => {
       render: (_: any, record: User) => (
         <Space style={{ display: 'flex', justifyContent: 'start' }}>
           <Button
-              type={'primary'}
-              onClick={() => unarchiveUser(record.id)}
+            type={'primary'}
+            onClick={() => unarchiveUser(record.id)}
             icon={<CheckOutlined />}
           >
             Убрать из архива
@@ -80,10 +91,21 @@ export const AdminArchivePage: React.FC = () => {
 
   return (
     <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, flexWrap: "wrap", marginBottom: 24 }}>
-        <Title level={2}><DeleteOutlined /> Архив</Title>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: 16,
+          flexWrap: 'wrap',
+          marginBottom: 24,
+        }}
+      >
+        <Title level={2}>
+          <DeleteOutlined /> Архив
+        </Title>
       </div>
-      
+
       <Card>
         <Table
           columns={columns}
@@ -93,8 +115,7 @@ export const AdminArchivePage: React.FC = () => {
           pagination={{
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total, range) => 
-              `${range[0]}-${range[1]} из ${total} пользователей`,
+            showTotal: (total, range) => `${range[0]}-${range[1]} из ${total} пользователей`,
           }}
         />
       </Card>

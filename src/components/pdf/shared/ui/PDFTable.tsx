@@ -1,8 +1,8 @@
-import { View, Text } from "@react-pdf/renderer";
-import type { PropsWithChildren } from "react";
-import { PDFTableStyles, type StyleObject } from "../utils";
+import { View, Text } from '@react-pdf/renderer';
+import type { PropsWithChildren } from 'react';
+import { PDFTableStyles, type StyleObject } from '../utils';
 
-type CellProps = PropsWithChildren<{ style?: StyleObject; wrap?: boolean }>; 
+type CellProps = PropsWithChildren<{ style?: StyleObject; wrap?: boolean }>;
 
 export const PDFTable: Record<string, React.FC<CellProps>> = {
   Self: (props) => (
@@ -16,7 +16,10 @@ export const PDFTable: Record<string, React.FC<CellProps>> = {
     </View>
   ),
   Th: (props) => (
-    <View style={[PDFTableStyles.col, PDFTableStyles.headerCell, props.style || {}]} wrap={props.wrap}>
+    <View
+      style={[PDFTableStyles.col, PDFTableStyles.headerCell, props.style || {}]}
+      wrap={props.wrap}
+    >
       <Text style={PDFTableStyles.headerText}>{props.children}</Text>
     </View>
   ),

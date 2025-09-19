@@ -1,7 +1,7 @@
-import React from "react";
-import { Input, Select, Form, Typography } from "antd";
-import type { ExtendedProgram } from "../../types/program";
-import { useProgramDictionaries } from "@/hooks/useProgramDictionaries";
+import React from 'react';
+import { Input, Select, Form, Typography } from 'antd';
+import type { ExtendedProgram } from '@/types';
+import { useProgramDictionaries } from '@/hooks/useProgramDictionaries';
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const ConstructorStep2: React.FC<Props> = ({ value, onChange }) => {
-  const { institutions: institutionList } = useProgramDictionaries()
+  const { institutions: institutionList } = useProgramDictionaries();
 
   return (
     <Form layout="vertical">
@@ -20,7 +20,9 @@ const ConstructorStep2: React.FC<Props> = ({ value, onChange }) => {
       <Form.Item label="Учреждение">
         <Select
           value={value.institution}
-          onChange={(v) => {onChange({ institution: v, customInstitution: '' });}}
+          onChange={(v) => {
+            onChange({ institution: v, customInstitution: '' });
+          }}
           placeholder="Выберите учреждение"
         >
           {institutionList?.map((inst) => (
@@ -31,7 +33,7 @@ const ConstructorStep2: React.FC<Props> = ({ value, onChange }) => {
           <Option value="other">Иное</Option>
         </Select>
       </Form.Item>
-      {value.institution === "other" && (
+      {value.institution === 'other' && (
         <Form.Item label="Ваше учреждение">
           <Input
             value={value.customInstitution}
@@ -51,4 +53,4 @@ const ConstructorStep2: React.FC<Props> = ({ value, onChange }) => {
   );
 };
 
-export default ConstructorStep2; 
+export default ConstructorStep2;

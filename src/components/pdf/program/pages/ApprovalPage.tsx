@@ -1,31 +1,25 @@
-import { Text } from "@react-pdf/renderer";
-import { currentYear } from "../../shared/utils";
-import type { FC } from "react";
-import type { ProgramPDFProps } from "@/types";
-import { PDFPage } from "../../shared/ui/PDFPage";
+import { Text } from '@react-pdf/renderer';
+import { currentYear } from '../../shared/utils';
+import type { FC } from 'react';
+import type { ProgramPDFProps } from '@/types';
+import { PDFPage } from '../../shared/ui/PDFPage';
 
 export const ApprovalPage: FC<ProgramPDFProps> = ({ program, authors }) => {
   return (
     <PDFPage title="ЛИСТ СОГЛАСОВАНИЯ">
       <Text style={{ marginBottom: 10 }}>
-        <Text style={{ fontWeight: "bold", fontSize: 12 }}>
-          Разработчик(и) программы: {"\n"}
-        </Text>
+        <Text style={{ fontWeight: 'bold', fontSize: 12 }}>Разработчик(и) программы: {'\n'}</Text>
         {authors.map(({ lastName, firstName, middleName }, idx) => (
           <Text key={idx}>
-            {(lastName ?? "") +
-              " " +
-              (firstName ?? "") +
-              " " +
-              (middleName ?? "")}
-            {"\n"}
+            {(lastName ?? '') + ' ' + (firstName ?? '') + ' ' + (middleName ?? '')}
+            {'\n'}
           </Text>
         ))}
       </Text>
 
       <Text style={{ marginBottom: 10 }}>
         Дополнительная профессиональная программа повышения квалификации "
-        {program.title || "Название Программы"}", прошла экспертизу:
+        {program.title || 'Название Программы'}", прошла экспертизу:
       </Text>
 
       <Text style={{ marginBottom: 5 }}>Эксперт 1: -</Text>
@@ -33,9 +27,8 @@ export const ApprovalPage: FC<ProgramPDFProps> = ({ program, authors }) => {
 
       <Text>
         Дополнительная профессиональная программа повышения квалификации "
-        {program.title || "Название Программы"}" утверждена Учёным советом
-        Калининградского областного института развития образования (протокол №
-        ___ от ______ {currentYear} г.)
+        {program.title || 'Название Программы'}" утверждена Учёным советом Калининградского
+        областного института развития образования (протокол № ___ от ______ {currentYear} г.)
       </Text>
     </PDFPage>
   );

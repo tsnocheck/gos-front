@@ -39,7 +39,7 @@ export const candidateService = {
   },
 
   async createCandidate(data: CreateCandidateData): Promise<Candidate> {
-    return apiClient.post<Candidate>('/candidates', data);
+    return apiClient.post<Candidate>('/auth/register-candidate', data);
   },
 
   async updateCandidate(id: string, data: UpdateCandidateData): Promise<Candidate> {
@@ -62,7 +62,9 @@ export const candidateService = {
     await apiClient.delete(`/candidates/${id}`);
   },
 
-  async approveCandidate(id: string): Promise<{ message: string; user: User; temporaryPassword: string }> {
+  async approveCandidate(
+    id: string,
+  ): Promise<{ message: string; user: User; temporaryPassword: string }> {
     return apiClient.post(`/candidates/${id}/approve`);
   },
-}; 
+};

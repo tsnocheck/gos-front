@@ -45,33 +45,24 @@ const HTMLPreview: React.FC<HTMLPreviewProps> = ({
   }
 
   return (
-    <Card 
+    <Card
       title={title}
       extra={
         <Space>
           {showPreviewButton && (
-            <Button 
-              icon={<EyeOutlined />} 
-              onClick={handlePreview}
-              size="small"
-            >
+            <Button icon={<EyeOutlined />} onClick={handlePreview} size="small">
               Просмотр
             </Button>
           )}
           {showExportButton && (
-            <Button 
-              icon={<DownloadOutlined />} 
-              onClick={handleExport}
-              size="small"
-              type="primary"
-            >
+            <Button icon={<DownloadOutlined />} onClick={handleExport} size="small" type="primary">
               Экспорт PDF
             </Button>
           )}
         </Space>
       }
     >
-      <div 
+      <div
         dangerouslySetInnerHTML={{ __html: html }}
         style={{
           border: '1px solid #f0f0f0',

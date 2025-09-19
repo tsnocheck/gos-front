@@ -1,8 +1,8 @@
-import type { FC } from "react";
-import type { ProgramPDFProps } from "@/types";
-import { View, Text } from "@react-pdf/renderer";
-import { PDFPage } from "../../shared/ui/PDFPage";
-import HTMLContent from "../../shared/ui/HTMLContent";
+import type { FC } from 'react';
+import type { ProgramPDFProps } from '@/types';
+import { View, Text } from '@react-pdf/renderer';
+import { PDFPage } from '../../shared/ui/PDFPage';
+import HTMLContent from '../../shared/ui/HTMLContent';
 
 export const LiteraturePage: FC<ProgramPDFProps> = ({ program }) => {
   const { orgPedConditions } = program;

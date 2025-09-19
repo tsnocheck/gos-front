@@ -34,7 +34,7 @@ export function extractTextFromNode(node: HTMLNode): string {
   }
 
   if (node.children) {
-    return node.children.map(child => extractTextFromNode(child)).join(' ');
+    return node.children.map((child) => extractTextFromNode(child)).join(' ');
   }
 
   return '';

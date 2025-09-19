@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View, Link } from '@react-pdf/renderer';
-import { 
-  parseHTMLToPDFStructure, 
+import {
+  parseHTMLToPDFStructure,
   sanitizeHTML,
   type HTMLNode,
   isHeading,
@@ -11,7 +11,7 @@ import {
   isParagraph,
   isBold,
   isItalic,
-  getHeadingLevel
+  getHeadingLevel,
 } from '@/utils/htmlToPdf';
 
 interface HTMLContentProps {
@@ -28,7 +28,10 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
   const nodes = parseHTMLToPDFStructure(sanitizedHTML);
 
   // Отрисовка инлайн-узлов внутри Text
-  const renderInline = (node: HTMLNode, index: string | number): (string | React.ReactElement | null) => {
+  const renderInline = (
+    node: HTMLNode,
+    index: string | number,
+  ): string | React.ReactElement | null => {
     // Текстовый узел
     if (node.type === 'text') {
       return node.data || '';
@@ -44,7 +47,9 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
       const href = (node as any).attribs?.href || '';
       return (
         <Link key={index} src={href} style={{ color: 'blue', textDecoration: 'underline' }}>
-          {(node.children || []).map((child, childIndex) => renderInline(child, `${index}-${childIndex}`))}
+          {(node.children || []).map((child, childIndex) =>
+            renderInline(child, `${index}-${childIndex}`),
+          )}
         </Link>
       );
     }
@@ -53,7 +58,9 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     if (isBold(node)) {
       return (
         <Text key={index} style={{ fontWeight: 'bold' }}>
-          {(node.children || []).map((child, childIndex) => renderInline(child, `${index}-${childIndex}`))}
+          {(node.children || []).map((child, childIndex) =>
+            renderInline(child, `${index}-${childIndex}`),
+          )}
         </Text>
       );
     }
@@ -62,18 +69,32 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     if (isItalic(node)) {
       return (
         <Text key={index} style={{ fontStyle: 'italic' }}>
-          {(node.children || []).map((child, childIndex) => renderInline(child, `${index}-${childIndex}`))}
+          {(node.children || []).map((child, childIndex) =>
+            renderInline(child, `${index}-${childIndex}`),
+          )}
         </Text>
       );
     }
 
     // Спан и прочие инлайн
-    if (node.type === 'tag' && (node.name === 'span' || node.name === 'strong' || node.name === 'em' || node.name === 'i' || node.name === 'b' || node.name === 'a')) {
-      return (node.children || []).map((child, childIndex) => renderInline(child, `${index}-${childIndex}`)) as any;
+    if (
+      node.type === 'tag' &&
+      (node.name === 'span' ||
+        node.name === 'strong' ||
+        node.name === 'em' ||
+        node.name === 'i' ||
+        node.name === 'b' ||
+        node.name === 'a')
+    ) {
+      return (node.children || []).map((child, childIndex) =>
+        renderInline(child, `${index}-${childIndex}`),
+      ) as any;
     }
 
     // По умолчанию — просто рендерим детей инлайн
-    return (node.children || []).map((child, childIndex) => renderInline(child, `${index}-${childIndex}`)) as any;
+    return (node.children || []).map((child, childIndex) =>
+      renderInline(child, `${index}-${childIndex}`),
+    ) as any;
   };
 
   // Отрисовка блочных элементов
@@ -90,7 +111,9 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
 
       return (
         <Text key={index} style={headingStyle}>
-          {(node.children || []).map((child, childIndex) => renderInline(child, `${index}-${childIndex}`))}
+          {(node.children || []).map((child, childIndex) =>
+            renderInline(child, `${index}-${childIndex}`),
+          )}
         </Text>
       );
     }
@@ -99,7 +122,9 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     if (isParagraph(node) || (node.type === 'tag' && node.name === 'div')) {
       return (
         <Text key={index} style={{ marginBottom: 6 }}>
-          {(node.children || []).map((child, childIndex) => renderInline(child, `${index}-${childIndex}`))}
+          {(node.children || []).map((child, childIndex) =>
+            renderInline(child, `${index}-${childIndex}`),
+          )}
         </Text>
       );
     }
@@ -108,7 +133,9 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     if (isList(node)) {
       return (
         <View key={index} style={{ marginBottom: 8, marginLeft: 10 }}>
-          {(node.children || []).map((child, childIndex) => renderBlock(child, `${index}-${childIndex}`))}
+          {(node.children || []).map((child, childIndex) =>
+            renderBlock(child, `${index}-${childIndex}`),
+          )}
         </View>
       );
     }
@@ -119,7 +146,9 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
         <Text key={index} style={{ marginBottom: 2 }}>
           {/* Маркер списка */}
           <Text>• </Text>
-          {(node.children || []).map((child, childIndex) => renderInline(child, `${index}-${childIndex}`))}
+          {(node.children || []).map((child, childIndex) =>
+            renderInline(child, `${index}-${childIndex}`),
+          )}
         </Text>
       );
     }
@@ -137,11 +166,7 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     return null;
   };
 
-  return (
-    <View style={style}>
-      {nodes.map((node, index) => renderBlock(node, index))}
-    </View>
-  );
+  return <View style={style}>{nodes.map((node, index) => renderBlock(node, index))}</View>;
 };
 
 export default HTMLContent;

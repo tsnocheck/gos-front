@@ -1,43 +1,45 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { recommendationService } from "../services/recommendationService";
-import type { Recommendation } from "../types/recommendation";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { recommendationService } from '../services/recommendationService';
+import type { Recommendation } from '../types/recommendation';
+import type { RecommendationQueryParams } from '@/services/recommendationService';
 
 // Query keys
 export const recommendationKeys = {
-  all: ["recommendations"] as const,
-  lists: () => [...recommendationKeys.all, "list"] as const,
-  list: () => [...recommendationKeys.lists()] as const,
-  my: () => [...recommendationKeys.all, "my"] as const,
-  stats: () => [...recommendationKeys.all, "stats"] as const,
-  byProgram: (programId: string) => [...recommendationKeys.all, "program", programId] as const,
-  detail: (id: string) => [...recommendationKeys.all, "detail", id] as const,
+  all: ['recommendations'] as const,
+  lists: () => [...recommendationKeys.all, 'list'] as const,
+  list: (params?: RecommendationQueryParams) => [...recommendationKeys.lists(), params || {}] as const,
+  my: (params?: RecommendationQueryParams) => [...recommendationKeys.all, 'my', params || {}] as const,
+  stats: () => [...recommendationKeys.all, 'stats'] as const,
+  byProgram: (programId: string, params?: RecommendationQueryParams) =>
+    [...recommendationKeys.all, 'program', programId, params || {}] as const,
+  detail: (id: string) => [...recommendationKeys.all, 'detail', id] as const,
 };
 
 // Queries
-export const useRecommendations = () => {
+export const useRecommendations = (params?: RecommendationQueryParams) => {
   return useQuery({
-    queryKey: recommendationKeys.list(),
-    queryFn: recommendationService.getRecommendations,
+    queryKey: recommendationKeys.list(params),
+    queryFn: () => recommendationService.getRecommendations(params),
     retry: false,
     refetchOnWindowFocus: false,
     staleTime: 2 * 60 * 1000,
   });
 };
 
-export const useMyRecommendations = () => {
+export const useMyRecommendations = (params?: RecommendationQueryParams) => {
   return useQuery({
-    queryKey: recommendationKeys.my(),
-    queryFn: recommendationService.getMyRecommendations,
+    queryKey: recommendationKeys.my(params),
+    queryFn: () => recommendationService.getMyRecommendations(params),
     retry: false,
     refetchOnWindowFocus: false,
     staleTime: 2 * 60 * 1000,
   });
 };
 
-export const useRecommendationsByProgram = (programId: string) => {
+export const useRecommendationsByProgram = (programId: string, params?: RecommendationQueryParams) => {
   return useQuery({
-    queryKey: recommendationKeys.byProgram(programId),
-    queryFn: () => recommendationService.getRecommendationsByProgram(programId),
+    queryKey: recommendationKeys.byProgram(programId, params),
+    queryFn: () => recommendationService.getRecommendationsByProgram(programId, params),
     enabled: !!programId,
     retry: false,
     refetchOnWindowFocus: false,

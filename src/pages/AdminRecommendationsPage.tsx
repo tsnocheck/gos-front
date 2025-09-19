@@ -14,8 +14,8 @@ import {
   Popconfirm,
   Tag,
 } from 'antd';
-import type { Recommendation } from '../types/recommendation';
-import { RecommendationType, RecommendationStatus } from '../types/recommendation';
+import type { Recommendation } from '@/types';
+import { RecommendationStatus } from '@/types';
 import {
   useRecommendations,
   useCreateRecommendation,
@@ -23,11 +23,12 @@ import {
   useDeleteRecommendation,
 } from '../queries/recommendations';
 import dayjs from 'dayjs';
+import type { TableProps } from 'antd';
 
 const { Title } = Typography;
 const { Option } = Select;
 
-const typeLabels: Record<RecommendationType, string> = {
+const typeLabels: Record<string, string> = {
   general: 'Общие',
   content: 'Содержание',
   methodology: 'Методология',
@@ -53,7 +54,10 @@ const AdminRecommendationsPage: React.FC = () => {
   const [editing, setEditing] = useState<Recommendation | null>(null);
   const [form] = Form.useForm();
 
-  const { data, isLoading } = useRecommendations();
+  const [sortBy, setSortBy] = useState<string | undefined>('createdAt');
+  const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC' | undefined>('DESC');
+
+  const { data, isLoading } = useRecommendations({ sortBy, sortOrder });
   const createMutation = useCreateRecommendation();
   const updateMutation = useUpdateRecommendation();
   const deleteMutation = useDeleteRecommendation();
@@ -111,12 +115,13 @@ const AdminRecommendationsPage: React.FC = () => {
   };
 
   const columns = [
-    { title: 'Заголовок', dataIndex: 'title', key: 'title' },
-    { title: 'Тип', dataIndex: 'type', key: 'type', render: (val: RecommendationType) => typeLabels[val] },
+    { title: 'Заголовок', dataIndex: 'title', key: 'title', sorter: true },
+    { title: 'Тип', dataIndex: 'type', key: 'type', sorter: true, render: (val: string) => typeLabels[val] },
     {
       title: 'Статус',
       dataIndex: 'status',
       key: 'status',
+      sorter: true,
       render: (val: RecommendationStatus) => {
         const { label, color } = statusLabels[val];
         return <Tag color={color}>{label}</Tag>;
@@ -126,12 +131,14 @@ const AdminRecommendationsPage: React.FC = () => {
       title: 'Приоритет',
       dataIndex: 'priority',
       key: 'priority',
+      sorter: true,
       render: (val: number) => priorityLabels[val as 1 | 2 | 3],
     },
     {
       title: 'Срок',
       dataIndex: 'dueDate',
       key: 'dueDate',
+      sorter: true,
       render: (val: string | Date) => (val ? dayjs(val).format('DD.MM.YYYY') : '—'),
     },
     {
@@ -153,9 +160,23 @@ const AdminRecommendationsPage: React.FC = () => {
     },
   ];
 
+  const handleTableChange: TableProps<Recommendation>['onChange'] = (_pagination, _filters, sorter) => {
+    const order = Array.isArray(sorter) ? sorter[0]?.order : sorter?.order;
+    const field = Array.isArray(sorter) ? (sorter[0]?.field as string | undefined) : (sorter?.field as string | undefined);
+    setSortBy(field || undefined);
+    setSortOrder(order === 'ascend' ? 'ASC' : order === 'descend' ? 'DESC' : undefined);
+  };
+
   return (
     <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 24,
+        }}
+      >
         <Title level={2}>Рекомендательная система</Title>
         <Button type="primary" onClick={handleOpenModal}>
           Добавить рекомендацию
@@ -167,6 +188,7 @@ const AdminRecommendationsPage: React.FC = () => {
           dataSource={data?.data || []}
           columns={columns}
           rowKey="id"
+          onChange={handleTableChange}
           pagination={false}
         />
       </Card>
@@ -178,23 +200,35 @@ const AdminRecommendationsPage: React.FC = () => {
         okText={editing ? 'Сохранить' : 'Добавить'}
       >
         <Form form={form} layout="vertical">
-          <Form.Item name="title" label="Заголовок" rules={[{ required: true, message: 'Введите заголовок' }]}>
+          <Form.Item
+            name="title"
+            label="Заголовок"
+            rules={[{ required: true, message: 'Введите заголовок' }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="content" label="Содержание" rules={[{ required: true, message: 'Введите содержание' }]}>
+          <Form.Item
+            name="content"
+            label="Содержание"
+            rules={[{ required: true, message: 'Введите содержание' }]}
+          >
             <Input.TextArea rows={4} />
           </Form.Item>
           <Form.Item name="type" label="Тип рекомендации" rules={[{ required: true }]}>
             <Select placeholder="Выберите тип">
               {Object.entries(typeLabels).map(([key, label]) => (
-                <Option key={key} value={key}>{label}</Option>
+                <Option key={key} value={key}>
+                  {label}
+                </Option>
               ))}
             </Select>
           </Form.Item>
           <Form.Item name="status" label="Статус рекомендации" rules={[{ required: true }]}>
             <Select>
               {Object.entries(statusLabels).map(([key, { label }]) => (
-                <Option key={key} value={key}>{label}</Option>
+                <Option key={key} value={key}>
+                  {label}
+                </Option>
               ))}
             </Select>
           </Form.Item>

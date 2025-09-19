@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Table, Button, Input, Form, Typography, Space, Popconfirm } from "antd";
-import type { ExtendedProgram, Abbreviation } from "../../types/program";
+import React, { useState } from 'react';
+import { Table, Button, Input, Form, Typography, Space, Popconfirm } from 'antd';
+import type { ExtendedProgram, Abbreviation } from '@/types';
 
 const { Title } = Typography;
 
@@ -27,9 +27,7 @@ const ConstructorStep4: React.FC<Props> = ({ value, onChange }) => {
 
   const handleSaveEdit = (values: Abbreviation) => {
     onChange({
-      abbreviations: abbreviations.map((item, idx) =>
-        idx === editingIndex ? values : item
-      ),
+      abbreviations: abbreviations.map((item, idx) => (idx === editingIndex ? values : item)),
     });
     setEditingIndex(null);
     form.resetFields();
@@ -52,19 +50,16 @@ const ConstructorStep4: React.FC<Props> = ({ value, onChange }) => {
       >
         <Form.Item
           name="abbreviation"
-          rules={[{ required: true, message: "Введите аббревиатуру" }]}
+          rules={[{ required: true, message: 'Введите аббревиатуру' }]}
         >
           <Input placeholder="Аббревиатура" />
         </Form.Item>
-        <Form.Item
-          name="fullname"
-          rules={[{ required: true, message: "Введите расшифровку" }]}
-        >
+        <Form.Item name="fullname" rules={[{ required: true, message: 'Введите расшифровку' }]}>
           <Input placeholder="Расшифровка" />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">
-            {editingIndex === null ? "Добавить" : "Сохранить"}
+            {editingIndex === null ? 'Добавить' : 'Сохранить'}
           </Button>
           {editingIndex !== null && (
             <Button
@@ -85,10 +80,10 @@ const ConstructorStep4: React.FC<Props> = ({ value, onChange }) => {
         rowKey={(_, i) => String(i)}
         pagination={false}
         columns={[
-          { title: "Аббревиатура", dataIndex: "abbreviation" },
-          { title: "Расшифровка", dataIndex: "fullname" },
+          { title: 'Аббревиатура', dataIndex: 'abbreviation' },
+          { title: 'Расшифровка', dataIndex: 'fullname' },
           {
-            title: "Действия",
+            title: 'Действия',
             render: (_, __, idx) => (
               <Space>
                 <Button size="small" onClick={() => handleEdit(idx)}>

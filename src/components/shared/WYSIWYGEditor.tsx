@@ -1,6 +1,6 @@
-import React from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import React from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 interface WYSIWYGEditorProps {
   name: string;
@@ -28,30 +28,30 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
   const modules = {
     toolbar: [
       [{ header: [1, 2, 3, false] }],
-      ["bold", "italic", "underline", "strike"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      [{ indent: "-1" }, { indent: "+1" }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      [{ indent: '-1' }, { indent: '+1' }],
       [{ align: [] }],
-      ["link"],
-      ["clean"],
+      ['link'],
+      ['clean'],
     ],
   };
 
   const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "bullet",
-    "indent",
-    "align",
-    "link",
+    'header',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'list',
+    'bullet',
+    'indent',
+    'align',
+    'link',
   ];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       <label style={{ fontSize: 16 }}>{label}</label>
       <ReactQuill
         id={name}

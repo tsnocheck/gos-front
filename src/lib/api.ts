@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
 
@@ -34,33 +34,36 @@ class ApiClient {
       },
       (error) => {
         return Promise.reject(error);
-      }
+      },
     );
 
     // Response interceptor
     this.client.interceptors.response.use(
       (response: AxiosResponse) => {
-        ;
         return response;
       },
       async (error) => {
-        const navigate = useNavigate()
+        const navigate = useNavigate();
 
         const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url.includes('/auth/refresh')) {
+        if (
+          error.response?.status === 401 &&
+          !originalRequest._retry &&
+          !originalRequest.url.includes('/auth/refresh')
+        ) {
           originalRequest._retry = true;
 
           try {
             // Попытка обновить токен
             await this.refreshToken();
-            
+
             // Повторяем оригинальный запрос
             const token = localStorage.getItem('accessToken');
             if (token) {
               originalRequest.headers.Authorization = `Bearer ${token}`;
             }
-            
+
             return this.client(originalRequest);
           } catch (refreshError) {
             // Если обновление токена не удалось, перенаправляем на логин
@@ -71,7 +74,7 @@ class ApiClient {
         }
 
         return Promise.reject(error);
-      }
+      },
     );
   }
 

@@ -27,9 +27,11 @@ export const dictionaryService = {
   },
 
   async getActionsByFunctions(functionsIds: string[]) {
-    const promises = functionsIds.map((id) => this.getDictionaryByType(id + `--${DictionaryType.LABOR_ACTIONS}`))
+    const promises = functionsIds.map((id) =>
+      this.getDictionaryByType(id + `--${DictionaryType.LABOR_ACTIONS}`),
+    );
 
-    return (await Promise.all(promises)).flat()
+    return (await Promise.all(promises)).flat();
   },
 
   async getDictionaryHierarchy(type: DictionaryType): Promise<Dictionary[]> {
@@ -71,7 +73,7 @@ export const dictionaryService = {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('type', type);
-    
+
     await apiClient.post('/dictionaries/admin/import', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -83,12 +85,12 @@ export const dictionaryService = {
   async searchDictionaries(query: string, type?: DictionaryType): Promise<Dictionary[]> {
     const params = new URLSearchParams({ query });
     if (type) params.append('type', type);
-    
+
     return apiClient.get<Dictionary[]>(`/dictionaries/search?${params}`);
   },
 
   // Получение популярных значений
   async getPopularDictionaries(type: DictionaryType, limit = 10): Promise<Dictionary[]> {
     return apiClient.get<Dictionary[]>(`/dictionaries/popular/${type}?limit=${limit}`);
-  }
+  },
 };

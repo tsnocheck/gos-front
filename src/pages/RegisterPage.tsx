@@ -1,10 +1,6 @@
 import React from 'react';
 import { Form, Input, Button, Typography, Card, message, Row, Col, Select } from 'antd';
-import { 
-  MailOutlined, 
-  PhoneOutlined,
-  FileTextOutlined 
-} from '@ant-design/icons';
+import { MailOutlined, PhoneOutlined, FileTextOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCreateCandidate } from '../queries/candidates';
 import type { CreateCandidateData } from '../services/candidateService';
@@ -27,36 +23,33 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #1890ff 0%, #722ed1 100%)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 24
-    }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #1890ff 0%, #722ed1 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 24,
+      }}
+    >
       <Row justify="center" style={{ width: '100%', maxWidth: 600 }}>
         <Col span={24}>
-          <Card style={{
-            borderRadius: 12,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.12)'
-          }}>
+          <Card
+            style={{
+              borderRadius: 12,
+              boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+            }}
+          >
             <div style={{ textAlign: 'center', marginBottom: 32 }}>
               <FileTextOutlined style={{ fontSize: 48, color: '#1890ff', marginBottom: 16 }} />
               <Title level={2} style={{ margin: 0, color: '#1890ff' }}>
                 Регистрация
               </Title>
-              <Text type="secondary">
-                Создание аккаунта в системе ПОРТАЛ
-              </Text>
+              <Text type="secondary">Создание аккаунта в системе ПОРТАЛ</Text>
             </div>
 
-            <Form
-              name="register"
-              onFinish={onFinish}
-              autoComplete="off"
-              layout="vertical"
-            >
+            <Form name="register" onFinish={onFinish} autoComplete="off" layout="vertical">
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item
@@ -93,13 +86,10 @@ export const RegisterPage: React.FC = () => {
                     name="email"
                     rules={[
                       { required: true, message: 'Введите email!' },
-                      { type: 'email', message: 'Введите корректный email!' }
+                      { type: 'email', message: 'Введите корректный email!' },
                     ]}
                   >
-                    <Input 
-                      prefix={<MailOutlined />}
-                      placeholder="email@example.com" 
-                    />
+                    <Input prefix={<MailOutlined />} placeholder="email@example.com" />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
@@ -108,10 +98,7 @@ export const RegisterPage: React.FC = () => {
                     name="phone"
                     rules={[{ required: true, message: 'Введите телефон!' }]}
                   >
-                    <Input 
-                      prefix={<PhoneOutlined />}
-                      placeholder="+7 (999) 999-99-99" 
-                    />
+                    <Input prefix={<PhoneOutlined />} placeholder="+7 (999) 999-99-99" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -127,10 +114,7 @@ export const RegisterPage: React.FC = () => {
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item
-                    label="Ученая степень"
-                    name="academicDegree"
-                  >
+                  <Form.Item label="Ученая степень" name="academicDegree">
                     <Select placeholder="Выберите ученую степень">
                       <Option value="none">Без степени</Option>
                       <Option value="candidate">Кандидат наук</Option>
@@ -152,24 +136,14 @@ export const RegisterPage: React.FC = () => {
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item
-                    label="Структурное подразделение"
-                    name="department"
-                  >
+                  <Form.Item label="Структурное подразделение" name="department">
                     <Input placeholder="Факультет, кафедра..." />
                   </Form.Item>
                 </Col>
               </Row>
 
-              <Form.Item
-                label="Преподаваемые предметы"
-                name="subjects"
-              >
-                <Select
-                  mode="tags"
-                  placeholder="Введите предметы"
-                  style={{ width: '100%' }}
-                />
+              <Form.Item label="Преподаваемые предметы" name="subjects">
+                <Select mode="tags" placeholder="Введите предметы" style={{ width: '100%' }} />
               </Form.Item>
 
               <Form.Item>
@@ -186,10 +160,7 @@ export const RegisterPage: React.FC = () => {
 
                 <div style={{ textAlign: 'center' }}>
                   <Text type="secondary">
-                    Уже есть аккаунт?{' '}
-                    <Link to="/login">
-                      Войти
-                    </Link>
+                    Уже есть аккаунт? <Link to="/login">Войти</Link>
                   </Text>
                 </div>
               </Form.Item>

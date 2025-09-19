@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState } from 'react';
 import {
   Card,
   Table,
@@ -12,69 +12,54 @@ import {
   Tag,
   Checkbox,
   Rate,
-} from "antd";
-import { EyeOutlined, EditOutlined } from "@ant-design/icons";
-import {
-  ExpertiseStatus,
-  type CompleteExpertiseDto,
-  type Expertise,
-} from "../types";
+} from 'antd';
+import { EyeOutlined, EditOutlined } from '@ant-design/icons';
+import { ExpertiseStatus, type CompleteExpertiseDto, type Expertise } from '@/types';
 import {
   useCompleteExpertise,
   useMyExpertises,
+  useSendForRevision,
   useUpdateExpertise,
-} from "../queries/expertises.ts";
-import { ProgramPDFViewer } from "@/components/pdf/program/ProgramPDFViewer";
+} from '../queries/expertises.ts';
+import ViewProgramModal from '@/components/shared/ViewProgramModal';
+import type { TableProps } from 'antd';
 
 const statusMap: Record<ExpertiseStatus, { text: string; color: string }> = {
-  [ExpertiseStatus.PENDING]: { text: "Ожидает экспертизы", color: "default" },
-  [ExpertiseStatus.IN_PROGRESS]: { text: "В процессе", color: "blue" },
-  [ExpertiseStatus.COMPLETED]: { text: "Завершена", color: "purple" },
-  [ExpertiseStatus.APPROVED]: { text: "Одобрено", color: "green" },
-  [ExpertiseStatus.REJECTED]: { text: "Отклонено", color: "red" },
+  [ExpertiseStatus.PENDING]: { text: 'Ожидает экспертизы', color: 'default' },
+  [ExpertiseStatus.IN_PROGRESS]: { text: 'В процессе', color: 'blue' },
+  [ExpertiseStatus.COMPLETED]: { text: 'Завершена', color: 'purple' },
+  [ExpertiseStatus.APPROVED]: { text: 'Опубликована', color: 'green' },
+  [ExpertiseStatus.REJECTED]: { text: 'Отклонено', color: 'red' },
 };
 
 const { Title, Text } = Typography;
-// const { Option } = Select;
-
-// const criteriaNames = {
-//   "1": "Актуальность программы",
-//   "2": "Соответствие нормативным требованиям",
-//   "3": "Качество содержания",
-//   "4": "Методическая обоснованность",
-//   "5": "Практическая направленность",
-//   "6": "Инновационность",
-//   "7": "Ресурсное обеспечение",
-//   "8": "Технологичность",
-//   "9": "Оценочные материалы",
-//   "10": "Структурированность",
-//   "11": "Логическая последовательность",
-//   "12": "Завершенность",
-//   "13": "Применимость результатов",
-// };
 
 export const ExpertisePage: React.FC = () => {
-  const [selectedExpertiseId, setSelectedExpertiseId] = useState<string | null>(
-    null
-  );
+  const [selectedExpertiseId, setSelectedExpertiseId] = useState<string | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [showRevisionInEdit, setShowRevisionInEdit] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [form] = Form.useForm();
 
-  const { data: expertises, isLoading } = useMyExpertises();
+  const [sortBy, setSortBy] = useState<string | undefined>('createdAt');
+  const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC' | undefined>('DESC');
+
+  const { data: expertises, isLoading } = useMyExpertises({ sortBy, sortOrder });
   const updateExpertiseMutation = useUpdateExpertise();
   const completeExpertiseMutation = useCompleteExpertise();
+  const sendForRevisionMutation = useSendForRevision();
 
   const selectedExpertise = useMemo(
     () => expertises?.data.find((e) => e.id === selectedExpertiseId),
-    [expertises, selectedExpertiseId]
+    [expertises, selectedExpertiseId],
   );
 
   const columns = [
     {
-      title: "Название программы",
-      dataIndex: ["program", "title"],
-      key: "title",
+      title: 'Название программы',
+      dataIndex: ['program', 'title'],
+      key: 'title',
+      sorter: true,
       render: (_: string, record: Expertise) => (
         <div>
           <div>{record.program?.title}</div>
@@ -83,45 +68,45 @@ export const ExpertisePage: React.FC = () => {
       ),
     },
     {
-      title: "Номер программы",
-      dataIndex: ["program", "programCode"],
-      key: "programCode",
-      render: (_: string, record: Expertise) =>
-        record.program?.programCode ?? "-",
+      title: 'Номер программы',
+      dataIndex: ['program', 'programCode'],
+      key: 'programCode',
+      sorter: true,
+      render: (_: string, record: Expertise) => record.program?.programCode ?? '-',
     },
     {
-      title: "Длительность",
-      dataIndex: ["program", "duration"],
-      key: "duration",
-      render: (_: number, record: Expertise) =>
-        `${record.program?.duration ?? "-"} ч.`,
+      title: 'Длительность',
+      dataIndex: ['program', 'duration'],
+      key: 'duration',
+      sorter: true,
+      render: (_: number, record: Expertise) => `${record.program?.duration ?? '-'} ч.`,
     },
     {
-      title: "Статус экспертизы",
-      dataIndex: "status",
-      key: "status",
-      render: (status: Expertise["status"]) => {
+      title: 'Статус экспертизы',
+      dataIndex: 'status',
+      key: 'status',
+      sorter: true,
+      render: (status: Expertise['status']) => {
         const { text, color } = statusMap[status as ExpertiseStatus] || {
           text: status,
-          color: "default",
+          color: 'default',
         };
         return <Tag color={color}>{text}</Tag>;
       },
     },
     {
-      title: "Создана",
-      dataIndex: "createdAt",
-      key: "createdAt",
+      title: 'Создана',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      sorter: true,
       render: (_: string, record: Expertise) =>
         record.createdAt
-          ? new Date(record.createdAt as unknown as string).toLocaleDateString(
-              "ru-RU"
-            )
-          : "-",
+          ? new Date(record.createdAt as unknown as string).toLocaleDateString('ru-RU')
+          : '-',
     },
     {
-      title: "Действия",
-      key: "actions",
+      title: 'Действия',
+      key: 'actions',
       render: (_: unknown, record: Expertise) => (
         <Space>
           <Button
@@ -160,6 +145,20 @@ export const ExpertisePage: React.FC = () => {
     },
   ];
 
+  const handleTableChange: TableProps<Expertise>['onChange'] = (pagination, _filters, sorter) => {
+    const order = Array.isArray(sorter) ? sorter[0]?.order : sorter?.order;
+    const field = (Array.isArray(sorter) ? sorter[0]?.field : sorter?.field) as string | undefined;
+
+    // keep pagination usage to avoid unused warning
+    const _current = pagination?.current;
+    const _pageSize = pagination?.pageSize;
+    void _current;
+    void _pageSize;
+
+    setSortBy(field || undefined);
+    setSortOrder(order === 'ascend' ? 'ASC' : order === 'descend' ? 'DESC' : undefined);
+  };
+
   const handleUpdateExpertise = async (values: Record<string, unknown>) => {
     if (!selectedExpertise) return;
     try {
@@ -167,10 +166,10 @@ export const ExpertisePage: React.FC = () => {
         id: selectedExpertise.id,
         data: values,
       });
-      message.success("Изменения сохранены");
+      message.success('Изменения сохранены');
       setIsEditOpen(false);
     } catch {
-      message.error("Не удалось сохранить изменения");
+      message.error('Не удалось сохранить изменения');
     }
   };
 
@@ -181,10 +180,10 @@ export const ExpertisePage: React.FC = () => {
         id: selectedExpertise.id,
         data: values,
       });
-      message.success("Экспертиза завершена");
+      message.success('Экспертиза завершена');
       setIsEditOpen(false);
     } catch {
-      message.error("Не удалось завершить экспертизу");
+      message.error('Не удалось завершить экспертизу');
     }
   };
 
@@ -197,34 +196,28 @@ export const ExpertisePage: React.FC = () => {
           dataSource={expertises?.data || []}
           loading={isLoading}
           rowKey="id"
+          onChange={handleTableChange}
           pagination={{
             total: expertises?.total,
             pageSize: expertises?.limit,
             current: expertises?.page,
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total, range) =>
-              `${range[0]}-${range[1]} из ${total} экспертиз`,
+            showTotal: (total, range) => `${range[0]}-${range[1]} из ${total} экспертиз`,
           }}
         />
       </Card>
 
       {/* Модальное окно предпросмотра PDF */}
-      <Modal
-        title={`Просмотр программы: ${selectedExpertise?.program?.title ?? ""}`}
+      <ViewProgramModal
         open={isPreviewOpen && !!selectedExpertise}
-        onCancel={() => setIsPreviewOpen(false)}
-        footer={null}
-        width="90vw"
-      >
-        {selectedExpertise?.program && (
-          <ProgramPDFViewer program={selectedExpertise.program} />
-        )}
-      </Modal>
+        program={selectedExpertise?.program ?? null}
+        onClose={() => setIsPreviewOpen(false)}
+      />
 
       {/* Модальное окно редактирования экспертизы */}
       <Modal
-        title={`Экспертиза: ${selectedExpertise?.program?.title ?? ""}`}
+        title={`Экспертиза: ${selectedExpertise?.program?.title ?? ''}`}
         open={isEditOpen}
         onCancel={() => setIsEditOpen(false)}
         width={800}
@@ -244,25 +237,27 @@ export const ExpertisePage: React.FC = () => {
             <Input.TextArea rows={3} />
           </Form.Item>
 
-          <div
-            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
-          >
+          {showRevisionInEdit && (
+            <Form.Item
+              name="revisionComments"
+              label="Комментарий для автора (на доработку)"
+              rules={[{ required: true, message: 'Укажите комментарий' }]}
+            >
+              <Input.TextArea rows={4} />
+            </Form.Item>
+          )}
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <Form.Item name="relevanceScore" label="Актуальность (0-10)">
               <Rate count={10} />
             </Form.Item>
-            <Form.Item
-              name="contentQualityScore"
-              label="Качество содержания (0-10)"
-            >
+            <Form.Item name="contentQualityScore" label="Качество содержания (0-10)">
               <Rate count={10} />
             </Form.Item>
             <Form.Item name="methodologyScore" label="Методология (0-10)">
               <Rate count={10} />
             </Form.Item>
-            <Form.Item
-              name="practicalValueScore"
-              label="Практическая ценность (0-10)"
-            >
+            <Form.Item name="practicalValueScore" label="Практическая ценность (0-10)">
               <Rate count={10} />
             </Form.Item>
             <Form.Item name="innovationScore" label="Инновационность (0-10)">
@@ -275,6 +270,41 @@ export const ExpertisePage: React.FC = () => {
 
           <Form.Item>
             <Space>
+              {!showRevisionInEdit && (
+                <Button onClick={() => setShowRevisionInEdit((v) => !v)}>На доработку</Button>
+              )}
+              {showRevisionInEdit && (
+                <Button
+                  variant="solid"
+                  color="red"
+                  onClick={async () => {
+                    try {
+                      await form.validateFields(['revisionComments']);
+                    } catch {
+                      return;
+                    }
+                    if (!selectedExpertise) return;
+                    try {
+                      const revisionComments = form.getFieldValue('revisionComments');
+                      await sendForRevisionMutation.mutateAsync({
+                        id: selectedExpertise.id,
+                        body: {
+                          revisionComments,
+                          generalFeedback: selectedExpertise.generalFeedback,
+                          recommendations: selectedExpertise.recommendations,
+                        },
+                      });
+                      message.success('Отправлено на доработку');
+                      setShowRevisionInEdit(false);
+                      setIsEditOpen(false);
+                    } catch {
+                      message.error('Не удалось отправить на доработку');
+                    }
+                  }}
+                >
+                  Отправить на доработку
+                </Button>
+              )}
               {selectedExpertise?.status !== ExpertiseStatus.APPROVED && (
                 <>
                   <Button
@@ -287,9 +317,7 @@ export const ExpertisePage: React.FC = () => {
                     type="primary"
                     variant="solid"
                     color="green"
-                    onClick={() =>
-                      handleCompleteExpertise(form.getFieldsValue())
-                    }
+                    onClick={() => handleCompleteExpertise(form.getFieldsValue())}
                   >
                     Завершить экспертизу
                   </Button>

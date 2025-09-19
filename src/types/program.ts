@@ -1,49 +1,49 @@
 // Типы и enum'ы программ
 
-import type { User } from "./user.ts";
-import type { Expertise } from "./expertise.ts";
-import type { Dictionary, Standard } from "./index.ts";
+import type { User } from './user.ts';
+import type { Expertise } from './expertise.ts';
+import type { Dictionary, Standard } from './index.ts';
 
 /** Статус программы */
 export enum ProgramStatus {
   /** Черновик */
-  DRAFT = "draft",
+  DRAFT = 'draft',
   /** Отправлена на экспертизу */
-  SUBMITTED = "submitted",
+  SUBMITTED = 'submitted',
   /** На рассмотрении */
-  IN_REVIEW = "in_review",
+  IN_REVIEW = 'in_review',
   /** Одобрена */
-  APPROVED = "approved",
+  APPROVED = 'approved',
   /** Отклонена */
-  REJECTED = "rejected",
+  REJECTED = 'rejected',
   /** В архиве */
-  ARCHIVED = "archived",
+  ARCHIVED = 'archived',
 }
 
 /** Раздел программы */
 export enum ProgramSection {
   /** Нормативно-правовой раздел */
-  NPR = "npr",
+  NPR = 'npr',
   /** Предметно-методический раздел */
-  PMR = "pmr",
+  PMR = 'pmr',
   /** Вариативный раздел */
-  VR = "vr",
+  VR = 'vr',
 }
 
 export enum Equipment {
-  COMPUTER = "computer",
-  PROJECTOR = "projector",
-  INTERACTIVE_BOARD = "interactive_board",
-  SPEAKERS = "speakers",
-  MARKER_BOARDS = "marker_boards",
-  OTHER = "other",
+  COMPUTER = 'computer',
+  PROJECTOR = 'projector',
+  INTERACTIVE_BOARD = 'interactive_board',
+  SPEAKERS = 'speakers',
+  MARKER_BOARDS = 'marker_boards',
+  OTHER = 'other',
 }
 
 export enum DistanceEquipment {
-  PC_INTERNET = "pc-internet",
-  AUDIO_DEVICES = "audio-devices",
-  SOFTWARE = "software",
-  OTHER_DISTANCE = "other-distance",
+  PC_INTERNET = 'pc-internet',
+  AUDIO_DEVICES = 'audio-devices',
+  SOFTWARE = 'software',
+  OTHER_DISTANCE = 'other-distance',
 }
 
 export const programSection: {
@@ -51,18 +51,18 @@ export const programSection: {
   short: Record<ProgramSection, string>;
 } = {
   full: {
-    [ProgramSection.NPR]: "Нормативно-правовой раздел",
-    [ProgramSection.PMR]: "Предметно-методический раздел",
-    [ProgramSection.VR]: "Вариативный раздел",
+    [ProgramSection.NPR]: 'Нормативно-правовой раздел',
+    [ProgramSection.PMR]: 'Предметно-методический раздел',
+    [ProgramSection.VR]: 'Вариативный раздел',
   },
   short: {
-    [ProgramSection.NPR]: "НПР",
-    [ProgramSection.PMR]: "ПМР",
-    [ProgramSection.VR]: "ВР",
+    [ProgramSection.NPR]: 'НПР',
+    [ProgramSection.PMR]: 'ПМР',
+    [ProgramSection.VR]: 'ВР',
   },
 };
 
-export const attestationForms = ["Тест", "Практическая работа", "Кейс"];
+export const attestationForms = ['Тест', 'Практическая работа', 'Кейс'];
 
 export interface Abbreviation {
   abbreviation: string; // Сокращение (например, "КОИРО")
