@@ -53,11 +53,11 @@ const ConstructorStep8: React.FC<Props> = ({ value, onChange }) => {
               </div>
 
               <div>
-                <label style={{ display: 'block', marginBottom: 4 }}>Критерии оценивания</label>
-                <Input.TextArea
-                  rows={3}
+                <WYSIWYGEditor
+                  name={`attestation-criteria-${i}`}
+                  label="Критерии оценивания"
                   value={a.criteria}
-                  onChange={(e) => updateAttestation(i, { criteria: e.target.value })}
+                  onChange={(v) => updateAttestation(i, { criteria: v })}
                 />
               </div>
 

@@ -53,16 +53,18 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
 
       {(value.standard === 'professional-standard' || value.standard === 'both') && (
         <div style={{ display: 'flex', width: '100%', gap: 20 }}>
-          <Form.Item name="functions" label="Трудовые функции" style={{ flex: 1 }}>
+          <Form.Item name="functions" label="Трудовые функции" style={{ flex: 1, minWidth: 0 }}>
             <Select
               mode="tags"
               options={functions?.map((f) => ({
                 value: f.id,
                 label: f.value,
               }))}
+              style={{ width: '100%', maxWidth: '100%' }}
+              maxTagTextLength={30}
             />
           </Form.Item>
-          <Form.Item name="actions" label="Трудовые действия" style={{ flex: 1 }}>
+          <Form.Item name="actions" label="Трудовые действия" style={{ flex: 1, minWidth: 0 }}>
             <Select
               mode="tags"
               options={actions?.map((a) => ({
@@ -70,6 +72,8 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
                 label: a.value,
               }))}
               disabled={!selectedFunctions?.length}
+              style={{ width: '100%', maxWidth: '100%' }}
+              maxTagTextLength={30}
             />
           </Form.Item>
         </div>
@@ -77,16 +81,31 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
 
       {(value.standard === 'eks' || value.standard === 'both') && (
         <Form.Item name="duties" label="Должностные обязанности">
-          <Select mode="tags" options={duties?.map((d) => ({ value: d.id, label: d.value }))} />
+          <Select
+            mode="tags"
+            options={duties?.map((d) => ({ value: d.id, label: d.value }))}
+            style={{ width: '100%', maxWidth: '100%' }}
+            maxTagTextLength={30}
+          />
         </Form.Item>
       )}
 
       <Form.Item name="know" label="Знать">
-        <Select mode="tags" style={{ width: '100%' }} placeholder="Введите знания" />
+        <Select
+          mode="tags"
+          style={{ width: '100%', maxWidth: '100%' }}
+          placeholder="Введите знания"
+          maxTagTextLength={30}
+        />
       </Form.Item>
 
       <Form.Item name="can" label="Уметь">
-        <Select mode="tags" style={{ width: '100%' }} placeholder="Введите умения" />
+        <Select
+          mode="tags"
+          style={{ width: '100%', maxWidth: '100%' }}
+          placeholder="Введите умения"
+          maxTagTextLength={30}
+        />
       </Form.Item>
 
       <Table

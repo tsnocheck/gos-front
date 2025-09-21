@@ -23,7 +23,7 @@ import type { TableProps } from 'antd';
 
 const { Title, Text } = Typography;
 
-export const ProgramsListPage: React.FC = () => {
+const ProgramsListPage: React.FC = () => {
   const [params, setParams] = useState<ProgramQueryParams>({
     page: 1,
     limit: 10,
@@ -39,7 +39,7 @@ export const ProgramsListPage: React.FC = () => {
   });
 
   const { data: programs, isLoading } = useMyPrograms(params);
-  const [viewProgram, setViewProgram] = useState<Program | null>(null);
+  const [viewProgramId, setViewProgramId] = useState<string | null>(null);
   const [resubmitOpen, setResubmitOpen] = useState(false);
   const [resubmitProgram, setResubmitProgram] = useState<Program | null>(null);
   const resubmitMutation = useResubmitAfterRevision();
@@ -95,7 +95,7 @@ export const ProgramsListPage: React.FC = () => {
       key: 'actions',
       render: (id: string, data: Program) => (
         <Space>
-          <Button icon={<EyeOutlined />} onClick={() => setViewProgram(data)}>
+          <Button icon={<EyeOutlined />} onClick={() => setViewProgramId(data.id)}>
             Просмотр
           </Button>
           {data.status === ProgramStatus.REJECTED && (
@@ -150,7 +150,9 @@ export const ProgramsListPage: React.FC = () => {
 
   const handleTableChange: TableProps<Program>['onChange'] = (pagination, _filters, sorter) => {
     const order = Array.isArray(sorter) ? sorter[0]?.order : sorter?.order;
-    const field = Array.isArray(sorter) ? (sorter[0]?.field as string | undefined) : (sorter?.field as string | undefined);
+    const field = Array.isArray(sorter)
+      ? (sorter[0]?.field as string | undefined)
+      : (sorter?.field as string | undefined);
 
     setParams((prev) => ({
       ...prev,
@@ -197,9 +199,9 @@ export const ProgramsListPage: React.FC = () => {
         />
       </Card>
       <ViewProgramModal
-        open={!!viewProgram}
-        program={viewProgram}
-        onClose={() => setViewProgram(null)}
+        open={!!viewProgramId}
+        programId={viewProgramId}
+        onClose={() => setViewProgramId(null)}
       />
       <Modal
         title={`Повторная отправка: ${resubmitProgram?.title ?? ''}`}
@@ -238,3 +240,4 @@ export const ProgramsListPage: React.FC = () => {
     </div>
   );
 };
+export default ProgramsListPage;

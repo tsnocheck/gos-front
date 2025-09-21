@@ -16,7 +16,6 @@ export const ResetPasswordPage: React.FC = () => {
   const query = useQuery();
   const resetPasswordMutation = useResetPassword();
   const [submitting, setSubmitting] = useState(false);
-
   const token = query.get('token');
 
   const onFinish = async (values: { password: string; confirm: string }) => {
@@ -78,7 +77,12 @@ export const ResetPasswordPage: React.FC = () => {
                 name="password"
                 rules={[
                   { required: true, message: 'Введите новый пароль!' },
-                  { min: 6, message: 'Пароль должен содержать минимум 6 символов' },
+                  {
+                    pattern:
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=\[{\]};:'",<.>/?\\|`~]).{8,}$/,
+                    message:
+                      'Пароль должен содержать минимум 8 символов, включать заглавные и строчные буквы, цифру и спецсимвол',
+                  },
                 ]}
                 hasFeedback
               >

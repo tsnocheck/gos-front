@@ -98,9 +98,15 @@ export const AdminProgramsPage: React.FC = () => {
     },
   ];
 
-  const handleTableChange: TableProps<ExtendedProgram>['onChange'] = (_pagination, _filters, sorter) => {
+  const handleTableChange: TableProps<ExtendedProgram>['onChange'] = (
+    _pagination,
+    _filters,
+    sorter,
+  ) => {
     const order = Array.isArray(sorter) ? sorter[0]?.order : sorter?.order;
-    const field = Array.isArray(sorter) ? (sorter[0]?.field as string | undefined) : (sorter?.field as string | undefined);
+    const field = Array.isArray(sorter)
+      ? (sorter[0]?.field as string | undefined)
+      : (sorter?.field as string | undefined);
     setSortBy(field || undefined);
     setSortOrder(order === 'ascend' ? 'ASC' : order === 'descend' ? 'DESC' : undefined);
   };

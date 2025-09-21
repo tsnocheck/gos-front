@@ -11,7 +11,7 @@ import ConstructorStep9 from '../components/constructor/ConstructorStep9';
 import ConstructorStep10 from '../components/constructor/ConstructorStep10';
 import type { ExtendedProgram } from '@/types';
 import { useCreateProgram, useProgram, useUpdateProgram } from '@/queries/programs';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const steps = [
   { title: 'Титульный лист', component: ConstructorStep2 },
@@ -29,6 +29,7 @@ const { Title } = Typography;
 
 const ProgramsConstructorPage: React.FC = () => {
   const params = useParams();
+  const navigate = useNavigate();
 
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<ExtendedProgram>({ title: '' });
@@ -37,6 +38,11 @@ const ProgramsConstructorPage: React.FC = () => {
   const { data: programData, isSuccess } = useProgram(params.id ?? '');
 
   const StepComponent = useMemo(() => steps[currentStep].component, [currentStep]);
+
+  const isPending = useMemo(
+    () => createProgram.isPending || updateProgram.isPending,
+    [createProgram, updateProgram],
+  );
 
   const handleNext = () => {
     setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
@@ -49,10 +55,24 @@ const ProgramsConstructorPage: React.FC = () => {
     setFormData((prev) => ({ ...prev, ...data }));
   }, []);
 
-  const handleFinish = async () => {
+  const handleFinish = async (leaveAfterSave: boolean) => {
     try {
-      if (!params.id) await createProgram.mutateAsync(formData);
-      else await updateProgram.mutateAsync({ id: params.id, data: formData });
+      if (!params.id) {
+        await createProgram.mutateAsync(formData, {
+          onSuccess() {
+            if (leaveAfterSave) navigate('/programs');
+          },
+        });
+      } else {
+        await updateProgram.mutateAsync(
+          { id: params.id, data: formData },
+          {
+            onSuccess() {
+              if (leaveAfterSave) navigate('/programs');
+            },
+          },
+        );
+      }
       message.success('Программа успешно сохранена');
     } catch {
       message.error('Ошибка при отправке формы');
@@ -95,9 +115,26 @@ const ProgramsConstructorPage: React.FC = () => {
               Далее
             </Button>
           )}
-          <Button type="primary" variant="solid" color="green" onClick={handleFinish}>
-            Сохранить программу
+          <Button
+            type="primary"
+            variant="solid"
+            color="green"
+            disabled={isPending}
+            onClick={() => handleFinish(false)}
+          >
+            Сохранить
           </Button>
+          {params.id && (
+            <Button
+              type="primary"
+              variant="solid"
+              color="orange"
+              disabled={isPending}
+              onClick={() => handleFinish(true)}
+            >
+              Сохранить и выйти
+            </Button>
+          )}
         </div>
       </div>
     </div>

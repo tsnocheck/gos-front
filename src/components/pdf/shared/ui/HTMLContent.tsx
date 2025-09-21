@@ -1,5 +1,6 @@
 import React from 'react';
-import { Text, View, Link } from '@react-pdf/renderer';
+import { Text, View, Link, Image } from '@react-pdf/renderer';
+import { PDFTable } from './PDFTable';
 import {
   parseHTMLToPDFStructure,
   sanitizeHTML,
@@ -11,6 +12,11 @@ import {
   isParagraph,
   isBold,
   isItalic,
+  isTable,
+  isTableRow,
+  isTableHeader,
+  isTableCell,
+  isImage,
   getHeadingLevel,
 } from '@/utils/htmlToPdf';
 
@@ -76,6 +82,22 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
       );
     }
 
+    // Изображение
+    if (isImage(node)) {
+      const src = (node as any).attribs?.src || '';
+      return (
+        <Image
+          key={index}
+          src={src}
+          style={{
+            width: 500,
+            height: 300,
+            marginVertical: 8,
+          }}
+        />
+      );
+    }
+
     // Спан и прочие инлайн
     if (
       node.type === 'tag' &&
@@ -99,6 +121,22 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
 
   // Отрисовка блочных элементов
   const renderBlock = (node: HTMLNode, index: string | number): React.ReactElement | null => {
+    // Изображение (блочное)
+    if (isImage(node)) {
+      const src = (node as any).attribs?.src || '';
+      return (
+        <View key={index} style={{ marginVertical: 8, textAlign: 'center' }}>
+          <Image
+            src={src}
+            style={{
+              width: 500,
+              height: 300,
+            }}
+          />
+        </View>
+      );
+    }
+
     // Заголовок
     if (isHeading(node)) {
       const level = getHeadingLevel(node);
@@ -121,7 +159,7 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     // Параграф
     if (isParagraph(node) || (node.type === 'tag' && node.name === 'div')) {
       return (
-        <Text key={index} style={{ marginBottom: 6 }}>
+        <Text key={index} style={{ marginBottom: 6, textAlign: 'justify' }}>
           {(node.children || []).map((child, childIndex) =>
             renderInline(child, `${index}-${childIndex}`),
           )}
@@ -143,13 +181,57 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     // Элемент списка
     if (isListItem(node)) {
       return (
-        <Text key={index} style={{ marginBottom: 2 }}>
+        <Text key={index} style={{ marginBottom: 2, textAlign: 'justify' }}>
           {/* Маркер списка */}
           <Text>• </Text>
           {(node.children || []).map((child, childIndex) =>
             renderInline(child, `${index}-${childIndex}`),
           )}
         </Text>
+      );
+    }
+
+    // Таблица
+    if (isTable(node)) {
+      return (
+        <PDFTable.Self key={index} style={{ marginBottom: 8 }}>
+          {(node.children || []).map((child, childIndex) =>
+            renderBlock(child, `${index}-${childIndex}`),
+          )}
+        </PDFTable.Self>
+      );
+    }
+
+    // Строка таблицы
+    if (isTableRow(node)) {
+      return (
+        <PDFTable.Tr key={index}>
+          {(node.children || []).map((child, childIndex) =>
+            renderBlock(child, `${index}-${childIndex}`),
+          )}
+        </PDFTable.Tr>
+      );
+    }
+
+    // Заголовок таблицы
+    if (isTableHeader(node)) {
+      return (
+        <PDFTable.Th key={index}>
+          {(node.children || []).map((child, childIndex) =>
+            renderInline(child, `${index}-${childIndex}`),
+          )}
+        </PDFTable.Th>
+      );
+    }
+
+    // Ячейка таблицы
+    if (isTableCell(node)) {
+      return (
+        <PDFTable.Td key={index}>
+          {(node.children || []).map((child, childIndex) =>
+            renderInline(child, `${index}-${childIndex}`),
+          )}
+        </PDFTable.Td>
       );
     }
 

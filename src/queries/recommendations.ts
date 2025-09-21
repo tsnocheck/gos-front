@@ -7,8 +7,10 @@ import type { RecommendationQueryParams } from '@/services/recommendationService
 export const recommendationKeys = {
   all: ['recommendations'] as const,
   lists: () => [...recommendationKeys.all, 'list'] as const,
-  list: (params?: RecommendationQueryParams) => [...recommendationKeys.lists(), params || {}] as const,
-  my: (params?: RecommendationQueryParams) => [...recommendationKeys.all, 'my', params || {}] as const,
+  list: (params?: RecommendationQueryParams) =>
+    [...recommendationKeys.lists(), params || {}] as const,
+  my: (params?: RecommendationQueryParams) =>
+    [...recommendationKeys.all, 'my', params || {}] as const,
   stats: () => [...recommendationKeys.all, 'stats'] as const,
   byProgram: (programId: string, params?: RecommendationQueryParams) =>
     [...recommendationKeys.all, 'program', programId, params || {}] as const,
@@ -36,7 +38,10 @@ export const useMyRecommendations = (params?: RecommendationQueryParams) => {
   });
 };
 
-export const useRecommendationsByProgram = (programId: string, params?: RecommendationQueryParams) => {
+export const useRecommendationsByProgram = (
+  programId: string,
+  params?: RecommendationQueryParams,
+) => {
   return useQuery({
     queryKey: recommendationKeys.byProgram(programId, params),
     queryFn: () => recommendationService.getRecommendationsByProgram(programId, params),

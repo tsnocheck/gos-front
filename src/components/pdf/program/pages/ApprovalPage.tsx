@@ -3,11 +3,12 @@ import { currentYear } from '../../shared/utils';
 import type { FC } from 'react';
 import type { ProgramPDFProps } from '@/types';
 import { PDFPage } from '../../shared/ui/PDFPage';
+import { getExpertsFromExpertises } from '@/utils/getExpertsFromExpertises.ts';
 
 export const ApprovalPage: FC<ProgramPDFProps> = ({ program, authors }) => {
   return (
     <PDFPage title="ЛИСТ СОГЛАСОВАНИЯ">
-      <Text style={{ marginBottom: 10 }}>
+      <Text style={{ marginBottom: 10, textAlign: 'justify' }}>
         <Text style={{ fontWeight: 'bold', fontSize: 12 }}>Разработчик(и) программы: {'\n'}</Text>
         {authors.map(({ lastName, firstName, middleName }, idx) => (
           <Text key={idx}>
@@ -17,15 +18,22 @@ export const ApprovalPage: FC<ProgramPDFProps> = ({ program, authors }) => {
         ))}
       </Text>
 
-      <Text style={{ marginBottom: 10 }}>
-        Дополнительная профессиональная программа повышения квалификации "
-        {program.title || 'Название Программы'}", прошла экспертизу:
-      </Text>
+      {program?.expertises?.length && (
+        <>
+          <Text style={{ marginBottom: 5, textAlign: 'justify' }}>
+            Дополнительная профессиональная программа повышения квалификации "
+            {program.title || 'Название Программы'}", прошла экспертизу:
+          </Text>
 
-      <Text style={{ marginBottom: 5 }}>Эксперт 1: -</Text>
-      <Text style={{ marginBottom: 20 }}>Эксперт 2: -</Text>
+          {getExpertsFromExpertises(program.expertises).map((expert, index) => (
+            <Text style={{ marginBottom: 5 }}>
+              Эксперт {index + 1}: {expert.lastName + ' ' + expert.firstName}
+            </Text>
+          ))}
+        </>
+      )}
 
-      <Text>
+      <Text style={{ textAlign: 'justify' }}>
         Дополнительная профессиональная программа повышения квалификации "
         {program.title || 'Название Программы'}" утверждена Учёным советом Калининградского
         областного института развития образования (протокол № ___ от ______ {currentYear} г.)

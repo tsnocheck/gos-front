@@ -101,6 +101,41 @@ export function getHeadingLevel(node: HTMLNode): number {
 }
 
 /**
+ * Проверяет, является ли узел таблицей
+ */
+export function isTable(node: HTMLNode): boolean {
+  return node.type === 'tag' && node.name === 'table';
+}
+
+/**
+ * Проверяет, является ли узел строкой таблицы
+ */
+export function isTableRow(node: HTMLNode): boolean {
+  return node.type === 'tag' && node.name === 'tr';
+}
+
+/**
+ * Проверяет, является ли узел заголовком таблицы
+ */
+export function isTableHeader(node: HTMLNode): boolean {
+  return node.type === 'tag' && (node.name === 'th' || node.name === 'thead');
+}
+
+/**
+ * Проверяет, является ли узел ячейкой таблицы
+ */
+export function isTableCell(node: HTMLNode): boolean {
+  return node.type === 'tag' && (node.name === 'td' || node.name === 'th');
+}
+
+/**
+ * Проверяет, является ли узел изображением
+ */
+export function isImage(node: HTMLNode): boolean {
+  return node.type === 'tag' && node.name === 'img';
+}
+
+/**
  * Очищает HTML от потенциально опасных тегов
  */
 export function sanitizeHTML(html: string): string {

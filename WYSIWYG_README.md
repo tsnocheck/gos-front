@@ -18,11 +18,13 @@
 ## Компоненты
 
 ### 1. WYSIWYGEditor
+
 Основной компонент редактора на основе `react-quill`.
 
 **Файл:** `src/components/shared/WYSIWYGEditor.tsx`
 
 **Возможности:**
+
 - Форматирование текста (жирный, курсив, подчеркнутый, зачеркнутый)
 - Заголовки (H1-H3)
 - Списки (нумерованные и маркированные)
@@ -32,11 +34,13 @@
 - Очистка форматирования
 
 ### 2. HTMLContent
+
 Компонент для отображения HTML в PDF.
 
 **Файл:** `src/components/pdf/shared/ui/HTMLContent.tsx`
 
 **Поддерживаемые HTML теги:**
+
 - `<h1>`, `<h2>`, `<h3>` - заголовки
 - `<p>` - параграфы
 - `<ul>`, `<ol>` - списки
@@ -46,11 +50,13 @@
 - `<a>` - ссылки
 
 ### 3. HTMLPreview
+
 Компонент для предварительного просмотра HTML с возможностью экспорта в PDF.
 
 **Файл:** `src/components/shared/HTMLPreview.tsx`
 
 **Функции:**
+
 - Предварительный просмотр HTML
 - Экспорт в PDF
 - Кнопка просмотра
@@ -58,22 +64,26 @@
 ## Утилиты
 
 ### 1. htmlToPdf.ts
+
 Утилиты для парсинга HTML и конвертации в структуру для PDF.
 
 **Файл:** `src/utils/htmlToPdf.ts`
 
 **Основные функции:**
+
 - `parseHTMLToPDFStructure()` - парсинг HTML в структуру узлов
 - `sanitizeHTML()` - очистка HTML от опасных тегов
 - `extractTextFromNode()` - извлечение текста из узла
 - Вспомогательные функции для проверки типов узлов
 
 ### 2. exportToPdf.ts
+
 Утилиты для экспорта HTML в PDF.
 
 **Файл:** `src/utils/exportToPdf.ts`
 
 **Основные функции:**
+
 - `exportHTMLToPDF()` - экспорт одной HTML страницы в PDF
 - `exportMultipleHTMLToPDF()` - экспорт нескольких HTML страниц в PDF
 
@@ -90,7 +100,7 @@ import WYSIWYGEditor from '../shared/WYSIWYGEditor';
   placeholder="Введите текст..."
   rows={3}
   required={true}
-/>
+/>;
 ```
 
 ### Отображение HTML в PDF:
@@ -98,7 +108,7 @@ import WYSIWYGEditor from '../shared/WYSIWYGEditor';
 ```tsx
 import HTMLContent from '../../shared/ui/HTMLContent';
 
-<HTMLContent html={program.fieldName || ''} />
+<HTMLContent html={program.fieldName || ''} />;
 ```
 
 ### Предварительный просмотр с экспортом:
@@ -112,7 +122,7 @@ import HTMLPreview from '../shared/HTMLPreview';
   filename="document.pdf"
   showExportButton={true}
   showPreviewButton={true}
-/>
+/>;
 ```
 
 ### Экспорт HTML в PDF программно:
@@ -124,21 +134,27 @@ import { exportHTMLToPDF } from '@/utils/exportToPdf';
 exportHTMLToPDF(htmlContent, 'filename.pdf', 'Заголовок');
 
 // Экспорт нескольких страниц
-exportMultipleHTMLToPDF([
-  { html: html1, title: 'Страница 1' },
-  { html: html2, title: 'Страница 2' }
-], 'multipage.pdf');
+exportMultipleHTMLToPDF(
+  [
+    { html: html1, title: 'Страница 1' },
+    { html: html2, title: 'Страница 2' },
+  ],
+  'multipage.pdf',
+);
 ```
 
 ## Обновленные страницы PDF
 
 ### 1. RegulatoryPage
+
 Отображает нормативные документы с поддержкой HTML разметки.
 
 ### 2. LiteraturePage (новая)
+
 Отображает все разделы литературы с поддержкой HTML разметки.
 
 ### 3. AttestationExamplesPage (новая)
+
 Отображает примеры заданий аттестации с поддержкой HTML разметки.
 
 ## Безопасность
@@ -156,6 +172,7 @@ exportMultipleHTMLToPDF([
 ## Примеры HTML разметки
 
 ### Заголовки:
+
 ```html
 <h1>Главный заголовок</h1>
 <h2>Подзаголовок</h2>
@@ -163,11 +180,13 @@ exportMultipleHTMLToPDF([
 ```
 
 ### Форматирование текста:
+
 ```html
 <p><strong>Жирный текст</strong> и <em>курсив</em></p>
 ```
 
 ### Списки:
+
 ```html
 <ul>
   <li>Элемент списка 1</li>
@@ -181,6 +200,7 @@ exportMultipleHTMLToPDF([
 ```
 
 ### Ссылки:
+
 ```html
 <p>Ссылка на <a href="https://example.com">сайт</a></p>
 ```

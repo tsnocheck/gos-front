@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { programService } from '../services/programService';
 import type { ProgramQueryParams, UpdateProgramData } from '../services/programService';
-import { useNavigate } from 'react-router-dom';
 import { adminKeys } from './admin';
 import { ExpertiseStatus, ProgramStatus } from '@/types';
 import type { ResubmitAfterRevisionDto } from '@/types/expertise';
@@ -94,14 +93,12 @@ export const useAvailableAuthors = () => {
 // Mutations
 export const useCreateProgram = (onSuccessCallback?: () => void) => {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
 
   return useMutation({
     mutationFn: programService.createProgram,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: programKeys.all });
 
-      navigate('/programs');
       if (onSuccessCallback) {
         onSuccessCallback();
       }
@@ -115,9 +112,8 @@ export const useCreateProgram = (onSuccessCallback?: () => void) => {
   });
 };
 
-export const useUpdateProgram = () => {
+export const useUpdateProgram = (onSuccessCallback?: () => void) => {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateProgramData }) =>
@@ -127,7 +123,7 @@ export const useUpdateProgram = () => {
       queryClient.invalidateQueries({ queryKey: programKeys.lists() });
       queryClient.invalidateQueries({ queryKey: programKeys.myPrograms() });
 
-      navigate('/programs');
+      if (onSuccessCallback) onSuccessCallback();
     },
   });
 };

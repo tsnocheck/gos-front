@@ -17,7 +17,10 @@ export const PDFStyles = StyleSheet.create({
     textAlign: 'center',
     textTransform: 'uppercase',
   },
-  paragraph: { marginBottom: 10 },
+  paragraph: {
+    marginBottom: 10,
+    textAlign: 'justify',
+  },
   bold: { fontWeight: 'bold' },
   italic: { fontStyle: 'italic' },
   block: {
@@ -30,10 +33,13 @@ export const PDFStyles = StyleSheet.create({
 
 export const PDFTableStyles = StyleSheet.create({
   self: {
-    borderLeftWidth: 1,
-    borderTopWidth: 1,
+    borderLeftWidth: 2,
+    borderTopWidth: 2,
+    borderRightWidth: 2,
+    borderBottomWidth: 2,
     borderColor: '#000',
-    marginTop: 4,
+    marginTop: 8,
+    marginBottom: 8,
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
@@ -48,18 +54,19 @@ export const PDFTableStyles = StyleSheet.create({
     borderRightWidth: 1,
     borderBottomWidth: 1,
     borderColor: '#000',
-    paddingVertical: 6,
+    paddingVertical: 8,
     paddingHorizontal: 10,
-    fontSize: 11,
+    fontSize: 10,
     lineHeight: 1.25,
     flexShrink: 1,
   },
   headerCell: {
-    backgroundColor: '#fff',
+    backgroundColor: '#f5f5f5',
   },
   headerText: {
     fontWeight: 'bold',
     textAlign: 'center',
+    fontSize: 10,
   },
   center: {
     textAlign: 'center',

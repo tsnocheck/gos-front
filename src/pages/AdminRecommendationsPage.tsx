@@ -116,7 +116,13 @@ const AdminRecommendationsPage: React.FC = () => {
 
   const columns = [
     { title: 'Заголовок', dataIndex: 'title', key: 'title', sorter: true },
-    { title: 'Тип', dataIndex: 'type', key: 'type', sorter: true, render: (val: string) => typeLabels[val] },
+    {
+      title: 'Тип',
+      dataIndex: 'type',
+      key: 'type',
+      sorter: true,
+      render: (val: string) => typeLabels[val],
+    },
     {
       title: 'Статус',
       dataIndex: 'status',
@@ -160,9 +166,15 @@ const AdminRecommendationsPage: React.FC = () => {
     },
   ];
 
-  const handleTableChange: TableProps<Recommendation>['onChange'] = (_pagination, _filters, sorter) => {
+  const handleTableChange: TableProps<Recommendation>['onChange'] = (
+    _pagination,
+    _filters,
+    sorter,
+  ) => {
     const order = Array.isArray(sorter) ? sorter[0]?.order : sorter?.order;
-    const field = Array.isArray(sorter) ? (sorter[0]?.field as string | undefined) : (sorter?.field as string | undefined);
+    const field = Array.isArray(sorter)
+      ? (sorter[0]?.field as string | undefined)
+      : (sorter?.field as string | undefined);
     setSortBy(field || undefined);
     setSortOrder(order === 'ascend' ? 'ASC' : order === 'descend' ? 'DESC' : undefined);
   };

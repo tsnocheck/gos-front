@@ -1,21 +1,23 @@
 import React from 'react';
 import { Modal } from 'antd';
 import { ProgramPDFViewer } from '@/components/pdf/program/ProgramPDFViewer';
-import type { Program } from '@/types/program';
+import { useProgram } from '@/queries/programs.ts';
 
 interface ViewProgramModalProps {
   open: boolean;
-  program: Program | null;
+  programId: string | null;
   onClose: () => void;
   width?: number | string;
 }
 
 export const ViewProgramModal: React.FC<ViewProgramModalProps> = ({
   open,
-  program,
+  programId,
   onClose,
   width = '90vw',
 }) => {
+  const { data: program } = useProgram(programId ?? '');
+
   return (
     <Modal
       open={open && !!program}

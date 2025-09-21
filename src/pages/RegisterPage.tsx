@@ -143,7 +143,12 @@ export const RegisterPage: React.FC = () => {
               </Row>
 
               <Form.Item label="Преподаваемые предметы" name="subjects">
-                <Select mode="tags" placeholder="Введите предметы" style={{ width: '100%' }} />
+                <Select
+                  mode="tags"
+                  placeholder="Введите предметы"
+                  style={{ width: '100%', maxWidth: '100%' }}
+                  maxTagTextLength={30}
+                />
               </Form.Item>
 
               <Form.Item>

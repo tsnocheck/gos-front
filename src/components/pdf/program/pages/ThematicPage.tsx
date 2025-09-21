@@ -4,6 +4,7 @@ import { PDFPage } from '../../shared/ui/PDFPage';
 import { calcWidth, PDFStyles } from '../../shared/utils';
 import { PDFList, PDFTable } from '../../shared';
 import { Text } from '@react-pdf/renderer';
+import HTMLContent from '../../shared/ui/HTMLContent';
 
 const TOTAL_COLS = 13;
 
@@ -102,9 +103,13 @@ export const ThematicPage: FC<ProgramPDFProps> = ({ program }) => {
             <PDFTable.Td style={calcWidth(1 / 8)}>{idx + 1}.</PDFTable.Td>
             <PDFTable.Td style={calcWidth(3 / 8)}>{topic.name}</PDFTable.Td>
             <PDFTable.Td style={calcWidth(3 / 8)}>
-              <Text>1. Содержание практического занятия: {'\n'}</Text>
+              <Text>
+                1. Содержание самостоятельной работы в режиме дистанционного обучения: {'\n'}
+              </Text>
               <PDFList items={topic.distant?.content || []} />
-              <Text>2. Формы организации практического занятия:{'\n'}</Text>
+              <Text>
+                2. Формы организации самостоятельной работы в режиме дистанционного обучения:{'\n'}
+              </Text>
               <PDFList items={topic.distant?.forms || []} />
             </PDFTable.Td>
             <PDFTable.Td style={calcWidth(1 / 8)}>{topic.distant?.hours || '-'}</PDFTable.Td>
@@ -196,14 +201,7 @@ export const ThematicPage: FC<ProgramPDFProps> = ({ program }) => {
         {list.map((a, idx) => (
           <Fragment key={`att-${moduleCode}-${idx}`}>
             <Text style={{ textAlign: 'center', fontWeight: 'bold', marginTop: 8 }}>{a.name}</Text>
-            {a.form && <Text style={{ marginTop: 2 }}>Представлена в форме {a.form}</Text>}
             {a.requirements && <Text style={{ marginTop: 2 }}>{a.requirements}</Text>}
-            {a.lecture || a.practice || a.distant ? (
-              <Text style={{ marginTop: 2 }}>
-                На прохождение даётся {(a.lecture || 0) + (a.practice || 0) + (a.distant || 0)}{' '}
-                академических ч.
-              </Text>
-            ) : null}
             {a.attempts ? (
               <Text style={{ marginTop: 2 }}>Количество попыток на прохождение - {a.attempts}</Text>
             ) : null}
@@ -212,7 +210,7 @@ export const ThematicPage: FC<ProgramPDFProps> = ({ program }) => {
                 <Text style={{ textAlign: 'center', fontWeight: 'bold', marginTop: 6 }}>
                   Критерии оценивания
                 </Text>
-                <Text>{a.criteria}</Text>
+                <HTMLContent html={a.criteria} />
               </>
             )}
             {a.examples && (
@@ -220,7 +218,7 @@ export const ThematicPage: FC<ProgramPDFProps> = ({ program }) => {
                 <Text style={{ textAlign: 'center', fontWeight: 'bold', marginTop: 6 }}>
                   Пример задания
                 </Text>
-                <PDFList items={[]} />
+                <HTMLContent html={a.examples} />
               </>
             )}
           </Fragment>

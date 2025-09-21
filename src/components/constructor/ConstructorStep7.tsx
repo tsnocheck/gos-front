@@ -119,6 +119,8 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
             value={tc.content}
             onChange={(val) => updateTopicContent(moduleIndex, topicIndex, kind, 'content', val)}
             placeholder="Содержание"
+            style={{ width: '100%', maxWidth: '100%' }}
+            maxTagTextLength={25}
           />
           {!hideForms ? (
             <Select
@@ -126,6 +128,8 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
               value={tc.forms}
               onChange={(val) => updateTopicContent(moduleIndex, topicIndex, kind, 'forms', val)}
               placeholder="Формы организации"
+              style={{ width: '100%', maxWidth: '100%' }}
+              maxTagTextLength={25}
             />
           ) : (
             <div />
@@ -187,20 +191,20 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
                   moduleIndex={moduleIndex}
                   topicIndex={i}
                   kind="lecture"
-                  title="Лекционный"
+                  title="Содержание лекционных занятий"
                   hideForms
                 />
                 <TopicContentEditor
                   moduleIndex={moduleIndex}
                   topicIndex={i}
                   kind="practice"
-                  title="Практический"
+                  title="Содержание практических занятий"
                 />
                 <TopicContentEditor
                   moduleIndex={moduleIndex}
                   topicIndex={i}
                   kind="distant"
-                  title="Дистанционный"
+                  title="Содержание самостоятельной работы в режиме дистанционного обучения"
                 />
               </div>
             ),

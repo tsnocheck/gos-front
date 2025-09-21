@@ -19,7 +19,7 @@ const DashboardPage = lazy(() =>
   import('./pages/DashboardPage').then((module) => ({ default: module.DashboardPage })),
 );
 const ProgramsListPage = lazy(() =>
-  import('./pages/ProgramsListPage').then((module) => ({ default: module.ProgramsListPage })),
+  import('./pages/ProgramsListPage').then((module) => ({ default: module.default })),
 );
 const ExpertisePage = lazy(() =>
   import('./pages/ExpertisePage').then((module) => ({ default: module.ExpertisePage })),

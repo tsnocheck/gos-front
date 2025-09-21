@@ -24,19 +24,13 @@ export const AttestationExamplesPage: FC<ProgramPDFProps> = ({ program }) => {
             {attestation.name}
           </Text>
 
-          <Text style={{ marginBottom: 4 }}>
-            {attestation.name} представлена в форме {attestation.form}
-          </Text>
           {attestation.requirements && (
-            <Text style={{ marginBottom: 4 }}>{attestation.requirements}</Text>
+            <Text style={{ marginBottom: 4, textAlign: 'justify' }}>
+              {attestation.requirements}
+            </Text>
           )}
-          <Text style={{ marginBottom: 4 }}>
-            На прохождение даётся{' '}
-            {(attestation.lecture || 0) + (attestation.practice || 0) + (attestation.distant || 0)}{' '}
-            академических ч.
-          </Text>
           {attestation.attempts ? (
-            <Text style={{ marginBottom: 8 }}>
+            <Text style={{ marginBottom: 8, textAlign: 'justify' }}>
               Количество попыток на прохождение - {attestation.attempts}
             </Text>
           ) : null}
@@ -46,7 +40,10 @@ export const AttestationExamplesPage: FC<ProgramPDFProps> = ({ program }) => {
               <Text style={{ fontSize: 14, fontWeight: 'bold', textAlign: 'center', marginTop: 6 }}>
                 Критерии оценивания
               </Text>
-              <Text style={{ marginBottom: 8 }}>{attestation.criteria}</Text>
+              <HTMLContent
+                style={{ marginBottom: 8, textAlign: 'justify' }}
+                html={attestation.criteria}
+              />
             </>
           )}
 
