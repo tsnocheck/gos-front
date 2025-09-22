@@ -1,5 +1,7 @@
 import React from 'react';
-import { PDFViewer, Font } from '@react-pdf/renderer';
+import { PDFViewer, PDFDownloadLink, Font } from '@react-pdf/renderer';
+import { Button } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
 import { type ExtendedProgram, type Dictionary, type User } from '@/types';
 import TimesNewRoman from '@/assets/times.ttf';
 import TimesNewRomanBold from '@/assets/times_bold.ttf';
@@ -44,7 +46,7 @@ const pages = [
 ];
 
 // Генератор PDF-документа по шагам
-const ProgramPDF: React.FC<{
+export const ProgramPDF: React.FC<{
   program: ExtendedProgram;
   authors: User[];
   user?: User;
@@ -82,4 +84,53 @@ export const ProgramPDFViewer: React.FC<{
   );
 };
 
-export default ProgramPDFViewer;
+// Компонент для скачивания PDF программы
+export const ProgramPDFDownloadButton: React.FC<{
+  program: ExtendedProgram;
+}> = ({ program }) => {
+  const { getDictionaryById } = useProgramDictionaries();
+  const { data: availableAuthors = [] } = useAvailableAuthors();
+  const { user } = useAuth();
+
+  const authors = [
+    program.author ?? user!,
+    ...availableAuthors.filter((author) => (program.coAuthorIds || []).includes(author.id)),
+  ];
+
+  if (!program || authors.length === 0) {
+    return (
+      <Button
+        type="link"
+        icon={<DownloadOutlined />}
+        disabled
+      >
+        Данные не загружены
+      </Button>
+    );
+  }
+
+  return (
+    <PDFDownloadLink
+      document={
+        <ProgramPDF
+          program={program}
+          authors={authors}
+          user={user}
+          getDictionaryById={getDictionaryById}
+        />
+      }
+      fileName={`${program.title || 'Программа'}_v${program.version}.pdf`}
+    >
+      {({ loading }) => (
+        <Button
+          type="link"
+          icon={<DownloadOutlined />}
+          loading={loading}
+          disabled={loading}
+        >
+          {loading ? 'Подготовка PDF...' : 'Скачать PDF программы'}
+        </Button>
+      )}
+    </PDFDownloadLink>
+  );
+};

@@ -12,14 +12,7 @@ export const PDFTable: Record<string, React.FC<CellProps | RowProps>> = {
     </View>
   ),
   Tr: (props: RowProps) => (
-    <View
-      style={[
-        PDFTableStyles.row,
-        props.isHeader && PDFTableStyles.headerRow,
-        props.style || {}
-      ]}
-      wrap={props.wrap}
-    >
+    <View style={[PDFTableStyles.row, props.style || {}]} wrap={props.wrap}>
       {props.children}
     </View>
   ),
@@ -32,8 +25,8 @@ export const PDFTable: Record<string, React.FC<CellProps | RowProps>> = {
     </View>
   ),
   Td: (props: CellProps) => (
-    <View style={[PDFTableStyles.col, PDFTableStyles.dataCell, props.style || {}]} wrap={props.wrap}>
-      <Text style={PDFTableStyles.dataText}>{props.children}</Text>
+    <View style={[PDFTableStyles.col, props.style || {}]} wrap={props.wrap}>
+      <Text>{props.children}</Text>
     </View>
   ),
 };

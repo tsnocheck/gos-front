@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { recommendationService } from '../services/recommendationService';
-import type { Recommendation } from '../types/recommendation';
+import type { Recommendation } from '@/types';
 import type { RecommendationQueryParams } from '@/services/recommendationService';
 
 // Query keys

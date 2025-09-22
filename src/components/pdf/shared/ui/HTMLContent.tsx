@@ -14,14 +14,11 @@ import {
   isItalic,
   isTable,
   isTableRow,
-  isTableHeader,
-  isTableBody,
   isTableCell,
   isImage,
   isUnderline,
   isStrikethrough,
   getHeadingLevel,
-  isCriteriaTable,
 } from '@/utils/htmlToPdf';
 
 interface HTMLContentProps {
@@ -186,12 +183,15 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     // Параграф с улучшенным форматированием
     if (isParagraph(node) || (node.type === 'tag' && node.name === 'div')) {
       return (
-        <Text key={index} style={{
-          marginBottom: 8,
-          textAlign: 'justify',
-          lineHeight: 1.5,
-          fontSize: 10,
-        }}>
+        <Text
+          key={index}
+          style={{
+            marginBottom: 8,
+            textAlign: 'justify',
+            lineHeight: 1.5,
+            fontSize: 10,
+          }}
+        >
           {(node.children || []).map((child, childIndex) =>
             renderInline(child, `${index}-${childIndex}`),
           )}
@@ -207,12 +207,15 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
           {(node.children || []).map((child, childIndex) => {
             if (isListItem(child)) {
               return (
-                <Text key={`${index}-${childIndex}`} style={{
-                  marginBottom: 3,
-                  textAlign: 'justify',
-                  fontSize: 10,
-                  lineHeight: 1.4,
-                }}>
+                <Text
+                  key={`${index}-${childIndex}`}
+                  style={{
+                    marginBottom: 3,
+                    textAlign: 'justify',
+                    fontSize: 10,
+                    lineHeight: 1.4,
+                  }}
+                >
                   <Text style={{ fontWeight: 'bold' }}>
                     {isOrdered ? `${childIndex + 1}. ` : '• '}
                   </Text>
@@ -231,17 +234,22 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     // Цитата
     if (node.type === 'tag' && node.name === 'blockquote') {
       return (
-        <View key={index} style={{
-          marginVertical: 8,
-          marginLeft: 20,
-          paddingLeft: 12,
-          borderLeft: '2pt solid #d9d9d9',
-        }}>
-          <Text style={{
-            fontStyle: 'italic',
-            fontSize: 10,
-            color: '#595959',
-          }}>
+        <View
+          key={index}
+          style={{
+            marginVertical: 8,
+            marginLeft: 20,
+            paddingLeft: 12,
+            borderLeft: '2pt solid #d9d9d9',
+          }}
+        >
+          <Text
+            style={{
+              fontStyle: 'italic',
+              fontSize: 10,
+              color: '#595959',
+            }}
+          >
             {(node.children || []).map((child, childIndex) =>
               renderInline(child, `${index}-${childIndex}`),
             )}
@@ -277,7 +285,10 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
   };
 
   // Специальная функция для рендеринга элементов таблицы
-  const renderTableElement = (node: HTMLNode, index: string | number): React.ReactElement | null => {
+  const renderTableElement = (
+    node: HTMLNode,
+    index: string | number,
+  ): React.ReactElement | null => {
     // Заголовок таблицы (thead)
     if (node.type === 'tag' && node.name === 'thead') {
       return (
@@ -336,7 +347,7 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
   const renderTableCell = (
     node: HTMLNode,
     index: string | number,
-    isHeader: boolean
+    isHeader: boolean,
   ): React.ReactElement | null => {
     if (isTableCell(node)) {
       const CellComponent = isHeader || node.name === 'th' ? PDFTable.Th : PDFTable.Td;

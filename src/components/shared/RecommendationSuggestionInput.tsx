@@ -20,15 +20,10 @@ const RecommendationSuggestionInput: React.FC<RecommendationSuggestionInputProps
 
   const suggestions = useMemo(() => {
     const recommendations = getRecommendationsByType(type);
-    return recommendations.map(rec => rec.content);
+    return recommendations.map((rec) => rec.content);
   }, [getRecommendationsByType, type]);
 
-  return (
-    <SuggestionInput
-      {...props}
-      suggestions={suggestions}
-    />
-  );
+  return <SuggestionInput {...props} suggestions={suggestions} />;
 };
 
 export default RecommendationSuggestionInput;

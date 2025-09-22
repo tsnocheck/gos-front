@@ -1,14 +1,14 @@
 import React, { useCallback, useState } from 'react';
-import { Card, Table, Button, Typography, Space, Modal, Tag } from 'antd';
+import { Card, Table, Button, Typography, Space, Tag } from 'antd';
 import { EyeOutlined, DeleteOutlined, InboxOutlined } from '@ant-design/icons';
 import { getStatusColor, getStatusText, usePrograms } from '../queries/programs';
 import { programService } from '../services/programService';
-import { type ExtendedProgram, type Program, ProgramStatus } from '../types/program';
+import { type ExtendedProgram, type Program, ProgramStatus } from '@/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { useUsers } from '../queries/admin';
-import { ProgramPDFViewer } from '@/components/pdf/program/ProgramPDFViewer';
 import type { ColumnsType } from 'antd/es/table';
 import type { TableProps } from 'antd';
+import ProgramDetailsModal from '@/components/shared/ProgramDetailsModal.tsx';
 
 const { Title } = Typography;
 
@@ -22,7 +22,7 @@ export const AdminProgramsPage: React.FC = () => {
   const queryClient = useQueryClient();
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [viewProgram, setViewProgram] = useState<ExtendedProgram | null>(null);
+  const [viewProgramId, setViewProgramId] = useState<string | null>(null);
 
   const getUserById = useCallback((id: string) => users.find((user) => user.id === id), [users]);
 
@@ -91,7 +91,7 @@ export const AdminProgramsPage: React.FC = () => {
       title: 'Действия',
       key: 'actions',
       render: (_, record) => (
-        <Button icon={<EyeOutlined />} size="small" onClick={() => setViewProgram(record)}>
+        <Button icon={<EyeOutlined />} size="small" onClick={() => setViewProgramId(record.id)}>
           Просмотр
         </Button>
       ),
@@ -162,15 +162,11 @@ export const AdminProgramsPage: React.FC = () => {
           }}
         />
       </Card>
-      <Modal
-        open={!!viewProgram}
-        onCancel={() => setViewProgram(null)}
-        title={viewProgram?.title}
-        footer={null}
-        width="90vw"
-      >
-        {viewProgram && <ProgramPDFViewer program={viewProgram} />}
-      </Modal>
+      <ProgramDetailsModal
+        open={!!viewProgramId}
+        programId={viewProgramId}
+        onClose={() => setViewProgramId(null)}
+      />
     </div>
   );
 };
