@@ -3,10 +3,12 @@ import { expertiseService } from '../services/expertiseService';
 import type {
   Expertise,
   CreateExpertiseDto,
+  SubmitExpertiseDto,
+  SendForRevisionDto,
+  AssignExpertDto,
+  ExpertiseQueryDto,
   UpdateExpertiseDto,
-  CompleteExpertiseDto,
-} from '../types';
-import type { ExpertiseCriteriaDto, ExpertTableFilters } from '../types/expertise';
+} from '@/types';
 import type { ExpertiseQueryParams } from '@/services/expertiseService';
 import { programKeys } from './programs';
 
@@ -87,11 +89,11 @@ export const useUpdateExpertise = () => {
   });
 };
 
-export const useCompleteExpertise = () => {
+export const useSubmitExpertise = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: CompleteExpertiseDto }) =>
-      expertiseService.completeExpertise(id, data),
+    mutationFn: ({ id, data }: { id: string; data: SubmitExpertiseDto }) =>
+      expertiseService.submitExpertise(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expertiseKeys.my() });
     },
@@ -101,8 +103,8 @@ export const useCompleteExpertise = () => {
 export const useAssignExpertToProgram = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ programId, expertId }: { programId: string; expertId: string }) =>
-      expertiseService.assignExpertToProgram(programId, { expertId }),
+    mutationFn: ({ programId, data }: { programId: string; data: AssignExpertDto }) =>
+      expertiseService.assignExpertToProgram(programId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expertiseKeys.lists() });
     },
@@ -191,7 +193,7 @@ export const useProgramPdf = (programId: string) => {
 export const useCreateCriteriaConclusion = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ expertiseId, data }: { expertiseId: string; data: ExpertiseCriteriaDto }) =>
+    mutationFn: ({ expertiseId, data }: { expertiseId: string; data: Expertise }) =>
       expertiseService.createCriteriaConclusion(expertiseId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expertiseKeys.lists() });
@@ -199,7 +201,7 @@ export const useCreateCriteriaConclusion = () => {
   });
 };
 
-export const useExpertTable = (params: ExpertTableFilters) => {
+export const useExpertTable = (params: ExpertiseQueryDto) => {
   return useQuery({
     queryKey: [...expertiseKeys.all, 'expert-table', params],
     queryFn: () => expertiseService.getExpertTable(params),
@@ -222,7 +224,7 @@ export const useMyExpertisesList = (status?: string) => {
 export const useSendForRevision = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: expertiseService.sendForRevision,
+    mutationFn: (data: { id: string; body: SendForRevisionDto }) => expertiseService.sendForRevision(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expertiseKeys.all });
       queryClient.invalidateQueries({ queryKey: programKeys.all });

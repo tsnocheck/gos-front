@@ -30,8 +30,36 @@ export interface Criterion {
   recommendation?: string;
 }
 
+export interface ExpertiseCriterions {
+  // 1. Характеристика программы
+  criterion1_1: Criterion; // Актуальность разработки и реализации программы
+  criterion1_2: Criterion; // Цель и тема программы соответствуют друг другу
+  criterion1_3: Criterion; // Профессиональный стандарт
+  criterion1_4: Criterion; // Планируемые результаты обучения (знать/уметь)
+  criterion1_5: Criterion; // Планируемые результаты обучения по программе
+
+  // 2. Содержание программы
+  criterion2_1: Criterion; // Содержание программы соответствует теме
+  criterion2_2: Criterion; // Рабочие программы образовательных модулей
+  criterion2_3: Criterion; // Содержание программы позволяет достигнуть планируемых результатов обучения
+  criterion2_4: Criterion; // Формы и виды учебной деятельности слушателей
+
+  // 3. Формы аттестации и оценочные материалы программы
+  criterion3_1: Criterion; // Критерии оценки аттестации слушателей
+  criterion3_2: Criterion; // Оценочные материалы по программе (знания)
+  criterion3_3: Criterion; // Оценочные материалы по программе (умения)
+  criterion3_4: Criterion; // Представленные примеры заданий аттестации
+
+  // 4. Организационно-педагогические условия реализации программы
+  criterion4_1: Criterion; // Список нормативно-правовых и методических документов
+  criterion4_2: Criterion; // Список основной литературы
+  criterion4_3: Criterion; // Список дополнительной литературы
+  criterion4_4: Criterion; // Перечень ресурсов электронной поддержки
+  criterion4_5: Criterion; // Технические средства обучения
+}
+
 /** Экспертиза */
-export interface Expertise {
+export interface Expertise extends ExpertiseCriterions {
   /** Идентификатор */
   id: string;
 
@@ -53,28 +81,6 @@ export interface Expertise {
   /** Заключение */
   conclusion?: string | null;
 
-  // --- Критерии ---
-
-  /** 1.1. Актуальность разработки и реализации */
-  criterion1_1?: Criterion;
-
-  /** 1.2. Цель и тема программы */
-  criterion1_2?: Criterion;
-
-  /** 1.3. Профессиональный стандарт */
-  criterion1_3?: Criterion;
-
-  /** 1.4. Планируемые результаты (знать/уметь) */
-  criterion1_4?: Criterion;
-
-  /** 1.5. Планируемые результаты по программе */
-  criterion1_5?: Criterion;
-
-  /** 2.1. Содержание соответствует теме */
-  criterion2_1?: Criterion;
-
-  /** 2.2. Рабочие программы соответствуют плану */
-  criterion2_2?: Criterion;
 
   /** Дополнительные рекомендации */
   additionalRecommendation?: string | null;
@@ -112,25 +118,14 @@ export interface Expertise {
 }
 
 /** Отправка заполненной экспертизы */
-export interface SubmitExpertiseDto {
-  // 1. Характеристика программы
-  criterion1_1: Criterion; // Актуальность разработки и реализации программы
-  criterion1_2: Criterion; // Цель и тема программы соответствуют друг другу
-  criterion1_3: Criterion; // Профессиональный стандарт
-  criterion1_4: Criterion; // Планируемые результаты обучения (знать/уметь)
-  criterion1_5: Criterion; // Планируемые результаты обучения по программе
-
-  // 2. Содержание программы
-  criterion2_1: Criterion; // Содержание программы соответствует теме
-  criterion2_2: Criterion; // Рабочие программы образовательных модулей
-
+export interface SubmitExpertiseDto extends ExpertiseCriterions {
   additionalRecommendation?: string; // Дополнительные рекомендации
   generalFeedback?: string; // Общий отзыв эксперта
   conclusion?: string; // Заключение
 }
 
 /** Отправка на доработку */
-export interface ResubmitAfterRevisionDto {
+export interface SendForRevisionDto {
   revisionComments: string; // Комментарии с замечаниями для доработки
   generalFeedback?: string; // Общий отзыв эксперта
   recommendations?: string; // Рекомендации по улучшению
@@ -151,4 +146,31 @@ export interface ExpertiseQueryDto {
   sortOrder?: 'ASC' | 'DESC';
   page?: number; // >= 1
   limit?: number; // 1–100
+}
+
+/** Создание экспертизы */
+export interface CreateExpertiseDto {
+  programId: string;
+  expertId: string;
+  initialComments?: string;
+}
+
+/** Обновление экспертизы */
+export interface UpdateExpertiseDto {
+  status?: ExpertiseStatus;
+  generalFeedback?: string;
+  recommendations?: string;
+  conclusion?: string;
+  position?: ExpertPosition;
+}
+
+/** Фильтры для таблицы экспертов */
+export interface ExpertTableFilters {
+  status?: ExpertiseStatus;
+  programId?: string;
+  expertId?: string;
+  sortBy?: string;
+  sortOrder?: 'ASC' | 'DESC';
+  page?: number;
+  limit?: number;
 }

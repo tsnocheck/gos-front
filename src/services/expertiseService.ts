@@ -2,12 +2,12 @@ import apiClient from '../lib/api';
 import type {
   PaginatedResponse,
   Expertise,
-  ExpertiseCriteriaDto,
-  ExpertTableFilters,
   CreateExpertiseDto,
+  SubmitExpertiseDto,
+  SendForRevisionDto,
+  AssignExpertDto,
+  ExpertiseQueryDto,
   UpdateExpertiseDto,
-  CompleteExpertiseDto,
-  ExpertiseForRevisionDto,
 } from '@/types';
 
 export interface ExpertiseQueryParams {
@@ -42,11 +42,11 @@ export const expertiseService = {
     return apiClient.get('/expertise/statistics');
   },
 
-  async completeExpertise(id: string, data: CompleteExpertiseDto) {
-    return apiClient.post(`/expertise/${id}/complete`, data);
+  async submitExpertise(id: string, data: SubmitExpertiseDto) {
+    return apiClient.post(`/expertise/${id}/submit`, data);
   },
 
-  async assignExpertToProgram(programId: string, data: { expertId: string }) {
+  async assignExpertToProgram(programId: string, data: AssignExpertDto) {
     return apiClient.post(`/expertise/programs/${programId}/assign`, data);
   },
 
@@ -83,11 +83,11 @@ export const expertiseService = {
     });
   },
 
-  async createCriteriaConclusion(expertiseId: string, data: ExpertiseCriteriaDto) {
+  async createCriteriaConclusion(expertiseId: string, data: Expertise) {
     return apiClient.post(`/expertise/${expertiseId}/criteria-conclusion`, data);
   },
 
-  async getExpertTable(params: ExpertTableFilters) {
+  async getExpertTable(params: ExpertiseQueryDto) {
     return apiClient.get('/expertise/expert/my-table', { params });
   },
 
@@ -95,7 +95,7 @@ export const expertiseService = {
     return apiClient.get('/expertise/my-expertises', { params: { status } });
   },
 
-  async sendForRevision(data: { id: string; body: ExpertiseForRevisionDto }) {
+  async sendForRevision(data: { id: string; body: SendForRevisionDto }) {
     return apiClient.post(`/expertise/${data.id}/send-for-revision`, data.body);
   },
 };

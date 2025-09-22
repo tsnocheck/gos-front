@@ -1,27 +1,10 @@
 import React, { useMemo, useState } from 'react';
-import {
-  Card,
-  Table,
-  Button,
-  Modal,
-  Form,
-  Input,
-  Typography,
-  Space,
-  message,
-  Tag,
-  Checkbox,
-  Rate,
-} from 'antd';
+import { Card, Table, Button, Typography, Space, message, Tag } from 'antd';
 import { EyeOutlined, EditOutlined } from '@ant-design/icons';
-import { ExpertiseStatus, type CompleteExpertiseDto, type Expertise } from '@/types';
-import {
-  useCompleteExpertise,
-  useMyExpertises,
-  useSendForRevision,
-  useUpdateExpertise,
-} from '../queries/expertises.ts';
+import { ExpertiseStatus, type Expertise, type SubmitExpertiseDto } from '@/types';
+import { useSubmitExpertise, useMyExpertises, useSendForRevision } from '../queries/expertises.ts';
 import ViewProgramModal from '@/components/shared/ViewProgramModal';
+import { ExpertiseFormModal } from '@/components/shared/ExpertiseFormModal';
 import type { TableProps } from 'antd';
 
 const statusMap: Record<ExpertiseStatus, { text: string; color: string }> = {
@@ -37,16 +20,13 @@ const { Title, Text } = Typography;
 export const ExpertisePage: React.FC = () => {
   const [selectedExpertiseId, setSelectedExpertiseId] = useState<string | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [showRevisionInEdit, setShowRevisionInEdit] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [form] = Form.useForm();
 
   const [sortBy, setSortBy] = useState<string | undefined>('createdAt');
   const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC' | undefined>('DESC');
 
   const { data: expertises, isLoading } = useMyExpertises({ sortBy, sortOrder });
-  const updateExpertiseMutation = useUpdateExpertise();
-  const completeExpertiseMutation = useCompleteExpertise();
+  const completeExpertiseMutation = useSubmitExpertise();
   const sendForRevisionMutation = useSendForRevision();
 
   const selectedExpertise = useMemo(
@@ -124,18 +104,6 @@ export const ExpertisePage: React.FC = () => {
             onClick={() => {
               setSelectedExpertiseId(record.id);
               setIsEditOpen(true);
-              form.setFieldsValue({
-                generalFeedback: record.generalFeedback,
-                recommendations: record.recommendations,
-                conclusion: record.conclusion,
-                relevanceScore: record.relevanceScore,
-                contentQualityScore: record.contentQualityScore,
-                methodologyScore: record.methodologyScore,
-                practicalValueScore: record.practicalValueScore,
-                innovationScore: record.innovationScore,
-                expertComments: record.expertComments,
-                isRecommendedForApproval: record.isRecommendedForApproval,
-              });
             }}
           >
             Экспертиза
@@ -159,31 +127,29 @@ export const ExpertisePage: React.FC = () => {
     setSortOrder(order === 'ascend' ? 'ASC' : order === 'descend' ? 'DESC' : undefined);
   };
 
-  const handleUpdateExpertise = async (values: Record<string, unknown>) => {
-    if (!selectedExpertise) return;
-    try {
-      await updateExpertiseMutation.mutateAsync({
-        id: selectedExpertise.id,
-        data: values,
-      });
-      message.success('Изменения сохранены');
-      setIsEditOpen(false);
-    } catch {
-      message.error('Не удалось сохранить изменения');
-    }
-  };
-
-  const handleCompleteExpertise = async (values: CompleteExpertiseDto) => {
+  const handleCompleteExpertise = async (data: SubmitExpertiseDto) => {
     if (!selectedExpertise) return;
     try {
       await completeExpertiseMutation.mutateAsync({
         id: selectedExpertise.id,
-        data: values,
+        data,
       });
       message.success('Экспертиза завершена');
-      setIsEditOpen(false);
     } catch {
       message.error('Не удалось завершить экспертизу');
+    }
+  };
+
+  const handleSendForRevision = async (data: { revisionComments: string }) => {
+    if (!selectedExpertise) return;
+    try {
+      await sendForRevisionMutation.mutateAsync({
+        id: selectedExpertise.id,
+        body: data,
+      });
+      message.success('Отправлено на доработку');
+    } catch {
+      message.error('Не удалось отправить на доработку');
     }
   };
 
@@ -211,123 +177,18 @@ export const ExpertisePage: React.FC = () => {
       {/* Модальное окно предпросмотра PDF */}
       <ViewProgramModal
         open={isPreviewOpen && !!selectedExpertise}
-        program={selectedExpertise?.program ?? null}
+        programId={selectedExpertise?.program?.id ?? null}
         onClose={() => setIsPreviewOpen(false)}
       />
 
-      {/* Модальное окно редактирования экспертизы */}
-      <Modal
-        title={`Экспертиза: ${selectedExpertise?.program?.title ?? ''}`}
+      {/* Новое модальное окно с табличной формой экспертизы */}
+      <ExpertiseFormModal
         open={isEditOpen}
-        onCancel={() => setIsEditOpen(false)}
-        width={800}
-        footer={null}
-      >
-        <Form form={form} layout="vertical" onFinish={handleUpdateExpertise}>
-          <Form.Item name="generalFeedback" label="Общий отзыв">
-            <Input.TextArea rows={3} />
-          </Form.Item>
-          <Form.Item name="recommendations" label="Рекомендации">
-            <Input.TextArea rows={3} />
-          </Form.Item>
-          <Form.Item name="conclusion" label="Заключение">
-            <Input.TextArea rows={3} />
-          </Form.Item>
-          <Form.Item name="expertComments" label="Комментарии эксперта">
-            <Input.TextArea rows={3} />
-          </Form.Item>
-
-          {showRevisionInEdit && (
-            <Form.Item
-              name="revisionComments"
-              label="Комментарий для автора (на доработку)"
-              rules={[{ required: true, message: 'Укажите комментарий' }]}
-            >
-              <Input.TextArea rows={4} />
-            </Form.Item>
-          )}
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <Form.Item name="relevanceScore" label="Актуальность (0-10)">
-              <Rate count={10} />
-            </Form.Item>
-            <Form.Item name="contentQualityScore" label="Качество содержания (0-10)">
-              <Rate count={10} />
-            </Form.Item>
-            <Form.Item name="methodologyScore" label="Методология (0-10)">
-              <Rate count={10} />
-            </Form.Item>
-            <Form.Item name="practicalValueScore" label="Практическая ценность (0-10)">
-              <Rate count={10} />
-            </Form.Item>
-            <Form.Item name="innovationScore" label="Инновационность (0-10)">
-              <Rate count={10} />
-            </Form.Item>
-            <Form.Item name="isRecommendedForApproval" valuePropName="checked">
-              <Checkbox>Рекомендуется к одобрению</Checkbox>
-            </Form.Item>
-          </div>
-
-          <Form.Item>
-            <Space>
-              {!showRevisionInEdit && (
-                <Button onClick={() => setShowRevisionInEdit((v) => !v)}>На доработку</Button>
-              )}
-              {showRevisionInEdit && (
-                <Button
-                  variant="solid"
-                  color="red"
-                  onClick={async () => {
-                    try {
-                      await form.validateFields(['revisionComments']);
-                    } catch {
-                      return;
-                    }
-                    if (!selectedExpertise) return;
-                    try {
-                      const revisionComments = form.getFieldValue('revisionComments');
-                      await sendForRevisionMutation.mutateAsync({
-                        id: selectedExpertise.id,
-                        body: {
-                          revisionComments,
-                          generalFeedback: selectedExpertise.generalFeedback,
-                          recommendations: selectedExpertise.recommendations,
-                        },
-                      });
-                      message.success('Отправлено на доработку');
-                      setShowRevisionInEdit(false);
-                      setIsEditOpen(false);
-                    } catch {
-                      message.error('Не удалось отправить на доработку');
-                    }
-                  }}
-                >
-                  Отправить на доработку
-                </Button>
-              )}
-              {selectedExpertise?.status !== ExpertiseStatus.APPROVED && (
-                <>
-                  <Button
-                    type="primary"
-                    onClick={() => handleUpdateExpertise(form.getFieldsValue())}
-                  >
-                    Сохранить
-                  </Button>
-                  <Button
-                    type="primary"
-                    variant="solid"
-                    color="green"
-                    onClick={() => handleCompleteExpertise(form.getFieldsValue())}
-                  >
-                    Завершить экспертизу
-                  </Button>
-                </>
-              )}
-              <Button onClick={() => setIsEditOpen(false)}>Закрыть</Button>
-            </Space>
-          </Form.Item>
-        </Form>
-      </Modal>
+        expertise={selectedExpertise ?? null}
+        onClose={() => setIsEditOpen(false)}
+        onSubmit={handleCompleteExpertise}
+        onSendForRevision={handleSendForRevision}
+      />
     </div>
   );
 };

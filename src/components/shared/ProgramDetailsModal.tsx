@@ -7,6 +7,7 @@ import { getStatusColor, getStatusText } from '@/queries/programs';
 import type { ExpertPosition } from '@/types';
 import { useNavigate } from 'react-router-dom';
 import { ProgramPDFDownloadButton } from '@/components/pdf/program/ProgramPDFViewer';
+import { ExpertisePDFDownloadButton } from '@/components/pdf/expertise';
 
 interface ProgramDetailsModalProps {
   open: boolean;
@@ -128,17 +129,7 @@ export const ProgramDetailsModal: React.FC<ProgramDetailsModalProps> = ({
         </Descriptions.Item>
 
         <Descriptions.Item label="Ссылка на PDF экспертизу эксперта 1">
-          {expert1 ? (
-            <Button
-              type="link"
-              icon={<DownloadOutlined />}
-              onClick={() => handleDownloadExpertise(expert1.id)}
-            >
-              Скачать PDF экспертизы
-            </Button>
-          ) : (
-            '-'
-          )}
+          {'-'}
         </Descriptions.Item>
 
         {/* Эксперт 2 */}

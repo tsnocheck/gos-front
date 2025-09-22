@@ -91,7 +91,7 @@ export const AdminProgramsPage: React.FC = () => {
       title: 'Действия',
       key: 'actions',
       render: (_, record) => (
-        <Button icon={<EyeOutlined />} size="small" onClick={() => setViewProgramId(record.id)}>
+        <Button icon={<EyeOutlined />} size="small" onClick={() => setViewProgramId(record.id!)}>
           Просмотр
         </Button>
       ),
