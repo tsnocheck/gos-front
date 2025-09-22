@@ -2,6 +2,8 @@ import React, { useCallback, useMemo } from 'react';
 import { Form, Input, Select, Table, Typography } from 'antd';
 import { standards, type ExtendedProgram } from '@/types';
 import { useProgramDictionaries } from '@/hooks/useProgramDictionaries';
+import RecommendationSuggestionInput from '../shared/RecommendationSuggestionInput';
+import { RecommendationField } from '@/types/recommendation';
 
 const { Title } = Typography;
 
@@ -33,12 +35,26 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
     <Form form={form} layout="vertical" initialValues={value} onValuesChange={handleValuesChange}>
       <Title level={4}>Характеристика программы</Title>
 
-      <Form.Item name="relevance" label="Актуальность разработки программы">
-        <Input.TextArea rows={2} />
+      <Form.Item name="relevance">
+        <RecommendationSuggestionInput
+          label="Актуальность разработки программы"
+          value={value.relevance}
+          onChange={(val) => onChange({ relevance: val })}
+          placeholder="Введите актуальность программы"
+          type={RecommendationField.RELEVANCE}
+          rows={2}
+        />
       </Form.Item>
 
-      <Form.Item name="goal" label="Цель реализации программы">
-        <Input.TextArea rows={2} />
+      <Form.Item name="goal">
+        <RecommendationSuggestionInput
+          label="Цель реализации программы"
+          value={value.goal}
+          onChange={(val) => onChange({ goal: val })}
+          placeholder="Введите цель программы"
+          type={RecommendationField.GOAL}
+          rows={2}
+        />
       </Form.Item>
 
       <Form.Item name="standard" label="Проф. стандарт/ЕКС">

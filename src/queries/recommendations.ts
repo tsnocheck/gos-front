@@ -79,6 +79,9 @@ export const useCreateRecommendation = () => {
   return useMutation({
     mutationFn: recommendationService.createRecommendation,
     onSuccess: () => {
+      // Remove cached recommendations to ensure useRecommendations is cleared
+      queryClient.refetchQueries({ queryKey: recommendationKeys.lists() });
+      queryClient.refetchQueries({ queryKey: recommendationKeys.all });
       queryClient.invalidateQueries({ queryKey: recommendationKeys.lists() });
     },
   });
@@ -90,6 +93,10 @@ export const useUpdateRecommendation = () => {
     mutationFn: ({ id, data }: { id: string; data: Partial<Recommendation> }) =>
       recommendationService.updateRecommendation(id, data),
     onSuccess: (_, { id }) => {
+      // Remove cached recommendations to ensure useRecommendations is cleared
+      queryClient.removeQueries({ queryKey: recommendationKeys.lists() });
+      queryClient.removeQueries({ queryKey: recommendationKeys.all });
+
       queryClient.invalidateQueries({ queryKey: recommendationKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: recommendationKeys.lists() });
     },

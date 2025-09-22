@@ -3,6 +3,8 @@ import { Table, Button, Input, Typography, Checkbox, Select, Tabs } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { ExtendedProgram, NetworkOrg, Topic, Module, TopicContent } from '@/types';
 import { programSection } from '@/types';
+import RecommendationSuggestionInput from '../shared/RecommendationSuggestionInput';
+import { RecommendationField } from '@/types/recommendation';
 
 const { Title } = Typography;
 
@@ -167,11 +169,14 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
                 title: 'Тема',
                 dataIndex: 'name',
                 render: (v: string, _row: Topic, i: number) => (
-                  <Input
-                    value={v}
-                    onChange={(e) => updateTopic(moduleIndex, i, 'name', e.target.value)}
-                    style={{ minWidth: 400 }}
-                  />
+                  <div style={{ minWidth: 400 }}>
+                    <RecommendationSuggestionInput
+                      value={v}
+                      onChange={(val) => updateTopic(moduleIndex, i, 'name', val)}
+                      placeholder="Введите название темы"
+                      type={RecommendationField.TOPIC_NAME}
+                    />
+                  </div>
                 ),
               },
               {

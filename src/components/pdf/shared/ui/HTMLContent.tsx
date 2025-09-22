@@ -15,9 +15,13 @@ import {
   isTable,
   isTableRow,
   isTableHeader,
+  isTableBody,
   isTableCell,
   isImage,
+  isUnderline,
+  isStrikethrough,
   getHeadingLevel,
+  isCriteriaTable,
 } from '@/utils/htmlToPdf';
 
 interface HTMLContentProps {
@@ -52,7 +56,7 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     if (isLink(node)) {
       const href = (node as any).attribs?.href || '';
       return (
-        <Link key={index} src={href} style={{ color: 'blue', textDecoration: 'underline' }}>
+        <Link key={index} src={href} style={{ color: '#1890ff', textDecoration: 'underline' }}>
           {(node.children || []).map((child, childIndex) =>
             renderInline(child, `${index}-${childIndex}`),
           )}
@@ -75,6 +79,28 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     if (isItalic(node)) {
       return (
         <Text key={index} style={{ fontStyle: 'italic' }}>
+          {(node.children || []).map((child, childIndex) =>
+            renderInline(child, `${index}-${childIndex}`),
+          )}
+        </Text>
+      );
+    }
+
+    // Подчеркнутый текст
+    if (isUnderline(node)) {
+      return (
+        <Text key={index} style={{ textDecoration: 'underline' }}>
+          {(node.children || []).map((child, childIndex) =>
+            renderInline(child, `${index}-${childIndex}`),
+          )}
+        </Text>
+      );
+    }
+
+    // Зачеркнутый текст
+    if (isStrikethrough(node)) {
+      return (
+        <Text key={index} style={{ textDecoration: 'line-through' }}>
           {(node.children || []).map((child, childIndex) =>
             renderInline(child, `${index}-${childIndex}`),
           )}
@@ -141,10 +167,11 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     if (isHeading(node)) {
       const level = getHeadingLevel(node);
       const headingStyle = {
-        fontSize: level === 1 ? 16 : level === 2 ? 14 : 12,
+        fontSize: level === 1 ? 18 : level === 2 ? 16 : level === 3 ? 14 : 12,
         fontWeight: 'bold' as const,
-        marginTop: 8,
-        marginBottom: 4,
+        marginTop: level <= 2 ? 12 : 8,
+        marginBottom: level <= 2 ? 8 : 4,
+        color: '#262626',
       };
 
       return (
@@ -156,10 +183,15 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
       );
     }
 
-    // Параграф
+    // Параграф с улучшенным форматированием
     if (isParagraph(node) || (node.type === 'tag' && node.name === 'div')) {
       return (
-        <Text key={index} style={{ marginBottom: 6, textAlign: 'justify' }}>
+        <Text key={index} style={{
+          marginBottom: 8,
+          textAlign: 'justify',
+          lineHeight: 1.5,
+          fontSize: 10,
+        }}>
           {(node.children || []).map((child, childIndex) =>
             renderInline(child, `${index}-${childIndex}`),
           )}
@@ -167,71 +199,67 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
       );
     }
 
-    // Список
+    // Список с улучшенным форматированием
     if (isList(node)) {
+      const isOrdered = node.name === 'ol';
       return (
-        <View key={index} style={{ marginBottom: 8, marginLeft: 10 }}>
-          {(node.children || []).map((child, childIndex) =>
-            renderBlock(child, `${index}-${childIndex}`),
-          )}
+        <View key={index} style={{ marginBottom: 8, marginLeft: 15 }}>
+          {(node.children || []).map((child, childIndex) => {
+            if (isListItem(child)) {
+              return (
+                <Text key={`${index}-${childIndex}`} style={{
+                  marginBottom: 3,
+                  textAlign: 'justify',
+                  fontSize: 10,
+                  lineHeight: 1.4,
+                }}>
+                  <Text style={{ fontWeight: 'bold' }}>
+                    {isOrdered ? `${childIndex + 1}. ` : '• '}
+                  </Text>
+                  {(child.children || []).map((grandChild, grandChildIndex) =>
+                    renderInline(grandChild, `${index}-${childIndex}-${grandChildIndex}`),
+                  )}
+                </Text>
+              );
+            }
+            return renderBlock(child, `${index}-${childIndex}`);
+          })}
         </View>
       );
     }
 
-    // Элемент списка
-    if (isListItem(node)) {
+    // Цитата
+    if (node.type === 'tag' && node.name === 'blockquote') {
       return (
-        <Text key={index} style={{ marginBottom: 2, textAlign: 'justify' }}>
-          {/* Маркер списка */}
-          <Text>• </Text>
-          {(node.children || []).map((child, childIndex) =>
-            renderInline(child, `${index}-${childIndex}`),
-          )}
-        </Text>
+        <View key={index} style={{
+          marginVertical: 8,
+          marginLeft: 20,
+          paddingLeft: 12,
+          borderLeft: '2pt solid #d9d9d9',
+        }}>
+          <Text style={{
+            fontStyle: 'italic',
+            fontSize: 10,
+            color: '#595959',
+          }}>
+            {(node.children || []).map((child, childIndex) =>
+              renderInline(child, `${index}-${childIndex}`),
+            )}
+          </Text>
+        </View>
       );
     }
 
     // Таблица
     if (isTable(node)) {
       return (
-        <PDFTable.Self key={index} style={{ marginBottom: 8 }}>
-          {(node.children || []).map((child, childIndex) =>
-            renderBlock(child, `${index}-${childIndex}`),
-          )}
-        </PDFTable.Self>
-      );
-    }
-
-    // Строка таблицы
-    if (isTableRow(node)) {
-      return (
-        <PDFTable.Tr key={index}>
-          {(node.children || []).map((child, childIndex) =>
-            renderBlock(child, `${index}-${childIndex}`),
-          )}
-        </PDFTable.Tr>
-      );
-    }
-
-    // Заголовок таблицы
-    if (isTableHeader(node)) {
-      return (
-        <PDFTable.Th key={index}>
-          {(node.children || []).map((child, childIndex) =>
-            renderInline(child, `${index}-${childIndex}`),
-          )}
-        </PDFTable.Th>
-      );
-    }
-
-    // Ячейка таблицы
-    if (isTableCell(node)) {
-      return (
-        <PDFTable.Td key={index}>
-          {(node.children || []).map((child, childIndex) =>
-            renderInline(child, `${index}-${childIndex}`),
-          )}
-        </PDFTable.Td>
+        <View key={index} style={{ marginVertical: 8 }}>
+          <PDFTable.Self>
+            {(node.children || []).map((child, childIndex) =>
+              renderTableElement(child, `${index}-${childIndex}`),
+            )}
+          </PDFTable.Self>
+        </View>
       );
     }
 
@@ -245,6 +273,81 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     }
 
     // Пусто
+    return null;
+  };
+
+  // Специальная функция для рендеринга элементов таблицы
+  const renderTableElement = (node: HTMLNode, index: string | number): React.ReactElement | null => {
+    // Заголовок таблицы (thead)
+    if (node.type === 'tag' && node.name === 'thead') {
+      return (
+        <React.Fragment key={index}>
+          {(node.children || []).map((child, childIndex) => {
+            if (isTableRow(child)) {
+              return (
+                <PDFTable.Tr key={`${index}-${childIndex}`} isHeader>
+                  {(child.children || []).map((cell, cellIndex) =>
+                    renderTableCell(cell, `${index}-${childIndex}-${cellIndex}`, true),
+                  )}
+                </PDFTable.Tr>
+              );
+            }
+            return null;
+          })}
+        </React.Fragment>
+      );
+    }
+
+    // Тело таблицы (tbody)
+    if (node.type === 'tag' && node.name === 'tbody') {
+      return (
+        <React.Fragment key={index}>
+          {(node.children || []).map((child, childIndex) => {
+            if (isTableRow(child)) {
+              return (
+                <PDFTable.Tr key={`${index}-${childIndex}`}>
+                  {(child.children || []).map((cell, cellIndex) =>
+                    renderTableCell(cell, `${index}-${childIndex}-${cellIndex}`, false),
+                  )}
+                </PDFTable.Tr>
+              );
+            }
+            return null;
+          })}
+        </React.Fragment>
+      );
+    }
+
+    // Строка таблицы (если не в thead/tbody)
+    if (isTableRow(node)) {
+      return (
+        <PDFTable.Tr key={index}>
+          {(node.children || []).map((child, childIndex) =>
+            renderTableCell(child, `${index}-${childIndex}`, false),
+          )}
+        </PDFTable.Tr>
+      );
+    }
+
+    return null;
+  };
+
+  // Специальная функция для рендеринга ячеек таблицы
+  const renderTableCell = (
+    node: HTMLNode,
+    index: string | number,
+    isHeader: boolean
+  ): React.ReactElement | null => {
+    if (isTableCell(node)) {
+      const CellComponent = isHeader || node.name === 'th' ? PDFTable.Th : PDFTable.Td;
+      return (
+        <CellComponent key={index}>
+          {(node.children || []).map((child, childIndex) =>
+            renderInline(child, `${index}-${childIndex}`),
+          )}
+        </CellComponent>
+      );
+    }
     return null;
   };
 

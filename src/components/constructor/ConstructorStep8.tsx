@@ -2,6 +2,8 @@ import React from 'react';
 import { Input, Typography, Card } from 'antd';
 import type { Attestation, ExtendedProgram } from '@/types';
 import WYSIWYGEditor from '../shared/WYSIWYGEditor';
+import RecommendationSuggestionInput from '../shared/RecommendationSuggestionInput';
+import { RecommendationField } from '@/types/recommendation';
 
 const { Title } = Typography;
 
@@ -42,13 +44,13 @@ const ConstructorStep8: React.FC<Props> = ({ value, onChange }) => {
           >
             <div style={{ display: 'grid', gap: 12 }}>
               <div>
-                <label style={{ display: 'block', marginBottom: 4 }}>
-                  Описание требований к выполнению
-                </label>
-                <Input.TextArea
-                  rows={3}
+                <RecommendationSuggestionInput
+                  label="Описание требований к выполнению"
                   value={a.requirements}
-                  onChange={(e) => updateAttestation(i, { requirements: e.target.value })}
+                  onChange={(val) => updateAttestation(i, { requirements: val })}
+                  placeholder="Введите описание требований"
+                  type={RecommendationField.ATTESTATION_REQUIREMENTS}
+                  rows={3}
                 />
               </div>
 

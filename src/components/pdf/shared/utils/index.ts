@@ -42,10 +42,10 @@ export const PDFStyles = StyleSheet.create({
 
 export const PDFTableStyles = StyleSheet.create({
   self: {
-    borderLeftWidth: 2,
-    borderTopWidth: 2,
-    borderRightWidth: 2,
-    borderBottomWidth: 2,
+    borderLeftWidth: 1,
+    borderTopWidth: 1,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
     borderColor: '#000',
     marginTop: 8,
     marginBottom: 8,

@@ -122,6 +122,13 @@ export function isTableHeader(node: HTMLNode): boolean {
 }
 
 /**
+ * Проверяет, является ли узел телом таблицы
+ */
+export function isTableBody(node: HTMLNode): boolean {
+  return node.type === 'tag' && node.name === 'tbody';
+}
+
+/**
  * Проверяет, является ли узел ячейкой таблицы
  */
 export function isTableCell(node: HTMLNode): boolean {
@@ -133,6 +140,34 @@ export function isTableCell(node: HTMLNode): boolean {
  */
 export function isImage(node: HTMLNode): boolean {
   return node.type === 'tag' && node.name === 'img';
+}
+
+/**
+ * Проверяет, является ли узел подчеркнутым текстом
+ */
+export function isUnderline(node: HTMLNode): boolean {
+  return node.type === 'tag' && node.name === 'u';
+}
+
+/**
+ * Проверяет, является ли узел зачеркнутым текстом
+ */
+export function isStrikethrough(node: HTMLNode): boolean {
+  return node.type === 'tag' && (node.name === 's' || node.name === 'strike');
+}
+
+/**
+ * Извлекает CSS-класс из узла
+ */
+export function getNodeClass(node: HTMLNode): string | undefined {
+  return node.attribs?.class;
+}
+
+/**
+ * Проверяет, является ли таблица таблицей критериев
+ */
+export function isCriteriaTable(node: HTMLNode): boolean {
+  return isTable(node) && getNodeClass(node)?.includes('criteria-table');
 }
 
 /**

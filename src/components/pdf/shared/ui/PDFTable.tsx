@@ -3,19 +3,27 @@ import type { PropsWithChildren } from 'react';
 import { PDFTableStyles, type StyleObject } from '../utils';
 
 type CellProps = PropsWithChildren<{ style?: StyleObject; wrap?: boolean }>;
+type RowProps = PropsWithChildren<{ style?: StyleObject; wrap?: boolean; isHeader?: boolean }>;
 
-export const PDFTable: Record<string, React.FC<CellProps>> = {
-  Self: (props) => (
+export const PDFTable: Record<string, React.FC<CellProps | RowProps>> = {
+  Self: (props: CellProps) => (
     <View style={[PDFTableStyles.self, props.style || {}]} wrap={props.wrap}>
       {props.children}
     </View>
   ),
-  Tr: (props) => (
-    <View style={[PDFTableStyles.row, props.style || {}]} wrap={props.wrap}>
+  Tr: (props: RowProps) => (
+    <View
+      style={[
+        PDFTableStyles.row,
+        props.isHeader && PDFTableStyles.headerRow,
+        props.style || {}
+      ]}
+      wrap={props.wrap}
+    >
       {props.children}
     </View>
   ),
-  Th: (props) => (
+  Th: (props: CellProps) => (
     <View
       style={[PDFTableStyles.col, PDFTableStyles.headerCell, props.style || {}]}
       wrap={props.wrap}
@@ -23,9 +31,9 @@ export const PDFTable: Record<string, React.FC<CellProps>> = {
       <Text style={PDFTableStyles.headerText}>{props.children}</Text>
     </View>
   ),
-  Td: (props) => (
-    <View style={[PDFTableStyles.col, props.style || {}]} wrap={props.wrap}>
-      <Text>{props.children}</Text>
+  Td: (props: CellProps) => (
+    <View style={[PDFTableStyles.col, PDFTableStyles.dataCell, props.style || {}]} wrap={props.wrap}>
+      <Text style={PDFTableStyles.dataText}>{props.children}</Text>
     </View>
   ),
 };

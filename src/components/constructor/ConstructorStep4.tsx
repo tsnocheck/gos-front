@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Table, Button, Input, Form, Typography, Space, Popconfirm } from 'antd';
+import { Table, Button, Form, Typography, Space, Popconfirm } from 'antd';
 import type { ExtendedProgram, Abbreviation } from '@/types';
+import RecommendationSuggestionInput from '../shared/RecommendationSuggestionInput';
+import { RecommendationField } from '@/types/recommendation';
 
 const { Title } = Typography;
 
@@ -52,10 +54,16 @@ const ConstructorStep4: React.FC<Props> = ({ value, onChange }) => {
           name="abbreviation"
           rules={[{ required: true, message: 'Введите аббревиатуру' }]}
         >
-          <Input placeholder="Аббревиатура" />
+          <RecommendationSuggestionInput
+            placeholder="Аббревиатура"
+            type={RecommendationField.ABBREVIATION}
+          />
         </Form.Item>
         <Form.Item name="fullname" rules={[{ required: true, message: 'Введите расшифровку' }]}>
-          <Input placeholder="Расшифровка" />
+          <RecommendationSuggestionInput
+            placeholder="Расшифровка"
+            type={RecommendationField.FULLNAME}
+          />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">

@@ -130,7 +130,7 @@ export interface SubmitExpertiseDto {
 }
 
 /** Отправка на доработку */
-export interface SendForRevisionDto {
+export interface ResubmitAfterRevisionDto {
   revisionComments: string; // Комментарии с замечаниями для доработки
   generalFeedback?: string; // Общий отзыв эксперта
   recommendations?: string; // Рекомендации по улучшению

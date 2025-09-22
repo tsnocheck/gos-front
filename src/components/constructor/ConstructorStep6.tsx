@@ -8,6 +8,8 @@ import {
   type ExtendedProgram,
   type Module,
 } from '@/types';
+import RecommendationSuggestionInput from '../shared/RecommendationSuggestionInput';
+import { RecommendationField } from '@/types/recommendation';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -129,9 +131,10 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
       dataIndex: 'code',
       render: (v: string, _: Module, i: number) => (
         <Input
-          style={{ width: 40 }}
+          style={{ width: 80 }}
           value={v}
           onChange={(e) => handleUpdate<Module>('modules', i, 'code', e.target.value)}
+          placeholder="Код"
         />
       ),
     },
@@ -139,11 +142,14 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
       title: 'Название модуля',
       dataIndex: 'name',
       render: (v: string, _: Module, i: number) => (
-        <Input
-          value={v}
-          style={{ minWidth: 400 }}
-          onChange={(e) => handleUpdate<Module>('modules', i, 'name', e.target.value)}
-        />
+        <div style={{ minWidth: 400 }}>
+          <RecommendationSuggestionInput
+            value={v}
+            onChange={(val) => handleUpdate<Module>('modules', i, 'name', val)}
+            placeholder="Название модуля"
+            type={RecommendationField.MODULE_NAME}
+          />
+        </div>
       ),
     },
     ...['lecture', 'practice', 'distant', 'kad'].map((field) => ({

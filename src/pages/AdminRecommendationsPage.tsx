@@ -6,7 +6,6 @@ import {
   Input,
   Modal,
   Select,
-  DatePicker,
   Space,
   Table,
   Typography,
@@ -16,6 +15,7 @@ import {
 } from 'antd';
 import type { Recommendation } from '@/types';
 import { RecommendationStatus } from '@/types';
+import { RecommendationField, recommendationFieldTranslations } from '@/types/recommendation';
 import {
   useRecommendations,
   useCreateRecommendation,
@@ -24,29 +24,19 @@ import {
 } from '../queries/recommendations';
 import dayjs from 'dayjs';
 import type { TableProps } from 'antd';
+import type { CreateRecommendationPayload } from '@/services/recommendationService.ts';
 
 const { Title } = Typography;
 const { Option } = Select;
 
-const typeLabels: Record<string, string> = {
-  general: 'Общие',
-  content: 'Содержание',
-  methodology: 'Методология',
-  structure: 'Структура',
-  assessment: 'Оценка',
-};
+// Build options from RecommendationField enum and translations
+const recommendationFieldOptions = Object.values(RecommendationField) as RecommendationField[];
 
 const statusLabels: Record<RecommendationStatus, { color: string; label: string }> = {
-  active: { color: 'blue', label: 'Активная' },
-  resolved: { color: 'green', label: 'Выполнена' },
-  ignored: { color: 'orange', label: 'Проигнорирована' },
-  archived: { color: 'gray', label: 'В архиве' },
-};
-
-const priorityLabels = {
-  1: 'Высокий',
-  2: 'Средний',
-  3: 'Низкий',
+  [RecommendationStatus.ACTIVE]: { color: 'blue', label: 'Активная' },
+  [RecommendationStatus.RESOLVED]: { color: 'green', label: 'Выполнена' },
+  [RecommendationStatus.INACTIVE]: { color: 'orange', label: 'Неактивная' },
+  [RecommendationStatus.ARCHIVED]: { color: 'gray', label: 'В архиве' },
 };
 
 const AdminRecommendationsPage: React.FC = () => {
@@ -95,16 +85,25 @@ const AdminRecommendationsPage: React.FC = () => {
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      const payload = {
-        ...values,
-        dueDate: values.dueDate ? values.dueDate.toISOString() : null,
-      };
-
       if (editing) {
-        await updateMutation.mutateAsync({ id: editing.id, data: payload });
+        // Update: send only allowed fields for update
+        const updatePayload: Record<string, any> = {};
+        if (values.title !== undefined) updatePayload.title = values.title;
+        if (values.content !== undefined) updatePayload.content = values.content;
+        if (values.type !== undefined) updatePayload.type = values.type;
+        if (values.status !== undefined) updatePayload.status = values.status;
+
+        await updateMutation.mutateAsync({ id: editing.id, data: updatePayload });
         message.success('Рекомендация обновлена');
       } else {
-        await createMutation.mutateAsync(payload);
+        // Create: backend accepts title, content, optional type and assignedToId
+        const createPayload: CreateRecommendationPayload = {
+          title: values.title,
+          content: values.content,
+        };
+        if (values.type) createPayload.type = values.type;
+
+        await createMutation.mutateAsync(createPayload);
         message.success('Рекомендация создана');
       }
 
@@ -121,7 +120,27 @@ const AdminRecommendationsPage: React.FC = () => {
       dataIndex: 'type',
       key: 'type',
       sorter: true,
-      render: (val: string) => typeLabels[val],
+      render: (val: Recommendation['type']) => {
+        // val is a RecommendationField value (string enum)
+        return recommendationFieldTranslations[val as RecommendationField] ?? String(val);
+      },
+    },
+    {
+      title: 'Создал',
+      dataIndex: ['createdBy'],
+      key: 'createdBy',
+      render: (_: any, record: Recommendation) => {
+        const user = record.createdBy;
+        if (!user) return '—';
+        return `${user.lastName ?? ''} ${user.firstName ?? ''}`.trim() || user.id;
+      },
+    },
+    {
+      title: 'Дата создания',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      sorter: true,
+      render: (val: string | Date) => (val ? dayjs(val).format('DD.MM.YYYY') : '—'),
     },
     {
       title: 'Статус',
@@ -132,20 +151,6 @@ const AdminRecommendationsPage: React.FC = () => {
         const { label, color } = statusLabels[val];
         return <Tag color={color}>{label}</Tag>;
       },
-    },
-    {
-      title: 'Приоритет',
-      dataIndex: 'priority',
-      key: 'priority',
-      sorter: true,
-      render: (val: number) => priorityLabels[val as 1 | 2 | 3],
-    },
-    {
-      title: 'Срок',
-      dataIndex: 'dueDate',
-      key: 'dueDate',
-      sorter: true,
-      render: (val: string | Date) => (val ? dayjs(val).format('DD.MM.YYYY') : '—'),
     },
     {
       title: 'Действия',
@@ -228,32 +233,25 @@ const AdminRecommendationsPage: React.FC = () => {
           </Form.Item>
           <Form.Item name="type" label="Тип рекомендации" rules={[{ required: true }]}>
             <Select placeholder="Выберите тип">
-              {Object.entries(typeLabels).map(([key, label]) => (
-                <Option key={key} value={key}>
-                  {label}
+              {recommendationFieldOptions.map((field) => (
+                <Option key={field} value={field}>
+                  {recommendationFieldTranslations[field]}
                 </Option>
               ))}
             </Select>
           </Form.Item>
-          <Form.Item name="status" label="Статус рекомендации" rules={[{ required: true }]}>
-            <Select>
-              {Object.entries(statusLabels).map(([key, { label }]) => (
-                <Option key={key} value={key}>
-                  {label}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item name="priority" label="Приоритет" rules={[{ required: true }]}>
-            <Select>
-              <Option value={1}>Высокий</Option>
-              <Option value={2}>Средний</Option>
-              <Option value={3}>Низкий</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item name="dueDate" label="Срок выполнения">
-            <DatePicker format="DD.MM.YYYY" style={{ width: '100%' }} />
-          </Form.Item>
+          {/* Status is editable only when editing an existing recommendation */}
+          {editing && (
+            <Form.Item name="status" label="Статус рекомендации" rules={[{ required: true }]}>
+              <Select>
+                {Object.entries(statusLabels).map(([key, { label }]) => (
+                  <Option key={key} value={key}>
+                    {label}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          )}
         </Form>
       </Modal>
     </div>

@@ -1,6 +1,11 @@
 import apiClient from '../lib/api';
-import type { Recommendation } from '../types/recommendation';
-import type { ApiResponse, PaginatedResponse } from '../types/common';
+import {
+  type Recommendation,
+  type RecommendationStatus,
+  type ApiResponse,
+  type PaginatedResponse,
+  RecommendationField,
+} from '@/types';
 
 export interface RecommendationQueryParams {
   page?: number;
@@ -9,8 +14,23 @@ export interface RecommendationQueryParams {
   sortOrder?: 'ASC' | 'DESC';
 }
 
+export interface CreateRecommendationPayload {
+  title: string;
+  content: string;
+  type?: RecommendationField;
+  assignedToId?: string;
+}
+
+export interface UpdateRecommendationPayload {
+  title?: string;
+  content?: string;
+  type?: string;
+  assignedToId?: string;
+  status?: RecommendationStatus;
+}
+
 export const recommendationService = {
-  async createRecommendation(data: Recommendation) {
+  async createRecommendation(data: CreateRecommendationPayload) {
     return apiClient.post<Recommendation>('/recommendations', data);
   },
 
@@ -37,7 +57,7 @@ export const recommendationService = {
     return apiClient.get<Recommendation>(`/recommendations/${id}`);
   },
 
-  async updateRecommendation(id: string, data: Partial<Recommendation>) {
+  async updateRecommendation(id: string, data: UpdateRecommendationPayload) {
     return apiClient.patch<Recommendation>(`/recommendations/${id}`, data);
   },
 

@@ -2,8 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { programService } from '../services/programService';
 import type { ProgramQueryParams, UpdateProgramData } from '../services/programService';
 import { adminKeys } from './admin';
-import { ExpertiseStatus, ProgramStatus } from '@/types';
-import type { ResubmitAfterRevisionDto } from '@/types/expertise';
+import { ExpertiseStatus, ProgramStatus, type ResubmitAfterRevisionDto } from '@/types';
 
 // Query keys
 export const programKeys = {

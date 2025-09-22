@@ -1,7 +1,9 @@
 import React from 'react';
-import { Input, Select, Form, Typography } from 'antd';
+import { Select, Form, Typography } from 'antd';
 import type { ExtendedProgram } from '@/types';
 import { useProgramDictionaries } from '@/hooks/useProgramDictionaries';
+import RecommendationSuggestionInput from '../shared/RecommendationSuggestionInput';
+import { RecommendationField } from '@/types/recommendation';
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -34,19 +36,23 @@ const ConstructorStep2: React.FC<Props> = ({ value, onChange }) => {
         </Select>
       </Form.Item>
       {value.institution === 'other' && (
-        <Form.Item label="Ваше учреждение">
-          <Input
+        <Form.Item>
+          <RecommendationSuggestionInput
+            label="Ваше учреждение"
             value={value.customInstitution}
-            onChange={(e) => onChange({ customInstitution: e.target.value })}
+            onChange={(val) => onChange({ customInstitution: val })}
             placeholder="Введите наименование учреждения"
+            type={RecommendationField.CUSTOM_INSTITUTION}
           />
         </Form.Item>
       )}
-      <Form.Item label="Название программы">
-        <Input
+      <Form.Item>
+        <RecommendationSuggestionInput
+          label="Название программы"
           value={value.title}
-          onChange={(e) => onChange({ title: e.target.value })}
+          onChange={(val) => onChange({ title: val })}
           placeholder="Введите название программы"
+          type={RecommendationField.TITLE}
         />
       </Form.Item>
     </Form>
