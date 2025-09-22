@@ -223,6 +223,7 @@ export interface ProgramPDFProps {
   program: Partial<Program>;
   authors: User[];
   getDictionaryById: (id: string) => Dictionary | undefined;
+  pageNumber?: number;
 }
 
 export type ExtendedProgram = Partial<Program>;

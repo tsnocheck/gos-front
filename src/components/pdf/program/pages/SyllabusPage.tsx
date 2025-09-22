@@ -8,7 +8,7 @@ import { Text } from '@react-pdf/renderer';
 
 const TOTAL_COLS = 8;
 
-export const SyllabusPage: FC<ProgramPDFProps> = ({ program }) => {
+export const SyllabusPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
   const modulesBySection = (section: ProgramSection) =>
     program.modules?.filter((module) => module.section === section);
 
@@ -94,7 +94,11 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program }) => {
   };
 
   return (
-    <PDFPage title="Учебный план" ui={{ title: { marginBottom: 0 } }}>
+    <PDFPage
+      title="Учебный план"
+      ui={{ title: { marginBottom: 0 } }}
+      pageNumber={pageNumber}
+    >
       <Text style={{ lineHeight: 1, textAlign: 'center' }}>
         дополнительной профессиональной программы повышения квалификации {'\n'}
         <Text style={PDFStyles.italic}>«{program.title ?? 'Название программы'}»</Text>

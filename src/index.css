@@ -78,22 +78,22 @@ body,
   max-width: 100% !important;
 }
 
-/* Table styles for better visibility */
-table {
+/* Table styles for better visibility - WYSIWYG editor tables only */
+.ql-editor table {
   border-collapse: collapse !important;
   width: 100% !important;
   margin: 10px 0 !important;
   border: 2px solid #000 !important;
 }
 
-table td,
-table th {
+.ql-editor table td,
+.ql-editor table th {
   border: 1px solid #000 !important;
   padding: 8px !important;
   text-align: left !important;
 }
 
-table th {
+.ql-editor table th {
   background-color: #f5f5f5 !important;
   font-weight: bold !important;
 }

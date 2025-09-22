@@ -4,11 +4,11 @@ import { View, Text } from '@react-pdf/renderer';
 import { PDFPage } from '../../shared/ui/PDFPage';
 import HTMLContent from '../../shared/ui/HTMLContent';
 
-export const LiteraturePage: FC<ProgramPDFProps> = ({ program }) => {
+export const LiteraturePage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
   const { orgPedConditions } = program;
 
   return (
-    <PDFPage title="Список литературы">
+    <PDFPage title="Список литературы" pageNumber={pageNumber}>
       {orgPedConditions?.mainLiterature && (
         <View style={{ marginBottom: 16 }}>
           <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>

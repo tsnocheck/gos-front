@@ -1,5 +1,5 @@
 import { apiClient } from '../lib/api';
-import type { LoginCredentials, RegisterData, AuthResponse, User, UserIdentity } from '../types';
+import type { LoginCredentials, RegisterData, AuthResponse, User, UserIdentity } from '@/types';
 
 export const authService = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
@@ -38,6 +38,10 @@ export const authService = {
 
   async resetPassword(data: { token: string; newPassword: string }) {
     await apiClient.post('/auth/reset-password', data);
+  },
+
+  async forgotPassword(data: { email: string }) {
+    return apiClient.post('/auth/forgot-password', data);
   },
 
   // Проверка аутентификации

@@ -1,11 +1,12 @@
 import React from 'react';
-import { Document, PDFViewer, Font } from '@react-pdf/renderer';
+import { PDFViewer, Font } from '@react-pdf/renderer';
 import { type ExtendedProgram, type Dictionary, type User } from '@/types';
 import TimesNewRoman from '@/assets/times.ttf';
 import TimesNewRomanBold from '@/assets/times_bold.ttf';
 import TimesNewRomanItalic from '@/assets/times-new-roman-italic.ttf';
 import { useAuth } from '@/hooks/useAuth';
 import { useProgramDictionaries } from '@/hooks/useProgramDictionaries';
+import { PDFDocumentWithPagination } from '../shared/ui/PDFDocumentWithPagination';
 import {
   AbbreviationPage,
   ApprovalPage,
@@ -50,11 +51,11 @@ const ProgramPDF: React.FC<{
   getDictionaryById: (id: string) => Dictionary | undefined;
 }> = (props) => {
   return (
-    <Document title={props.program.title ?? 'Программа'}>
+    <PDFDocumentWithPagination title={props.program.title ?? 'Программа'}>
       {pages.map((Page, index) => (
         <Page key={index} {...props}></Page>
       ))}
-    </Document>
+    </PDFDocumentWithPagination>
   );
 };
 

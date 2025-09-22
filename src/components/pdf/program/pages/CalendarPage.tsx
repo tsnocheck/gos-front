@@ -7,7 +7,7 @@ import { Text } from '@react-pdf/renderer';
 
 const TOTAL_COLS = 9;
 
-export const CalendarPage: FC<ProgramPDFProps> = ({ program }) => {
+export const CalendarPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
   const calcTime = useCallback(
     (module: Module | Attestation) => {
       return module.lecture + module.distant + module.practice;
@@ -97,7 +97,11 @@ export const CalendarPage: FC<ProgramPDFProps> = ({ program }) => {
   };
 
   return (
-    <PDFPage title="Календарный учебный график" ui={{ title: { marginBottom: 0 } }}>
+    <PDFPage
+      title="Календарный учебный график"
+      ui={{ title: { marginBottom: 0 } }}
+      pageNumber={pageNumber}
+    >
       <Text style={{ textAlign: 'center', marginBottom: 4 }}>
         дополнительной профессиональной программы повышения квалификации {'\n'}
         <Text style={{ fontStyle: 'italic' }}>«{program.title ?? 'Название программы'}»</Text>

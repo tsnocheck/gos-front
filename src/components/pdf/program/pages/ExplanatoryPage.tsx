@@ -3,7 +3,11 @@ import { useCallback, type FC } from 'react';
 import { Standard, standards, type ProgramPDFProps } from '@/types';
 import { PDFPage, PDFTable, PDFList, PDFStyles } from '../../shared';
 
-export const ExplanatoryPage: FC<ProgramPDFProps> = ({ program, getDictionaryById }) => {
+export const ExplanatoryPage: FC<ProgramPDFProps> = ({
+  program,
+  getDictionaryById,
+  pageNumber,
+}) => {
   const isProfessionalStandard = [Standard.PROFESSIONAL, Standard.BOTH].includes(program.standard!);
 
   const isEksStandard = [Standard.EKS, Standard.BOTH].includes(program.standard!);
@@ -35,7 +39,10 @@ export const ExplanatoryPage: FC<ProgramPDFProps> = ({ program, getDictionaryByI
   }, [program, getValueFromDictionary]);
 
   return (
-    <PDFPage title="Пояснительная записка">
+    <PDFPage
+      title="ПОЯСНИТЕЛЬНАЯ ЗАПИСКА"
+      pageNumber={pageNumber}
+    >
       <Text style={PDFStyles.block}>
         <Text style={PDFStyles.bold}>Актуальность разработки программы:</Text> {program.relevance}
       </Text>

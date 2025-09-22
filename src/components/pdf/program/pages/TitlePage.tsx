@@ -4,9 +4,13 @@ import type { FC } from 'react';
 import type { ProgramPDFProps } from '@/types';
 import { PDFPage } from '../../shared/ui/PDFPage';
 
-export const TitlePage: FC<ProgramPDFProps> = ({ program }) => {
+export const TitlePage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
   return (
-    <PDFPage ui={{ view: { justifyContent: 'center' } }}>
+    <PDFPage
+      ui={{ view: { justifyContent: 'center' } }}
+      showPageNumber={false}
+      pageNumber={pageNumber}
+    >
       <Text style={{ textAlign: 'center', marginBottom: 60 }}>
         {program.customInstitution ? program.customInstitution : program.institution}
       </Text>

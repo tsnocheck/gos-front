@@ -4,9 +4,12 @@ import type { ProgramPDFProps } from '@/types';
 import { PDFPage } from '../../shared/ui/PDFPage';
 import { calcWidth, PDFTable } from '../../shared';
 
-export const AbbreviationPage: FC<ProgramPDFProps> = ({ program }) => {
+export const AbbreviationPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
   return (
-    <PDFPage title="СПИСОК СОКРАЩЕНИЙ И УСЛОВНЫХ ОБОЗНАЧЕНИЙ">
+    <PDFPage
+      title="СПИСОК СОКРАЩЕНИЙ И УСЛОВНЫХ ОБОЗНАЧЕНИЙ"
+      pageNumber={pageNumber}
+    >
       {program.abbreviations?.length ? (
         <PDFTable.Self>
           {program.abbreviations.map((item, idx) => (

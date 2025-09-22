@@ -8,7 +8,7 @@ import HTMLContent from '../../shared/ui/HTMLContent';
 
 const TOTAL_COLS = 13;
 
-export const ThematicPage: FC<ProgramPDFProps> = ({ program }) => {
+export const ThematicPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
   const modulesBySection = (section: ProgramSection) =>
     program.modules?.filter((m) => m.section === section) || [];
 
@@ -228,7 +228,11 @@ export const ThematicPage: FC<ProgramPDFProps> = ({ program }) => {
   };
 
   return (
-    <PDFPage title="Учебно-тематический план" ui={{ title: { marginBottom: 10 } }}>
+    <PDFPage
+      title="Учебно-тематический план"
+      ui={{ title: { marginBottom: 10 } }}
+      pageNumber={pageNumber}
+    >
       <Text style={{ textAlign: 'center', fontWeight: 'bold', lineHeight: 1 }}>
         РАБОЧИЕ ПРОГРАММЫ{'\n'}
         <Text style={{ fontWeight: 'normal' }}>

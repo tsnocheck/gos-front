@@ -29,6 +29,15 @@ export const PDFStyles = StyleSheet.create({
   row: {
     marginBottom: 5,
   },
+  pageNumber: {
+    position: 'absolute',
+    bottom: 30,
+    right: 0,
+    left: 0,
+    textAlign: 'center',
+    fontSize: 10,
+    fontFamily: 'Times-New-Roman',
+  },
 });
 
 export const PDFTableStyles = StyleSheet.create({
