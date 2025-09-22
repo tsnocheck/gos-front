@@ -10,7 +10,7 @@ interface ExpertisePDFProps {
 
 export const ExpertiseRecommendationsPage: FC<ExpertisePDFProps> = ({ expertise, pageNumber }) => {
   return (
-    <PDFPage title="Рекомендации эксперта" pageNumber={pageNumber}>
+    <PDFPage title="Рекомендации эксперта" pageNumber={pageNumber! + 1}>
       <View style={{ marginTop: 20 }}>
         <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 10 }}>
           Общий отзыв эксперта:

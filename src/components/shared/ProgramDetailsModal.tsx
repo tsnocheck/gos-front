@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Descriptions, Button, Tag } from 'antd';
-import { EditOutlined, DownloadOutlined } from '@ant-design/icons';
+import { EditOutlined } from '@ant-design/icons';
 import { useProgram } from '@/queries/programs';
 import { useUsers } from '@/queries/admin';
 import { getStatusColor, getStatusText } from '@/queries/programs';
@@ -37,11 +37,6 @@ export const ProgramDetailsModal: React.FC<ProgramDetailsModalProps> = ({
     }
   };
 
-  const handleDownloadExpertise = (expertiseId: string) => {
-    // TODO: Implement expertise PDF download
-    console.log('Download expertise PDF:', expertiseId);
-  };
-
   const formatDate = (date: string | Date | undefined) => {
     if (!date) return '-';
     return new Date(date).toLocaleDateString('ru-RU');
@@ -49,12 +44,14 @@ export const ProgramDetailsModal: React.FC<ProgramDetailsModalProps> = ({
 
   const getExpertiseConclusionText = (expertise: any) => {
     if (!expertise) return '-';
+    if (!expertise.reviewedAt) return 'Не просмотрен';
     if (expertise.isRecommendedForApproval) return 'Положительное';
     return 'Отрицательное';
   };
 
   const getExpertiseConclusionColor = (expertise: any) => {
     if (!expertise) return 'default';
+    if (!expertise.reviewedAt) return 'default';
     if (expertise.isRecommendedForApproval) return 'success';
     return 'error';
   };
@@ -129,7 +126,7 @@ export const ProgramDetailsModal: React.FC<ProgramDetailsModalProps> = ({
         </Descriptions.Item>
 
         <Descriptions.Item label="Ссылка на PDF экспертизу эксперта 1">
-          {'-'}
+          {expert1 && <ExpertisePDFDownloadButton id={expert1.id} />}
         </Descriptions.Item>
 
         {/* Эксперт 2 */}
@@ -152,17 +149,7 @@ export const ProgramDetailsModal: React.FC<ProgramDetailsModalProps> = ({
         </Descriptions.Item>
 
         <Descriptions.Item label="Ссылка на PDF экспертизу эксперта 2">
-          {expert2 ? (
-            <Button
-              type="link"
-              icon={<DownloadOutlined />}
-              onClick={() => handleDownloadExpertise(expert2.id)}
-            >
-              Скачать PDF экспертизы
-            </Button>
-          ) : (
-            '-'
-          )}
+          {expert2 && <ExpertisePDFDownloadButton id={expert2.id} />}
         </Descriptions.Item>
 
         {/* Эксперт 3 */}
@@ -185,17 +172,7 @@ export const ProgramDetailsModal: React.FC<ProgramDetailsModalProps> = ({
         </Descriptions.Item>
 
         <Descriptions.Item label="Ссылка на PDF экспертизу эксперта 3">
-          {expert3 ? (
-            <Button
-              type="link"
-              icon={<DownloadOutlined />}
-              onClick={() => handleDownloadExpertise(expert3.id)}
-            >
-              Скачать PDF экспертизы
-            </Button>
-          ) : (
-            '-'
-          )}
+          {expert3 && <ExpertisePDFDownloadButton id={expert3.id} />}
         </Descriptions.Item>
       </Descriptions>
     </Modal>

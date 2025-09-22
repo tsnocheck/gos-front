@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Table, Button, Form, Input, Space, Checkbox, Typography } from 'antd';
+import { Modal, Table, Button, Form, Input, Space, Checkbox } from 'antd';
 import type { Expertise, SubmitExpertiseDto, ExpertiseCriterions, Criterion } from '@/types';
 
 const { TextArea } = Input;
@@ -139,11 +139,9 @@ export const ExpertiseFormModal: React.FC<ExpertiseFormModalProps> = ({
   expertise,
   onClose,
   onSubmit,
-  onSendForRevision,
 }) => {
   const [form] = Form.useForm();
   const [criteriaData, setCriteriaData] = useState<CriterionData[]>([]);
-  const [showRevisionMode, setShowRevisionMode] = useState(false);
 
   useEffect(() => {
     if (expertise && open) {
@@ -204,16 +202,6 @@ export const ExpertiseFormModal: React.FC<ExpertiseFormModalProps> = ({
       };
 
       await onSubmit(submitData);
-      onClose();
-    } catch (error) {
-      console.error('Validation failed:', error);
-    }
-  };
-
-  const handleSendForRevision = async () => {
-    try {
-      const values = await form.validateFields(['revisionComments']);
-      await onSendForRevision({ revisionComments: values.revisionComments });
       onClose();
     } catch (error) {
       console.error('Validation failed:', error);
@@ -378,19 +366,6 @@ export const ExpertiseFormModal: React.FC<ExpertiseFormModalProps> = ({
             }}
           />
         </div>
-
-        {showRevisionMode && (
-          <Form.Item
-            name="revisionComments"
-            label="Комментарий для автора (на доработку)"
-            rules={[{ required: true, message: 'Укажите комментарий для доработки' }]}
-          >
-            <TextArea
-              rows={4}
-              placeholder="Укажите замечания и рекомендации для доработки программы"
-            />
-          </Form.Item>
-        )}
 
         <Form.Item
           name="additionalRecommendation"

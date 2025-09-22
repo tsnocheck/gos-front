@@ -1,6 +1,6 @@
 import { View, Text } from '@react-pdf/renderer';
 import type { FC } from 'react';
-import type { Expertise, ExpertiseStatus } from '@/types';
+import type { Expertise } from '@/types';
 import { PDFPage } from '../../shared/ui/PDFPage';
 
 interface ExpertisePDFProps {
@@ -8,41 +8,12 @@ interface ExpertisePDFProps {
   pageNumber?: number;
 }
 
-const getStatusText = (status: ExpertiseStatus) => {
-  switch (status) {
-    case 'approved':
-      return 'ОДОБРЕНО';
-    case 'rejected':
-      return 'ОТКЛОНЕНО';
-    case 'completed':
-      return 'ЗАВЕРШЕНО';
-    case 'in_progress':
-      return 'В ПРОЦЕССЕ';
-    case 'pending':
-      return 'ОЖИДАЕТ ЭКСПЕРТИЗЫ';
-    default:
-      return 'НЕ ОПРЕДЕЛЕНО';
-  }
-};
-
-const getStatusColor = (status: ExpertiseStatus) => {
-  switch (status) {
-    case 'approved':
-      return '#00b894';
-    case 'rejected':
-      return '#e17055';
-    case 'completed':
-      return '#0984e3';
-    default:
-      return '#636e72';
-  }
-};
 
 export const ExpertiseConclusionPage: FC<ExpertisePDFProps> = ({ expertise, pageNumber }) => {
-  const { program, expert, status, isRecommendedForApproval } = expertise;
+  const { program, expert } = expertise;
 
   return (
-    <PDFPage title="Заключение эксперта" pageNumber={pageNumber}>
+    <PDFPage title="Заключение эксперта" pageNumber={pageNumber! + 1}>
       <View style={{ marginTop: 20 }}>
         <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 15 }}>
           Экспертное заключение:
@@ -58,42 +29,6 @@ export const ExpertiseConclusionPage: FC<ExpertisePDFProps> = ({ expertise, page
         >
           <Text style={{ fontSize: 12, lineHeight: 1.5 }}>
             {expertise.conclusion || 'Заключение не предоставлено'}
-          </Text>
-        </View>
-
-        <View
-          style={{
-            marginBottom: 25,
-            padding: 15,
-            border: '2px solid ' + getStatusColor(status),
-            borderRadius: 5,
-            backgroundColor:
-              status === 'approved' ? '#f0fff4' : status === 'rejected' ? '#fff5f5' : '#f8f9fa',
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: 'bold',
-              textAlign: 'center',
-              color: getStatusColor(status),
-              marginBottom: 10,
-            }}
-          >
-            СТАТУС ЭКСПЕРТИЗЫ: {getStatusText(status)}
-          </Text>
-
-          <Text
-            style={{
-              fontSize: 14,
-              fontWeight: 'bold',
-              textAlign: 'center',
-              color: isRecommendedForApproval ? '#00b894' : '#e17055',
-            }}
-          >
-            {isRecommendedForApproval
-              ? 'ПРОГРАММА РЕКОМЕНДУЕТСЯ К ОДОБРЕНИЮ'
-              : 'ПРОГРАММА НЕ РЕКОМЕНДУЕТСЯ К ОДОБРЕНИЮ'}
           </Text>
         </View>
 

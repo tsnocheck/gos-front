@@ -5,6 +5,7 @@ import { ExpertiseStatus, type Expertise, type SubmitExpertiseDto } from '@/type
 import { useSubmitExpertise, useMyExpertises, useSendForRevision } from '../queries/expertises.ts';
 import ViewProgramModal from '@/components/shared/ViewProgramModal';
 import { ExpertiseFormModal } from '@/components/shared/ExpertiseFormModal';
+import { ExpertisePDFDownloadButton } from '@/components/pdf/expertise';
 import type { TableProps } from 'antd';
 
 const statusMap: Record<ExpertiseStatus, { text: string; color: string }> = {
@@ -98,16 +99,20 @@ export const ExpertisePage: React.FC = () => {
           >
             Просмотр
           </Button>
-          <Button
-            type="primary"
-            icon={<EditOutlined />}
-            onClick={() => {
-              setSelectedExpertiseId(record.id);
-              setIsEditOpen(true);
-            }}
-          >
-            Экспертиза
-          </Button>
+          {record.status === ExpertiseStatus.COMPLETED ? (
+            <ExpertisePDFDownloadButton id={record.id} />
+          ) : (
+            <Button
+              type="primary"
+              icon={<EditOutlined />}
+              onClick={() => {
+                setSelectedExpertiseId(record.id);
+                setIsEditOpen(true);
+              }}
+            >
+              Экспертиза
+            </Button>
+          )}
         </Space>
       ),
     },

@@ -13,6 +13,7 @@ import {
   ExpertiseRecommendationsPage,
   ExpertiseConclusionPage,
 } from './pages';
+import { useExpertise } from '@/queries/expertises.ts';
 
 Font.register({
   family: 'Times-New-Roman',
@@ -59,21 +60,23 @@ export const ExpertisePDFViewer: React.FC<{
 
 // Компонент для скачивания PDF экспертизы
 export const ExpertisePDFDownloadButton: React.FC<{
-  expertise: Expertise;
-}> = ({ expertise }) => {
-  if (!expertise) {
+  id: Expertise['id'];
+}> = ({ id }) => {
+  const { data, isSuccess } = useExpertise(id ?? '');
+
+  if (!isSuccess) {
     return (
-      <Button disabled icon={<DownloadOutlined />}>
+      <Button type="link" disabled icon={<DownloadOutlined />}>
         Скачать PDF
       </Button>
     );
   }
 
   return (
-    <PDFDownloadLink document={<ExpertisePDF expertise={expertise} />} fileName={`экспертиза.pdf`}>
+    <PDFDownloadLink document={<ExpertisePDF expertise={data} />} fileName={`экспертиза.pdf`}>
       {({ loading }) => (
-        <Button type="primary" icon={<DownloadOutlined />} loading={loading}>
-          {loading ? 'Генерация PDF...' : 'Скачать PDF'}
+        <Button type="link" icon={<DownloadOutlined />} loading={loading}>
+          {loading ? 'Генерация PDF экспертизы...' : 'Скачать PDF экспертизы'}
         </Button>
       )}
     </PDFDownloadLink>
