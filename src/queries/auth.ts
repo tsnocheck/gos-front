@@ -73,3 +73,14 @@ export const useForgotPassword = () => {
     mutationFn: authService.forgotPassword,
   });
 };
+
+export const useUpdateProfile = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: authService.updateProfile,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: authKeys.user() });
+    },
+  });
+};

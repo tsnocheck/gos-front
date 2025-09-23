@@ -1,6 +1,16 @@
 import { apiClient } from '../lib/api';
 import type { LoginCredentials, RegisterData, AuthResponse, User, UserIdentity } from '@/types';
 
+export interface UpdateProfileData {
+  firstName?: string;
+  lastName?: string;
+  middleName?: string;
+  phone?: string;
+  position?: string;
+  workplace?: string;
+  department?: string;
+}
+
 export const authService = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     return apiClient.post<AuthResponse>('/auth/login', credentials);
@@ -24,6 +34,10 @@ export const authService = {
 
   async getUser() {
     return apiClient.get<User>('/users/profile');
+  },
+
+  async updateProfile(data: UpdateProfileData): Promise<User> {
+    return apiClient.patch<User>('/users/profile', data);
   },
 
   async refreshToken(): Promise<AuthResponse> {

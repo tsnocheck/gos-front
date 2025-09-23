@@ -3,15 +3,18 @@ import { Button, Card, Col, Form, Input, message, Row, Tag, Typography } from 'a
 import { EditOutlined, SaveOutlined, UserOutlined } from '@ant-design/icons';
 import { UserRole } from '@/types';
 import { useAuth } from '../hooks/useAuth';
+import { useUpdateProfile } from '../queries/auth';
 
 const { Title } = Typography;
 
 export const ProfilePage: React.FC = () => {
   const { user, checkPermission, getToken } = useAuth();
   const [form] = Form.useForm();
+  const updateProfileMutation = useUpdateProfile();
 
-  const handleSave = async () => {
+  const handleSave = async (values: any) => {
     try {
+      await updateProfileMutation.mutateAsync(values);
       message.success('Профиль обновлен');
     } catch {
       message.error('Ошибка обновления профиля');
@@ -93,7 +96,12 @@ export const ProfilePage: React.FC = () => {
               </Form.Item>
 
               <Form.Item>
-                <Button type="primary" htmlType="submit" icon={<SaveOutlined />}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  icon={<SaveOutlined />}
+                  loading={updateProfileMutation.isPending}
+                >
                   Сохранить изменения
                 </Button>
                 <Button
