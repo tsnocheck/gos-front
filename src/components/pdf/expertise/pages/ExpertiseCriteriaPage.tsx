@@ -122,7 +122,11 @@ const criteriaData = [
   },
 ];
 
-const renderSectionTable = (section: (typeof criteriaData)[0], expertise: Expertise, showHeader: boolean = false) => (
+const renderSectionTable = (
+  section: (typeof criteriaData)[0],
+  expertise: Expertise,
+  showHeader: boolean = false,
+) => (
   <View key={section.section}>
     {/* Заголовок таблицы - только для первой секции */}
     {showHeader && (
@@ -152,7 +156,10 @@ const renderSectionTable = (section: (typeof criteriaData)[0], expertise: Expert
     {/* Критерии секции */}
     {section.criteria.map((criterion, criterionIndex) => {
       const criterionValue = expertise[criterion.key] as Criterion | undefined;
-      const hasCommentOrRecommendation = criterionValue && !criterionValue.value && (criterionValue.comment || criterionValue.recommendation);
+      const hasCommentOrRecommendation =
+        criterionValue &&
+        !criterionValue.value &&
+        (criterionValue.comment || criterionValue.recommendation);
 
       return (
         <View key={criterionIndex}>
@@ -186,7 +193,9 @@ const renderSectionTable = (section: (typeof criteriaData)[0], expertise: Expert
                 <PDFTable.Tr>
                   <PDFTable.Td style={{ width: '100%', padding: 4, backgroundColor: '#f9f9f9' }}>
                     <Text style={{ fontWeight: 'bold', fontSize: 10 }}>Рекомендация: </Text>
-                    <Text style={{ fontSize: 10, marginTop: 2 }}>{criterionValue.recommendation}</Text>
+                    <Text style={{ fontSize: 10, marginTop: 2 }}>
+                      {criterionValue.recommendation}
+                    </Text>
                   </PDFTable.Td>
                 </PDFTable.Tr>
               )}
@@ -208,7 +217,7 @@ export const ExpertiseCriteriaPage: FC<ExpertisePDFProps> = ({ expertise, pageNu
       <PDFPage title="Критерии экспертизы программы" pageNumber={pageNumber}>
         <PDFTable.Self style={{ marginTop: 10 }}>
           {firstPageSections.map((section, index) =>
-            renderSectionTable(section, expertise, index === 0)
+            renderSectionTable(section, expertise, index === 0),
           )}
         </PDFTable.Self>
       </PDFPage>
@@ -216,9 +225,7 @@ export const ExpertiseCriteriaPage: FC<ExpertisePDFProps> = ({ expertise, pageNu
       {/* Вторая страница - разделы 3 и 4 с единой таблицей */}
       <PDFPage title="Критерии экспертизы программы (продолжение)" pageNumber={pageNumber + 1}>
         <PDFTable.Self style={{ marginTop: 10 }}>
-          {secondPageSections.map((section) =>
-            renderSectionTable(section, expertise, false)
-          )}
+          {secondPageSections.map((section) => renderSectionTable(section, expertise, false))}
         </PDFTable.Self>
       </PDFPage>
     </>
