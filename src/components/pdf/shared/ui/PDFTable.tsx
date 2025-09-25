@@ -7,25 +7,29 @@ type RowProps = PropsWithChildren<{ style?: StyleObject; wrap?: boolean; isHeade
 
 export const PDFTable: Record<string, React.FC<CellProps | RowProps>> = {
   Self: (props: CellProps) => (
-    <View style={[PDFTableStyles.self, props.style || {}]} wrap={props.wrap}>
+    <View style={[PDFTableStyles.self, props.style || {}]} wrap={true}>
       {props.children}
     </View>
   ),
   Tr: (props: RowProps) => (
-    <View style={[PDFTableStyles.row, props.style || {}]} wrap={props.wrap}>
+    // prevent breaking a single row across pages by default
+    // if isHeader is true, mark the row as fixed so it can be repeated on each page
+    <View style={[PDFTableStyles.row, props.style || {}]} wrap={props.wrap ?? false}>
       {props.children}
     </View>
   ),
   Th: (props: CellProps) => (
+    // prevent splitting header cell content across pages by default
     <View
       style={[PDFTableStyles.col, PDFTableStyles.headerCell, props.style || {}]}
-      wrap={props.wrap}
+      wrap={props.wrap ?? false}
     >
       <Text style={PDFTableStyles.headerText}>{props.children}</Text>
     </View>
   ),
   Td: (props: CellProps) => (
-    <View style={[PDFTableStyles.col, props.style || {}]} wrap={props.wrap}>
+    // prevent splitting cell content across pages by default
+    <View style={[PDFTableStyles.col, props.style || {}]} wrap={props.wrap ?? false}>
       <Text>{props.children}</Text>
     </View>
   ),

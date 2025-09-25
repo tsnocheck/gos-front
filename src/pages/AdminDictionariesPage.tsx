@@ -183,9 +183,19 @@ export const AdminDictionariesPage: React.FC = () => {
 
   // Колонки для модалки
   const getColumns = (_: DictionaryType, onEdit: (record: Dictionary) => void) => {
+    const isInstitutions = openType === DictionaryType.INSTITUTIONS;
+
     const columns = [
-      { title: 'Значение', dataIndex: 'value', key: 'value' },
-      { title: 'Описание', dataIndex: 'description', key: 'description' },
+      {
+        title: isInstitutions ? 'Краткое название' : 'Значение',
+        dataIndex: 'value',
+        key: 'value',
+      },
+      {
+        title: isInstitutions ? 'Полное название' : 'Описание',
+        dataIndex: 'description',
+        key: 'description',
+      },
       { title: 'Порядок', dataIndex: 'sortOrder', key: 'sortOrder' },
       {
         title: 'Статус',
@@ -304,10 +314,17 @@ export const AdminDictionariesPage: React.FC = () => {
           }}
         >
           {openType === DictionaryType.LABOR_ACTIONS && <SelectLaborFunctionRender />}
-          <Form.Item name="value" label="Значение" required>
+          <Form.Item
+            name="value"
+            label={openType === DictionaryType.INSTITUTIONS ? 'Краткое название' : 'Значение'}
+            required
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="description" label="Описание">
+          <Form.Item
+            name="description"
+            label={openType === DictionaryType.INSTITUTIONS ? 'Полное название' : 'Описание'}
+          >
             <Input />
           </Form.Item>
           <Form.Item getValueFromEvent={(e) => +e.target.value} name="sortOrder" label="Порядок">

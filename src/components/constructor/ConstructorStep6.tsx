@@ -142,7 +142,7 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
       title: 'Название модуля',
       dataIndex: 'name',
       render: (v: string, _: Module, i: number) => (
-        <div style={{ minWidth: 400 }}>
+        <div style={{ minWidth: 300 }}>
           <RecommendationSuggestionInput
             value={v}
             onChange={(val) => handleUpdate<Module>('modules', i, 'name', val)}
@@ -165,6 +165,16 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
         />
       ),
     })),
+    {
+      title: 'Всего часов',
+      dataIndex: 'total',
+      render: (_: any, record: Module) => {
+        const total = (record.lecture || 0) + (record.practice || 0) + (record.distant || 0);
+        return (
+          <Input value={total} disabled style={{ backgroundColor: '#f5f5f5', color: '#666' }} />
+        );
+      },
+    },
     {
       title: '',
       render: (_: any, __: Module, i: number) => (
@@ -235,6 +245,16 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
         />
       ),
     })),
+    {
+      title: 'Всего часов',
+      dataIndex: 'total',
+      render: (_: any, record: Attestation) => {
+        const total = (record.lecture || 0) + (record.practice || 0) + (record.distant || 0);
+        return (
+          <Input value={total} disabled style={{ backgroundColor: '#f5f5f5', color: '#666' }} />
+        );
+      },
+    },
     {
       title: 'Форма',
       dataIndex: 'form',

@@ -3,6 +3,7 @@ import { Form, Input, Select, Table, Typography } from 'antd';
 import { standards, type ExtendedProgram } from '@/types';
 import { useProgramDictionaries } from '@/hooks/useProgramDictionaries';
 import RecommendationSuggestionInput from '../shared/RecommendationSuggestionInput';
+import EditableTagsSelect from '../shared/EditableTagsSelect';
 import { RecommendationField } from '@/types/recommendation';
 
 const { Title } = Typography;
@@ -70,24 +71,31 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
       {(value.standard === 'professional-standard' || value.standard === 'both') && (
         <div style={{ display: 'flex', width: '100%', gap: 20 }}>
           <Form.Item name="functions" label="Трудовые функции" style={{ flex: 1, minWidth: 0 }}>
-            <Select
-              mode="tags"
+            <EditableTagsSelect
+              value={value.functions || []}
+              onChange={(val) => {
+                onChange({ functions: val });
+                if (val.length === 0) onChange({ actions: [] });
+              }}
               options={functions?.map((f) => ({
                 value: f.id,
                 label: f.value,
               }))}
+              placeholder="Выберите трудовые функции"
               style={{ width: '100%', maxWidth: '100%' }}
               maxTagTextLength={30}
             />
           </Form.Item>
           <Form.Item name="actions" label="Трудовые действия" style={{ flex: 1, minWidth: 0 }}>
-            <Select
-              mode="tags"
+            <EditableTagsSelect
+              value={value.actions || []}
+              onChange={(val) => onChange({ actions: val })}
               options={actions?.map((a) => ({
                 value: a.id,
                 label: a.value,
               }))}
               disabled={!selectedFunctions?.length}
+              placeholder="Выберите трудовые действия"
               style={{ width: '100%', maxWidth: '100%' }}
               maxTagTextLength={30}
             />
@@ -97,9 +105,11 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
 
       {(value.standard === 'eks' || value.standard === 'both') && (
         <Form.Item name="duties" label="Должностные обязанности">
-          <Select
-            mode="tags"
+          <EditableTagsSelect
+            value={value.duties || []}
+            onChange={(val) => onChange({ duties: val })}
             options={duties?.map((d) => ({ value: d.id, label: d.value }))}
+            placeholder="Выберите должностные обязанности"
             style={{ width: '100%', maxWidth: '100%' }}
             maxTagTextLength={30}
           />
@@ -107,19 +117,21 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
       )}
 
       <Form.Item name="know" label="Знать">
-        <Select
-          mode="tags"
-          style={{ width: '100%', maxWidth: '100%' }}
+        <EditableTagsSelect
+          value={value.know || []}
+          onChange={(val) => onChange({ know: val })}
           placeholder="Введите знания"
+          style={{ width: '100%', maxWidth: '100%' }}
           maxTagTextLength={30}
         />
       </Form.Item>
 
       <Form.Item name="can" label="Уметь">
-        <Select
-          mode="tags"
-          style={{ width: '100%', maxWidth: '100%' }}
+        <EditableTagsSelect
+          value={value.can || []}
+          onChange={(val) => onChange({ can: val })}
           placeholder="Введите умения"
+          style={{ width: '100%', maxWidth: '100%' }}
           maxTagTextLength={30}
         />
       </Form.Item>

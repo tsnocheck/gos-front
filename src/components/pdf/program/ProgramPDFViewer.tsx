@@ -55,7 +55,7 @@ export const ProgramPDF: React.FC<{
   return (
     <PDFDocumentWithPagination title={props.program.title ?? 'Программа'}>
       {pages.map((Page, index) => (
-        <Page key={index} {...props}></Page>
+        <Page key={index} {...props} />
       ))}
     </PDFDocumentWithPagination>
   );

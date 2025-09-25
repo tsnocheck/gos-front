@@ -17,6 +17,17 @@ export const useProgramDictionaries = () => {
     [data],
   );
 
+  const getFullInstitutionName = useCallback(
+    (shortName: string) => {
+      const institution = data?.find(
+        (dictionary) =>
+          dictionary.type === DictionaryType.INSTITUTIONS && dictionary.value === shortName,
+      );
+      return institution?.description || shortName;
+    },
+    [data],
+  );
+
   const getActions = useCallback(
     (functionIds: string[]) =>
       getDictionaryByTypes(
@@ -35,5 +46,6 @@ export const useProgramDictionaries = () => {
 
     getActions,
     getDictionaryById,
+    getFullInstitutionName,
   };
 };

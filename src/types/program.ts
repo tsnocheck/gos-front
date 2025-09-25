@@ -224,6 +224,7 @@ export interface ProgramPDFProps {
   authors: User[];
   getDictionaryById: (id: string) => Dictionary | undefined;
   pageNumber?: number;
+  [key: string]: any;
 }
 
 export type ExtendedProgram = Partial<Program>;

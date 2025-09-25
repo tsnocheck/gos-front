@@ -39,10 +39,7 @@ export const ExplanatoryPage: FC<ProgramPDFProps> = ({
   }, [program, getValueFromDictionary]);
 
   return (
-    <PDFPage
-      title="ПОЯСНИТЕЛЬНАЯ ЗАПИСКА"
-      pageNumber={pageNumber}
-    >
+    <PDFPage title="ПОЯСНИТЕЛЬНАЯ ЗАПИСКА" pageNumber={pageNumber}>
       <Text style={PDFStyles.block}>
         <Text style={PDFStyles.bold}>Актуальность разработки программы:</Text> {program.relevance}
       </Text>

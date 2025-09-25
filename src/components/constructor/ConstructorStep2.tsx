@@ -28,7 +28,7 @@ const ConstructorStep2: React.FC<Props> = ({ value, onChange }) => {
           placeholder="Выберите учреждение"
         >
           {institutionList?.map((inst) => (
-            <Option key={inst.value} value={inst.value}>
+            <Option key={inst.id} value={inst.id}>
               {inst.value}
             </Option>
           ))}

@@ -4,16 +4,29 @@ import type { FC } from 'react';
 import type { ProgramPDFProps } from '@/types';
 import { PDFPage } from '../../shared/ui/PDFPage';
 
-export const TitlePage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
+export const TitlePage: FC<ProgramPDFProps> = ({ program, getDictionaryById, pageNumber }) => {
+  const getInstitutionName = () => {
+    if (program.customInstitution) {
+      return program.customInstitution;
+    }
+
+    if (program.institution && program.institution !== 'other') {
+      const institution = getDictionaryById(program.institution);
+      return institution?.description || institution?.value || program.institution;
+    }
+
+    return '';
+  };
+
+  const institutionName = getInstitutionName();
+
   return (
     <PDFPage
       ui={{ view: { justifyContent: 'center' } }}
       showPageNumber={false}
       pageNumber={pageNumber}
     >
-      <Text style={{ textAlign: 'center', marginBottom: 60 }}>
-        {program.customInstitution ? program.customInstitution : program.institution}
-      </Text>
+      <Text style={{ textAlign: 'center', marginBottom: 60 }}>{institutionName}</Text>
 
       <View style={{ flexGrow: 1, paddingTop: 50 }}>
         <Text style={{ textAlign: 'center' }}>
@@ -36,5 +49,5 @@ export const TitlePage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
         <Text>{currentYear}</Text>
       </View>
     </PDFPage>
-  );
+  )
 };

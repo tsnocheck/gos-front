@@ -26,6 +26,50 @@ interface HTMLContentProps {
   style?: any;
 }
 
+const CONTENT_MAX_WIDTH = 530; // page width (A4 ~595) minus horizontal padding (30 * 2)
+const PAGE_MAX_HEIGHT = 720;   // A4 usable height (842 - vertical paddings)
+
+// Reworked: do NOT upscale small images to full width; only downscale if they exceed limits.
+// Optional attribute: data-fullwidth="true" — force width stretch to CONTENT_MAX_WIDTH (with proportional height).
+function buildImageStyle(node: HTMLNode) {
+  const attribs: any = (node as any).attribs || {};
+  const forceFull = attribs['data-fullwidth'] === 'true';
+  const attrW = parseInt(attribs.width || attribs['data-width'], 10);
+  const attrH = parseInt(attribs.height || attribs['data-height'], 10);
+
+  // If both dimensions provided
+  if (!isNaN(attrW) && attrW > 0 && !isNaN(attrH) && attrH > 0) {
+    let scale = 1;
+    if (forceFull) {
+      scale = CONTENT_MAX_WIDTH / attrW;
+    } else {
+      if (attrW > CONTENT_MAX_WIDTH) scale = Math.min(scale, CONTENT_MAX_WIDTH / attrW);
+      if (attrH > PAGE_MAX_HEIGHT) scale = Math.min(scale, PAGE_MAX_HEIGHT / attrH);
+    }
+    // Prevent upscaling if scale > 1 and not forced
+    if (!forceFull && scale > 1) scale = 1;
+    return { width: Math.round(attrW * scale), height: Math.round(attrH * scale) };
+  }
+
+  // Only width specified
+  if (!isNaN(attrW) && attrW > 0) {
+    if (forceFull) {
+      const scale = CONTENT_MAX_WIDTH / attrW;
+      return { width: CONTENT_MAX_WIDTH, // height will auto preserve intrinsic aspect
+      };
+    }
+    return { width: Math.min(attrW, CONTENT_MAX_WIDTH) };
+  }
+
+  // Only height specified
+  if (!isNaN(attrH) && attrH > 0) {
+    return { height: Math.min(attrH, PAGE_MAX_HEIGHT), maxWidth: CONTENT_MAX_WIDTH };
+  }
+
+  // No size hints: constrain only by max values, let intrinsic size drive actual dimensions
+  return { maxWidth: CONTENT_MAX_WIDTH, maxHeight: PAGE_MAX_HEIGHT };
+}
+
 const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
   if (!html || html.trim() === '') {
     return null;
@@ -105,20 +149,9 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
       );
     }
 
-    // Изображение
+    // Изображения НЕ рендерим инлайном внутри <Text>, чтобы избежать наложения. Обрабатываются в блочном рендеринге и в параграфах отдельно.
     if (isImage(node)) {
-      const src = (node as any).attribs?.src || '';
-      return (
-        <Image
-          key={index}
-          src={src}
-          style={{
-            width: 500,
-            height: 300,
-            marginVertical: 8,
-          }}
-        />
-      );
+      return null; // сигнал параграфному рендеру, что здесь был img (он обработает отдельно)
     }
 
     // Спан и прочие инлайн
@@ -147,15 +180,10 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     // Изображение (блочное)
     if (isImage(node)) {
       const src = (node as any).attribs?.src || '';
+      const imgStyle = buildImageStyle(node);
       return (
-        <View key={index} style={{ marginVertical: 8, textAlign: 'center' }}>
-          <Image
-            src={src}
-            style={{
-              width: 500,
-              height: 300,
-            }}
-          />
+        <View key={index} style={{ marginVertical: 12, alignItems: 'center' }} wrap={false}>
+          <Image src={src} style={imgStyle as any} />
         </View>
       );
     }
@@ -182,20 +210,44 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
 
     // Параграф с улучшенным форматированием
     if (isParagraph(node) || (node.type === 'tag' && node.name === 'div')) {
+      // Собираем текстовые фрагменты и отделяем изображения как блоки
+      const parts: React.ReactElement[] = [];
+      let buffer: (string | React.ReactElement)[] = [];
+      const flushBuffer = () => {
+        if (buffer.length) {
+          parts.push(
+            <Text
+              key={`p-text-${parts.length}`}
+              style={{ marginBottom: 0, textAlign: 'justify', lineHeight: 1.5, fontSize: 10 }}
+            >
+              {buffer as any}
+            </Text>,
+          );
+          buffer = [];
+        }
+      };
+      (node.children || []).forEach((child, childIndex) => {
+        if (isImage(child)) {
+          flushBuffer();
+          const src = (child as any).attribs?.src || '';
+            const imgStyle = buildImageStyle(child);
+          parts.push(
+            <View key={`p-img-${childIndex}`} style={{ marginVertical: 10, alignItems: 'center' }} wrap={false}>
+              <Image src={src} style={imgStyle as any} />
+            </View>,
+          );
+        } else {
+          const rendered = renderInline(child, `${childIndex}`);
+          if (rendered !== null && rendered !== undefined) buffer.push(rendered as any);
+        }
+      });
+      flushBuffer();
+
+      if (!parts.length) return null;
       return (
-        <Text
-          key={index}
-          style={{
-            marginBottom: 8,
-            textAlign: 'justify',
-            lineHeight: 1.5,
-            fontSize: 10,
-          }}
-        >
-          {(node.children || []).map((child, childIndex) =>
-            renderInline(child, `${index}-${childIndex}`),
-          )}
-        </Text>
+        <View key={index} style={{ marginBottom: 8 }}>
+          {parts}
+        </View>
       );
     }
 

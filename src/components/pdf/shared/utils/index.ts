@@ -25,6 +25,7 @@ export const PDFStyles = StyleSheet.create({
   italic: { fontStyle: 'italic' },
   block: {
     marginBottom: 10,
+    textAlign: 'justify',
   },
   row: {
     marginBottom: 5,
@@ -42,11 +43,8 @@ export const PDFStyles = StyleSheet.create({
 
 export const PDFTableStyles = StyleSheet.create({
   self: {
-    borderLeftWidth: 1,
-    borderTopWidth: 1,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: '#000',
+    // removed outer borders so each row/cell draws its own borders — this prevents a visible gap
+    // when the table is split across pages
     marginTop: 8,
     marginBottom: 8,
     display: 'flex',
@@ -58,10 +56,14 @@ export const PDFTableStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'stretch',
     width: '100%',
+    // draw a top border for every row so horizontal lines remain continuous across page breaks
+    borderTopWidth: 1,
+    borderColor: '#000',
   },
   col: {
     borderRightWidth: 1,
     borderBottomWidth: 1,
+    borderLeftWidth: 1, // add left border to ensure complete table borders
     borderColor: '#000',
     paddingVertical: 8,
     paddingHorizontal: 10,

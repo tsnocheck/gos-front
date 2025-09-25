@@ -104,31 +104,35 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
         <Text style={PDFStyles.italic}>«{program.title ?? 'Название программы'}»</Text>
       </Text>
       <PDFTable.Self>
-        <PDFTable.Tr>
+        {/* Header row 1 - main headers */}
+        <PDFTable.Tr isHeader>
           <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}>Шифр модуля</PDFTable.Th>
           <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}>
             Структурный компонент программы / образовательный модуль
           </PDFTable.Th>
-          <PDFTable.Tr
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              ...calcWidth(3 / TOTAL_COLS),
-            }}
-          >
-            <PDFTable.Th>Формы организации, часы</PDFTable.Th>
-            <PDFTable.Tr>
-              <PDFTable.Th style={calcWidth(2 / 3)}>Ауд. зан.</PDFTable.Th>
-              <PDFTable.Th style={calcWidth(1 / 3)}>Сам. раб.</PDFTable.Th>
-            </PDFTable.Tr>
-            <PDFTable.Tr>
-              <PDFTable.Td style={calcWidth(1 / 3)}>Лекц. зан.</PDFTable.Td>
-              <PDFTable.Td style={calcWidth(1 / 3)}>Практ. зан.</PDFTable.Td>
-              <PDFTable.Td style={calcWidth(1 / 3)}>Дист. обучение</PDFTable.Td>
-            </PDFTable.Tr>
-          </PDFTable.Tr>
+          <PDFTable.Th style={calcWidth(3 / TOTAL_COLS)}>
+            Формы организации, часы
+          </PDFTable.Th>
           <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}>Формы контроля</PDFTable.Th>
+        </PDFTable.Tr>
+
+        {/* Header row 2 - subheaders for "Формы организации, часы" */}
+        <PDFTable.Tr isHeader>
+          <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}></PDFTable.Th>
+          <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}></PDFTable.Th>
+          <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}>Ауд. зан.</PDFTable.Th>
+          <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}>Сам. раб.</PDFTable.Th>
+          <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}></PDFTable.Th>
+        </PDFTable.Tr>
+
+        {/* Header row 3 - detailed subheaders */}
+        <PDFTable.Tr isHeader>
+          <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}></PDFTable.Th>
+          <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}></PDFTable.Th>
+          <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}>Лекц. зан.</PDFTable.Th>
+          <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}>Практ. зан.</PDFTable.Th>
+          <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}>Дист. обучение</PDFTable.Th>
+          <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}></PDFTable.Th>
         </PDFTable.Tr>
 
         {attestationsByModule('open')?.length && <AttestationRows moduleCode="open" />}

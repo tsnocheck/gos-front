@@ -4,6 +4,7 @@ import type { ColumnsType } from 'antd/es/table';
 import type { ExtendedProgram, NetworkOrg, Topic, Module, TopicContent } from '@/types';
 import { programSection } from '@/types';
 import RecommendationSuggestionInput from '../shared/RecommendationSuggestionInput';
+import EditableTagsSelect from '../shared/EditableTagsSelect';
 import { RecommendationField } from '@/types/recommendation';
 
 const { Title } = Typography;
@@ -116,8 +117,7 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
         <div
           style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 120px', gap: 8, marginTop: 8 }}
         >
-          <Select
-            mode="tags"
+          <EditableTagsSelect
             value={tc.content}
             onChange={(val) => updateTopicContent(moduleIndex, topicIndex, kind, 'content', val)}
             placeholder="Содержание"
@@ -125,8 +125,7 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
             maxTagTextLength={25}
           />
           {!hideForms ? (
-            <Select
-              mode="tags"
+            <EditableTagsSelect
               value={tc.forms}
               onChange={(val) => updateTopicContent(moduleIndex, topicIndex, kind, 'forms', val)}
               placeholder="Формы организации"

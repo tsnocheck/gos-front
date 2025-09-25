@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { authService } from '../services/authService';
-import type { User } from '../types';
+import type { User } from '@/types';
 import { useNavigate } from 'react-router-dom';
 
 // Query keys
