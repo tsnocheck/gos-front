@@ -99,11 +99,7 @@ export const ProgramPDFDownloadButton: React.FC<{
 
   if (!program || authors.length === 0) {
     return (
-      <Button
-        type="link"
-        icon={<DownloadOutlined />}
-        disabled
-      >
+      <Button type="link" icon={<DownloadOutlined />} disabled>
         Данные не загружены
       </Button>
     );
@@ -122,12 +118,7 @@ export const ProgramPDFDownloadButton: React.FC<{
       fileName={`${program.title || 'Программа'}_v${program.version}.pdf`}
     >
       {({ loading }) => (
-        <Button
-          type="link"
-          icon={<DownloadOutlined />}
-          loading={loading}
-          disabled={loading}
-        >
+        <Button type="link" icon={<DownloadOutlined />} loading={loading} disabled={loading}>
           {loading ? 'Подготовка PDF...' : 'Скачать PDF программы'}
         </Button>
       )}

@@ -13,8 +13,8 @@ import {
   Select,
   Tag,
 } from 'antd';
-import type { Dictionary } from '../types/dictionary';
-import { DictionaryType, DictionaryStatus } from '../types/dictionary';
+import type { Dictionary } from '@/types';
+import { DictionaryType, DictionaryStatus } from '@/types';
 import {
   useDictionariesByType,
   useCreateDictionary,

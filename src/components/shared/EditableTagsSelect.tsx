@@ -92,7 +92,7 @@ const EditableTagsSelect: React.FC<EditableTagsSelectProps> = ({
       const existingOption = availableOptions.find(
         (opt) =>
           opt.label.toLowerCase() === inputValue.toLowerCase() ||
-          opt.value.toLowerCase() === inputValue.toLowerCase()
+          opt.value.toLowerCase() === inputValue.toLowerCase(),
       );
 
       if (!existingOption) {

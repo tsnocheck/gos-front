@@ -49,5 +49,5 @@ export const TitlePage: FC<ProgramPDFProps> = ({ program, getDictionaryById, pag
         <Text>{currentYear}</Text>
       </View>
     </PDFPage>
-  )
+  );
 };

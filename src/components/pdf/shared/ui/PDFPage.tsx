@@ -10,7 +10,14 @@ type Props = PropsWithChildren<{
   [key: string]: any;
 }>;
 
-export const PDFPage: FC<Props> = ({ children, ui, title, showPageNumber = true, pageNumber, ...props }) => {
+export const PDFPage: FC<Props> = ({
+  children,
+  ui,
+  title,
+  showPageNumber = true,
+  pageNumber,
+  ...props
+}) => {
   return (
     <Page size="A4" style={PDFStyles.page} {...props}>
       <View style={{ flex: 1, ...ui?.view }}>

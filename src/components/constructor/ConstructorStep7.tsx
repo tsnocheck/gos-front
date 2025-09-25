@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Button, Input, Typography, Checkbox, Select, Tabs } from 'antd';
+import { Table, Button, Input, Typography, Checkbox, Tabs } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { ExtendedProgram, NetworkOrg, Topic, Module, TopicContent } from '@/types';
 import { programSection } from '@/types';

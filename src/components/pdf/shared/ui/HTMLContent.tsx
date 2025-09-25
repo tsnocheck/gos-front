@@ -27,7 +27,7 @@ interface HTMLContentProps {
 }
 
 const CONTENT_MAX_WIDTH = 530; // page width (A4 ~595) minus horizontal padding (30 * 2)
-const PAGE_MAX_HEIGHT = 720;   // A4 usable height (842 - vertical paddings)
+const PAGE_MAX_HEIGHT = 720; // A4 usable height (842 - vertical paddings)
 
 // Reworked: do NOT upscale small images to full width; only downscale if they exceed limits.
 // Optional attribute: data-fullwidth="true" — force width stretch to CONTENT_MAX_WIDTH (with proportional height).
@@ -54,8 +54,8 @@ function buildImageStyle(node: HTMLNode) {
   // Only width specified
   if (!isNaN(attrW) && attrW > 0) {
     if (forceFull) {
-      const scale = CONTENT_MAX_WIDTH / attrW;
-      return { width: CONTENT_MAX_WIDTH, // height will auto preserve intrinsic aspect
+      return {
+        width: CONTENT_MAX_WIDTH, // height will auto preserve intrinsic aspect
       };
     }
     return { width: Math.min(attrW, CONTENT_MAX_WIDTH) };
@@ -230,9 +230,13 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
         if (isImage(child)) {
           flushBuffer();
           const src = (child as any).attribs?.src || '';
-            const imgStyle = buildImageStyle(child);
+          const imgStyle = buildImageStyle(child);
           parts.push(
-            <View key={`p-img-${childIndex}`} style={{ marginVertical: 10, alignItems: 'center' }} wrap={false}>
+            <View
+              key={`p-img-${childIndex}`}
+              style={{ marginVertical: 10, alignItems: 'center' }}
+              wrap={false}
+            >
               <Image src={src} style={imgStyle as any} />
             </View>,
           );

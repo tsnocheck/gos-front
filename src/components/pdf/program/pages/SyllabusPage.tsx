@@ -94,11 +94,7 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
   };
 
   return (
-    <PDFPage
-      title="Учебный план"
-      ui={{ title: { marginBottom: 0 } }}
-      pageNumber={pageNumber}
-    >
+    <PDFPage title="Учебный план" ui={{ title: { marginBottom: 0 } }} pageNumber={pageNumber}>
       <Text style={{ lineHeight: 1, textAlign: 'center' }}>
         дополнительной профессиональной программы повышения квалификации {'\n'}
         <Text style={PDFStyles.italic}>«{program.title ?? 'Название программы'}»</Text>
@@ -110,9 +106,7 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
           <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}>
             Структурный компонент программы / образовательный модуль
           </PDFTable.Th>
-          <PDFTable.Th style={calcWidth(3 / TOTAL_COLS)}>
-            Формы организации, часы
-          </PDFTable.Th>
+          <PDFTable.Th style={calcWidth(3 / TOTAL_COLS)}>Формы организации, часы</PDFTable.Th>
           <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}>Формы контроля</PDFTable.Th>
         </PDFTable.Tr>
 
