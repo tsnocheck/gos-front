@@ -155,7 +155,7 @@ export const ExpertiseFormModal: React.FC<ExpertiseFormModalProps> = ({
             key: item.key,
             number: item.number,
             text: item.text,
-            value: criterion?.value ?? true, // По умолчанию "Да"
+            value: criterion?.value ?? true,
             comment: criterion?.comment ?? '',
             recommendation: criterion?.recommendation ?? '',
           });
@@ -164,7 +164,6 @@ export const ExpertiseFormModal: React.FC<ExpertiseFormModalProps> = ({
 
       setCriteriaData(data);
 
-      // Устанавливаем дополнительные поля формы
       form.setFieldsValue({
         additionalRecommendation: expertise.additionalRecommendation || '',
       });

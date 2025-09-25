@@ -99,6 +99,16 @@ export const ExpertisePage: React.FC = () => {
           >
             Просмотр
           </Button>
+          <Button
+            type="primary"
+            icon={<EditOutlined />}
+            onClick={() => {
+              setSelectedExpertiseId(record.id);
+              setIsEditOpen(true);
+            }}
+          >
+            Экспертиза
+          </Button>
           {record.status === ExpertiseStatus.COMPLETED ? (
             <ExpertisePDFDownloadButton id={record.id} />
           ) : (

@@ -25,7 +25,7 @@ export const LiteraturePage: FC<ProgramPDFProps> = ({ program, pageNumber }) => 
   const { orgPedConditions } = program;
 
   const formatEquipmentList = (equipment: Equipment[], otherEquipment?: string) => {
-    const items = equipment.map(eq => equipmentLabels[eq]).filter(Boolean);
+    const items = equipment.map((eq) => equipmentLabels[eq]).filter(Boolean);
     if (equipment.includes(Equipment.OTHER) && otherEquipment) {
       items[items.indexOf(equipmentLabels[Equipment.OTHER])] = otherEquipment;
     }
@@ -33,9 +33,10 @@ export const LiteraturePage: FC<ProgramPDFProps> = ({ program, pageNumber }) => 
   };
 
   const formatDistanceEquipmentList = (equipment: DistanceEquipment[], otherDistance?: string) => {
-    const items = equipment.map(eq => distanceEquipmentLabels[eq]).filter(Boolean);
+    const items = equipment.map((eq) => distanceEquipmentLabels[eq]).filter(Boolean);
     if (equipment.includes(DistanceEquipment.OTHER_DISTANCE) && otherDistance) {
-      items[items.indexOf(distanceEquipmentLabels[DistanceEquipment.OTHER_DISTANCE])] = otherDistance;
+      items[items.indexOf(distanceEquipmentLabels[DistanceEquipment.OTHER_DISTANCE])] =
+        otherDistance;
     }
     return items.join(', ');
   };
@@ -95,7 +96,10 @@ export const LiteraturePage: FC<ProgramPDFProps> = ({ program, pageNumber }) => 
             Оборудование для дистанционного обучения
           </Text>
           <Text style={{ fontSize: 12, lineHeight: 1.4 }}>
-            {formatDistanceEquipmentList(orgPedConditions.distanceEquipment, orgPedConditions.otherDistance)}
+            {formatDistanceEquipmentList(
+              orgPedConditions.distanceEquipment,
+              orgPedConditions.otherDistance,
+            )}
           </Text>
         </View>
       )}

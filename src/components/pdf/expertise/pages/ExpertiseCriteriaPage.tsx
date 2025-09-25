@@ -122,38 +122,41 @@ const criteriaData = [
   },
 ];
 
-const renderSectionTable = (section: (typeof criteriaData)[0], expertise: Expertise) => (
+const renderSectionTable = (section: (typeof criteriaData)[0], expertise: Expertise, showHeader: boolean = false) => (
   <View key={section.section}>
-    <PDFTable.Self style={{ marginTop: 10 }}>
-      {/* Заголовок таблицы */}
+    {/* Заголовок таблицы - только для первой секции */}
+    {showHeader && (
       <PDFTable.Tr isHeader>
         <PDFTable.Th style={{ width: '8%' }}>№ п/п</PDFTable.Th>
         <PDFTable.Th style={{ width: '62%' }}>Критерий экспертизы программы</PDFTable.Th>
         <PDFTable.Th style={{ width: '15%' }}>Да</PDFTable.Th>
         <PDFTable.Th style={{ width: '15%' }}>Нет</PDFTable.Th>
       </PDFTable.Tr>
+    )}
 
-      {/* Заголовок секции */}
-      <PDFTable.Tr>
-        <PDFTable.Td
-          style={{
-            width: '100%',
-            textAlign: 'center',
-            fontWeight: 'bold',
-            backgroundColor: '#f0f0f0',
-            padding: 8,
-          }}
-        >
-          <Text style={{ fontWeight: 'bold' }}>{section.section}</Text>
-        </PDFTable.Td>
-      </PDFTable.Tr>
+    {/* Заголовок секции */}
+    <PDFTable.Tr>
+      <PDFTable.Td
+        style={{
+          width: '100%',
+          textAlign: 'center',
+          fontWeight: 'bold',
+          backgroundColor: '#f0f0f0',
+          padding: 8,
+        }}
+      >
+        <Text style={{ fontWeight: 'bold' }}>{section.section}</Text>
+      </PDFTable.Td>
+    </PDFTable.Tr>
 
-      {/* Критерии секции */}
-      {section.criteria.map((criterion, criterionIndex) => {
-        const criterionValue = expertise[criterion.key] as Criterion | undefined;
+    {/* Критерии секции */}
+    {section.criteria.map((criterion, criterionIndex) => {
+      const criterionValue = expertise[criterion.key] as Criterion | undefined;
+      const hasCommentOrRecommendation = criterionValue && !criterionValue.value && (criterionValue.comment || criterionValue.recommendation);
 
-        return (
-          <PDFTable.Tr key={criterionIndex}>
+      return (
+        <View key={criterionIndex}>
+          <PDFTable.Tr>
             <PDFTable.Td style={{ width: '8%', textAlign: 'center' }}>
               <Text>{criterion.number}</Text>
             </PDFTable.Td>
@@ -161,52 +164,37 @@ const renderSectionTable = (section: (typeof criteriaData)[0], expertise: Expert
               <Text>{criterion.text}</Text>
             </PDFTable.Td>
             <PDFTable.Td style={{ width: '15%', textAlign: 'center' }}>
-              <Text>{criterionValue?.value ? 'V' : ''}</Text>
+              <Text>{criterionValue?.value === true ? 'V' : ''}</Text>
             </PDFTable.Td>
             <PDFTable.Td style={{ width: '15%', textAlign: 'center' }}>
-              <Text>{!criterionValue?.value ? 'V' : ''}</Text>
+              <Text>{criterionValue?.value === false ? 'V' : ''}</Text>
             </PDFTable.Td>
           </PDFTable.Tr>
-        );
-      })}
 
-      {/* Поля для замечаний и рекомендаций */}
-      <PDFTable.Tr>
-        <PDFTable.Td style={{ width: '100%', padding: 8 }}>
-          <Text style={{ fontWeight: 'bold' }}>Замечания: </Text>
-          <Text style={{ marginTop: 4 }}>
-            {section.criteria
-              .filter((c) => {
-                const criterionValue = expertise[c.key] as Criterion | undefined;
-                return criterionValue?.comment;
-              })
-              .map((c) => {
-                const criterionValue = expertise[c.key] as Criterion | undefined;
-                return `${c.number} ${criterionValue?.comment}`;
-              })
-              .join('; ') || 'Замечаний нет'}
-          </Text>
-        </PDFTable.Td>
-      </PDFTable.Tr>
-
-      <PDFTable.Tr>
-        <PDFTable.Td style={{ width: '100%', padding: 8 }}>
-          <Text style={{ fontWeight: 'bold' }}>Рекомендации по исправлению замечаний: </Text>
-          <Text style={{ marginTop: 4 }}>
-            {section.criteria
-              .filter((c) => {
-                const criterionValue = expertise[c.key] as Criterion | undefined;
-                return criterionValue?.recommendation;
-              })
-              .map((c) => {
-                const criterionValue = expertise[c.key] as Criterion | undefined;
-                return `${c.number} ${criterionValue?.recommendation}`;
-              })
-              .join('; ') || 'Рекомендаций нет'}
-          </Text>
-        </PDFTable.Td>
-      </PDFTable.Tr>
-    </PDFTable.Self>
+          {/* Отображаем замечания и рекомендации только если value = false */}
+          {hasCommentOrRecommendation && (
+            <>
+              {criterionValue.comment && (
+                <PDFTable.Tr>
+                  <PDFTable.Td style={{ width: '100%', padding: 4, backgroundColor: '#f9f9f9' }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 10 }}>Замечание: </Text>
+                    <Text style={{ fontSize: 10, marginTop: 2 }}>{criterionValue.comment}</Text>
+                  </PDFTable.Td>
+                </PDFTable.Tr>
+              )}
+              {criterionValue.recommendation && (
+                <PDFTable.Tr>
+                  <PDFTable.Td style={{ width: '100%', padding: 4, backgroundColor: '#f9f9f9' }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 10 }}>Рекомендация: </Text>
+                    <Text style={{ fontSize: 10, marginTop: 2 }}>{criterionValue.recommendation}</Text>
+                  </PDFTable.Td>
+                </PDFTable.Tr>
+              )}
+            </>
+          )}
+        </View>
+      );
+    })}
   </View>
 );
 
@@ -216,14 +204,22 @@ export const ExpertiseCriteriaPage: FC<ExpertisePDFProps> = ({ expertise, pageNu
 
   return (
     <>
-      {/* Первая страница - разделы 1 и 2 */}
+      {/* Первая страница - разделы 1 и 2 с единой таблицей */}
       <PDFPage title="Критерии экспертизы программы" pageNumber={pageNumber}>
-        {firstPageSections.map((section) => renderSectionTable(section, expertise))}
+        <PDFTable.Self style={{ marginTop: 10 }}>
+          {firstPageSections.map((section, index) =>
+            renderSectionTable(section, expertise, index === 0)
+          )}
+        </PDFTable.Self>
       </PDFPage>
 
-      {/* Вторая страница - разделы 3 и 4 */}
+      {/* Вторая страница - разделы 3 и 4 с единой таблицей */}
       <PDFPage title="Критерии экспертизы программы (продолжение)" pageNumber={pageNumber + 1}>
-        {secondPageSections.map((section) => renderSectionTable(section, expertise))}
+        <PDFTable.Self style={{ marginTop: 10 }}>
+          {secondPageSections.map((section) =>
+            renderSectionTable(section, expertise, false)
+          )}
+        </PDFTable.Self>
       </PDFPage>
     </>
   );

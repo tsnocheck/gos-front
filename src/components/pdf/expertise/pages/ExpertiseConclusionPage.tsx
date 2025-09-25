@@ -8,7 +8,6 @@ interface ExpertisePDFProps {
   pageNumber?: number;
 }
 
-
 export const ExpertiseConclusionPage: FC<ExpertisePDFProps> = ({ expertise, pageNumber }) => {
   const { program, expert } = expertise;
 
