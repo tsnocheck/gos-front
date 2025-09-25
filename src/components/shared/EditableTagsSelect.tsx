@@ -79,6 +79,30 @@ const EditableTagsSelect: React.FC<EditableTagsSelectProps> = ({
       onChange([...value, selectedValue]);
     }
     setInputVisible(false);
+    setInputValue('');
+  };
+
+  const handleSelectSearch = (searchValue: string) => {
+    setInputValue(searchValue);
+  };
+
+  const handleSelectKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && inputValue && !value.includes(inputValue)) {
+      // Если нажали Enter и есть введенный текст, который не входит в существующие теги
+      const existingOption = availableOptions.find(
+        (opt) =>
+          opt.label.toLowerCase() === inputValue.toLowerCase() ||
+          opt.value.toLowerCase() === inputValue.toLowerCase()
+      );
+
+      if (!existingOption) {
+        // Добавляем кастомный тег
+        onChange([...value, inputValue]);
+        setInputVisible(false);
+        setInputValue('');
+        e.preventDefault();
+      }
+    }
   };
 
   const handleEditStart = (index: number, currentValue: string) => {
@@ -229,6 +253,8 @@ const EditableTagsSelect: React.FC<EditableTagsSelectProps> = ({
             style={{ width: 150, marginRight: 8, marginBottom: 4 }}
             value={inputValue}
             onChange={handleSelectChange}
+            onSearch={handleSelectSearch}
+            onKeyDown={handleSelectKeyDown}
             onBlur={() => {
               setInputVisible(false);
               setInputValue('');
@@ -241,6 +267,28 @@ const EditableTagsSelect: React.FC<EditableTagsSelectProps> = ({
             placeholder={placeholder}
             autoFocus
             open
+            notFoundContent={
+              inputValue ? (
+                <div
+                  style={{
+                    padding: '8px 12px',
+                    cursor: 'pointer',
+                    color: '#1890ff',
+                  }}
+                  onClick={() => {
+                    if (inputValue && !value.includes(inputValue)) {
+                      onChange([...value, inputValue]);
+                      setInputVisible(false);
+                      setInputValue('');
+                    }
+                  }}
+                >
+                  + Добавить "{inputValue}"
+                </div>
+              ) : (
+                'Не найдено'
+              )
+            }
           />
         ) : (
           <Input
