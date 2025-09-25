@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { programService } from '../services/programService';
 import type { ProgramQueryParams, UpdateProgramData } from '../services/programService';
 import { adminKeys } from './admin';
-import { ExpertiseStatus, ProgramStatus, type ResubmitAfterRevisionDto } from '@/types';
+import { ExpertiseStatus, ProgramStatus } from '@/types';
 
 // Query keys
 export const programKeys = {
@@ -150,7 +150,7 @@ export const useSubmitForExpertise = () => {
 export const useResubmitAfterRevision = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: ResubmitAfterRevisionDto }) =>
+    mutationFn: ({ id, data }: { id: string; data: unknown }) =>
       programService.resubmitAfterRevision(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: programKeys.all });

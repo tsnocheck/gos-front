@@ -167,7 +167,7 @@ export function getNodeClass(node: HTMLNode): string | undefined {
  * Проверяет, является ли таблица таблицей критериев
  */
 export function isCriteriaTable(node: HTMLNode): boolean {
-  return isTable(node) && getNodeClass(node)?.includes('criteria-table');
+  return !!(isTable(node) && getNodeClass(node)?.includes('criteria-table'));
 }
 
 /**

@@ -1,6 +1,5 @@
 import { apiClient } from '../lib/api';
 import type { Program, ProgramStatus, ExtendedProgram, PaginatedResponse, User } from '@/types';
-import type { ResubmitAfterRevisionDto } from '@/types/expertise';
 
 export interface ProgramQueryParams {
   page?: number;
@@ -59,7 +58,7 @@ export const programService = {
     return apiClient.post<Program>(`/programs/${id}/reject`, { reason });
   },
 
-  async resubmitAfterRevision(id: string, data: ResubmitAfterRevisionDto): Promise<Program> {
+  async resubmitAfterRevision(id: string, data: unknown): Promise<Program> {
     return apiClient.post<Program>(`/expertise/${id}/resubmit-after-revision`, data);
   },
 
