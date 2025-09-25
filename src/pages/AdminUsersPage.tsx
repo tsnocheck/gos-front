@@ -169,7 +169,7 @@ export const AdminUsersPage: React.FC = () => {
       }
       setIsCreateModalOpen(false);
       form.resetFields();
-    } catch (error) {
+    } catch {
       message.error('Ошибка при сохранении пользователя');
     }
   };
@@ -200,7 +200,7 @@ export const AdminUsersPage: React.FC = () => {
     try {
       await activateUser(userId);
       message.success('Пользователь активирован');
-    } catch (error) {
+    } catch {
       message.error('Ошибка при активации пользователя');
     }
   };
@@ -209,7 +209,7 @@ export const AdminUsersPage: React.FC = () => {
     try {
       await deactivateUser(userId);
       message.success('Пользователь деактивирован');
-    } catch (error) {
+    } catch {
       message.error('Ошибка при деактивации пользователя');
     }
   };
@@ -224,7 +224,7 @@ export const AdminUsersPage: React.FC = () => {
         try {
           await deleteUser(userId);
           message.success('Пользователь удален');
-        } catch (error) {
+        } catch {
           message.error('Ошибка при удалении пользователя');
         }
       },

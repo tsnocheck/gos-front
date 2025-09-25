@@ -79,13 +79,9 @@ class ApiClient {
   }
 
   private async refreshToken(): Promise<void> {
-    try {
-      const response = await this.client.post('/auth/refresh');
-      const { accessToken } = response.data;
-      localStorage.setItem('accessToken', accessToken);
-    } catch (error) {
-      throw error;
-    }
+    const response = await this.client.post('/auth/refresh');
+    const { accessToken } = response.data;
+    localStorage.setItem('accessToken', accessToken);
   }
 
   private logout(): void {

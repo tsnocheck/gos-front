@@ -1,14 +1,5 @@
 import React from 'react';
-import { Typography, Row, Col, Card, Statistic, Button, List, Avatar, Tag } from 'antd';
-import {
-  BookOutlined,
-  ExperimentOutlined,
-  TeamOutlined,
-  PlusOutlined,
-  ClockCircleOutlined,
-  CheckCircleOutlined,
-  FileTextOutlined,
-} from '@ant-design/icons';
+import { Typography, Row, Col, Card, Button, List, Avatar, Tag } from 'antd';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import {
@@ -17,7 +8,14 @@ import {
   getStatusColor,
   getStatusText,
 } from '../queries/programs.ts';
-import { type Program, UserRole, UserStatus, type User, ProgramStatus } from '../types';
+import { type Program, UserRole, UserStatus, type User, ProgramStatus } from '@/types';
+import {
+  BookOutlined,
+  ClockCircleOutlined,
+  ExperimentOutlined,
+  PlusOutlined,
+  TeamOutlined,
+} from '@ant-design/icons';
 
 const { Title, Text } = Typography;
 
@@ -39,32 +37,19 @@ export const DashboardPage: React.FC = () => {
     lastName: '',
   };
 
-  // Заглушка для статистики, если данные не загружены
-  const mockStats = {
-    total: 12,
-    byStatus: {
-      [ProgramStatus.APPROVED]: 5,
-      [ProgramStatus.SUBMITTED]: 3,
-      [ProgramStatus.DRAFT]: 2,
-      [ProgramStatus.IN_REVIEW]: 2,
-    },
-    byAuthor: [],
-  };
-
   // Заглушка для программ, если данные не загружены
   const mockPrograms: { data: Program[]; total: number } = myPrograms || {
     data: [],
     total: 0,
   };
 
-  const displayStats = programStats || mockStats;
   const displayPrograms = mockPrograms;
 
   const getWelcomeMessage = () => {
     const name = displayUser ? `${displayUser.firstName} ${displayUser.lastName}` : 'Пользователь';
     const time = new Date().getHours();
 
-    let greeting = 'Добро пожаловать';
+    let greeting;
     if (time < 12) greeting = 'Доброе утро';
     else if (time < 18) greeting = 'Добрый день';
     else greeting = 'Добрый вечер';
@@ -145,54 +130,6 @@ export const DashboardPage: React.FC = () => {
           </div>
         )}
       </div>
-
-      {/* Статистика (убрать false как будет понятно со статистикой) */}
-      {displayUser?.roles?.includes(UserRole.ADMIN) && false && (
-        <Row style={{ gap: 16, marginBottom: 32 }}>
-          <Col style={{ flex: 1 }}>
-            <Card>
-              <Statistic
-                title="Всего программ"
-                value={displayStats.total}
-                prefix={<BookOutlined />}
-              />
-            </Card>
-          </Col>
-          <Col style={{ flex: 1 }}>
-            <Card>
-              <Statistic
-                title="Опубликованы"
-                value={displayStats.byStatus[ProgramStatus.APPROVED] || 0}
-                prefix={<CheckCircleOutlined />}
-                valueStyle={{ color: '#3f8600' }}
-              />
-            </Card>
-          </Col>
-          <Col style={{ flex: 1 }}>
-            <Card>
-              <Statistic
-                title="На экспертизе"
-                value={displayStats.byStatus[ProgramStatus.SUBMITTED] || 0}
-                prefix={<ClockCircleOutlined />}
-                valueStyle={{ color: '#1890ff' }}
-              />
-            </Card>
-          </Col>
-          <Col style={{ flex: 1 }}>
-            <Card>
-              <Statistic
-                title="В разработке"
-                value={
-                  (displayStats.byStatus[ProgramStatus.DRAFT] || 0) +
-                  (displayStats.byStatus[ProgramStatus.IN_REVIEW] || 0)
-                }
-                prefix={<FileTextOutlined />}
-                valueStyle={{ color: '#faad14' }}
-              />
-            </Card>
-          </Col>
-        </Row>
-      )}
 
       <Row style={{ gap: 16 }}>
         {/* Быстрые действия */}

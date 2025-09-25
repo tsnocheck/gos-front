@@ -5,16 +5,9 @@ import type { ProgramPDFProps } from '@/types';
 import { PDFPage } from '../../shared/ui/PDFPage';
 import { getExpertsFromExpertises } from '@/utils/getExpertsFromExpertises.ts';
 
-export const ApprovalPage: FC<ProgramPDFProps> = ({
-  program,
-  authors,
-  pageNumber,
-}) => {
+export const ApprovalPage: FC<ProgramPDFProps> = ({ program, authors, pageNumber }) => {
   return (
-    <PDFPage
-      title="ЛИСТ СОГЛАСОВАНИЯ"
-      pageNumber={pageNumber}
-    >
+    <PDFPage title="ЛИСТ СОГЛАСОВАНИЯ" pageNumber={pageNumber}>
       <Text style={{ marginBottom: 10, textAlign: 'justify' }}>
         <Text style={{ fontWeight: 'bold', fontSize: 12 }}>Разработчик(и) программы: {'\n'}</Text>
         {authors.map(({ lastName, firstName, middleName }, idx) => (

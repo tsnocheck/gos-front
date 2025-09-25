@@ -81,7 +81,6 @@ export interface Expertise extends ExpertiseCriterions {
   /** Заключение */
   conclusion?: string | null;
 
-
   /** Дополнительные рекомендации */
   additionalRecommendation?: string | null;
 

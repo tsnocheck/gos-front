@@ -224,7 +224,8 @@ export const useMyExpertisesList = (status?: string) => {
 export const useSendForRevision = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: { id: string; body: SendForRevisionDto }) => expertiseService.sendForRevision(data),
+    mutationFn: (data: { id: string; body: SendForRevisionDto }) =>
+      expertiseService.sendForRevision(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expertiseKeys.all });
       queryClient.invalidateQueries({ queryKey: programKeys.all });
