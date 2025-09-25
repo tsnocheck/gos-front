@@ -20,7 +20,7 @@ import {
   PlusOutlined,
   StopOutlined,
 } from '@ant-design/icons';
-import { type User, UserStatus } from '../types';
+import { type User, UserStatus } from '@/types';
 import { useAdmin } from '../hooks/useAdmin.ts';
 import { useUsers } from '../queries/admin.ts';
 import type { TableProps } from 'antd';
