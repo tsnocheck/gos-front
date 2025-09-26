@@ -50,6 +50,10 @@ export const authService = {
     return response;
   },
 
+  async changePassword(data: { currentPassword: string; newPassword: string }) {
+    return apiClient.post('/auth/change-password', data);
+  },
+
   async resetPassword(data: { token: string; newPassword: string }) {
     await apiClient.post('/auth/reset-password', data);
   },

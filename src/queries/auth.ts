@@ -68,6 +68,12 @@ export const useResetPassword = () => {
   });
 };
 
+export const useChangePassword = () => {
+  return useMutation({
+    mutationFn: authService.changePassword,
+  });
+};
+
 export const useForgotPassword = () => {
   return useMutation({
     mutationFn: authService.forgotPassword,

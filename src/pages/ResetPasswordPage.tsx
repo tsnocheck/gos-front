@@ -1,39 +1,36 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Typography, Card, message, Row, Col } from 'antd';
-import { LockOutlined, FileTextOutlined } from '@ant-design/icons';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useResetPassword } from '../queries/auth';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
+import { useChangePassword } from '../queries/auth';
 
 const { Title, Text } = Typography;
-
-function useQuery() {
-  return new URLSearchParams(useLocation().search);
-}
 
 export const ResetPasswordPage: React.FC = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const query = useQuery();
-  const resetPasswordMutation = useResetPassword();
+  const changePasswordMutation = useChangePassword();
   const [submitting, setSubmitting] = useState(false);
-  const token = query.get('token');
 
-  const onFinish = async (values: { password: string; confirm: string }) => {
-    if (!token) {
-      message.error('Некорректная ссылка для сброса пароля.');
-      return;
-    }
-    if (values.password !== values.confirm) {
+  const onFinish = async (values: {
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+  }) => {
+    if (values.newPassword !== values.confirmPassword) {
       message.error('Пароли не совпадают!');
       return;
     }
     setSubmitting(true);
     try {
-      await resetPasswordMutation.mutateAsync({ token, newPassword: values.password });
+      await changePasswordMutation.mutateAsync({
+        currentPassword: values.currentPassword,
+        newPassword: values.newPassword,
+      });
       message.success('Пароль успешно изменён!');
-      navigate('/login');
+      navigate('/dashboard');
     } catch (error: any) {
-      message.error(error.response?.data?.message || 'Ошибка смены пароля');
+      message.error(error.response?.data?.message || 'Введён неверный пароль');
     } finally {
       setSubmitting(false);
     }
@@ -59,29 +56,39 @@ export const ResetPasswordPage: React.FC = () => {
             }}
           >
             <div style={{ textAlign: 'center', marginBottom: 32 }}>
-              <FileTextOutlined style={{ fontSize: 48, color: '#1890ff', marginBottom: 16 }} />
+              <UserOutlined style={{ fontSize: 48, color: '#1890ff', marginBottom: 16 }} />
               <Title level={2} style={{ margin: 0, color: '#1890ff' }}>
-                Сброс пароля
+                Смена пароля
               </Title>
-              <Text type="secondary">Введите новый пароль для входа</Text>
+              <Text type="secondary">Введите текущий пароль и новый пароль</Text>
             </div>
 
             <Form
               form={form}
-              name="reset-password"
+              name="change-password"
               onFinish={onFinish}
               autoComplete="off"
               size="large"
             >
               <Form.Item
-                name="password"
+                name="currentPassword"
+                rules={[
+                  { required: true, message: 'Введите текущий пароль!' },
+                  { min: 6, message: 'Пароль должен содержать минимум 6 символов' },
+                ]}
+              >
+                <Input.Password prefix={<LockOutlined />} placeholder="Текущий пароль" />
+              </Form.Item>
+
+              <Form.Item
+                name="newPassword"
                 rules={[
                   { required: true, message: 'Введите новый пароль!' },
+                  { min: 6, message: 'Пароль должен содержать минимум 6 символов' },
                   {
-                    pattern:
-                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=\[{\]};:'",<.>/?\\|`~]).{8,}$/,
+                    pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
                     message:
-                      'Пароль должен содержать минимум 8 символов, включать заглавные и строчные буквы, цифру и спецсимвол',
+                      'Пароль должен содержать минимум одну строчную букву, одну заглавную букву и одну цифру',
                   },
                 ]}
                 hasFeedback
@@ -90,14 +97,15 @@ export const ResetPasswordPage: React.FC = () => {
               </Form.Item>
 
               <Form.Item
-                name="confirm"
-                dependencies={['password']}
+                name="confirmPassword"
+                dependencies={['newPassword']}
                 hasFeedback
                 rules={[
                   { required: true, message: 'Подтвердите новый пароль!' },
+                  { min: 6, message: 'Пароль должен содержать минимум 6 символов' },
                   ({ getFieldValue }) => ({
                     validator(_, value) {
-                      if (!value || getFieldValue('password') === value) {
+                      if (!value || getFieldValue('newPassword') === value) {
                         return Promise.resolve();
                       }
                       return Promise.reject(new Error('Пароли не совпадают!'));
@@ -105,7 +113,7 @@ export const ResetPasswordPage: React.FC = () => {
                   }),
                 ]}
               >
-                <Input.Password prefix={<LockOutlined />} placeholder="Подтвердите пароль" />
+                <Input.Password prefix={<LockOutlined />} placeholder="Подтвердите новый пароль" />
               </Form.Item>
 
               <Form.Item>
