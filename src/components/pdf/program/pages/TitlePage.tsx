@@ -33,7 +33,7 @@ export const TitlePage: FC<ProgramPDFProps> = ({ program, getDictionaryById, pag
           Дополнительная профессиональная программа {'\n'} повышения квалификации
         </Text>
         <Text style={{ textAlign: 'center', marginTop: 8 }}>
-          "{program.title || 'Название программы'}"
+          {program.title || 'Название программы'}
         </Text>
       </View>
 
