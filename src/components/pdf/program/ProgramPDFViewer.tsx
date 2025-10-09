@@ -6,6 +6,7 @@ import { type ExtendedProgram, type Dictionary, type User } from '@/types';
 import TimesNewRoman from '@/assets/times.ttf';
 import TimesNewRomanBold from '@/assets/times_bold.ttf';
 import TimesNewRomanItalic from '@/assets/times-new-roman-italic.ttf';
+import TimesNewRomanItalicBold from '@/assets/times-new-roman-italic-bold.ttf';
 import { useAuth } from '@/hooks/useAuth';
 import { useProgramDictionaries } from '@/hooks/useProgramDictionaries';
 import { PDFDocumentWithPagination } from '../shared/ui/PDFDocumentWithPagination';
@@ -29,6 +30,7 @@ Font.register({
     { src: TimesNewRoman, fontWeight: 'normal' },
     { src: TimesNewRomanBold, fontWeight: 'bold' },
     { src: TimesNewRomanItalic, fontStyle: 'italic' },
+    { src: TimesNewRomanItalicBold, fontStyle: 'italic', fontWeight: 'bold' },
   ],
 });
 

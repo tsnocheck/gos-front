@@ -29,10 +29,12 @@ export const TitlePage: FC<ProgramPDFProps> = ({ program, getDictionaryById, pag
       <Text style={{ textAlign: 'center', marginBottom: 60 }}>{institutionName}</Text>
 
       <View style={{ flexGrow: 1, paddingTop: 50 }}>
-        <Text style={{ textAlign: 'center', fontWeight: 'bold' }}>
+        <Text style={{ textAlign: 'center', lineHeight: 1 }}>
           Дополнительная профессиональная программа {'\n'} повышения квалификации
         </Text>
-        <Text style={{ textAlign: 'center', marginTop: 8, fontWeight: 'bold' }}>
+        <Text
+          style={{ textAlign: 'center', marginTop: 3, fontWeight: 'bold', fontStyle: 'italic' }}
+        >
           «{program.title || 'Название программы'}»
         </Text>
       </View>
