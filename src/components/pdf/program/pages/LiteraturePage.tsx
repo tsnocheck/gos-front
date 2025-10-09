@@ -45,7 +45,7 @@ export const LiteraturePage: FC<ProgramPDFProps> = ({ program, pageNumber }) => 
     <PDFPage title="Список литературы" pageNumber={pageNumber}>
       {orgPedConditions?.mainLiterature && (
         <View style={{ marginBottom: 16 }}>
-          <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
+          <Text style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
             Список основной литературы
           </Text>
           <HTMLContent html={orgPedConditions.mainLiterature} />
@@ -54,7 +54,7 @@ export const LiteraturePage: FC<ProgramPDFProps> = ({ program, pageNumber }) => 
 
       {orgPedConditions?.additionalLiterature && (
         <View style={{ marginBottom: 16 }}>
-          <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
+          <Text style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
             Список дополнительной литературы
           </Text>
           <HTMLContent html={orgPedConditions.additionalLiterature} />
@@ -63,7 +63,7 @@ export const LiteraturePage: FC<ProgramPDFProps> = ({ program, pageNumber }) => 
 
       {orgPedConditions?.electronicMaterials && (
         <View style={{ marginBottom: 16 }}>
-          <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
+          <Text style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
             Электронные учебные материалы
           </Text>
           <HTMLContent html={orgPedConditions.electronicMaterials} />
@@ -72,7 +72,7 @@ export const LiteraturePage: FC<ProgramPDFProps> = ({ program, pageNumber }) => 
 
       {orgPedConditions?.internetResources && (
         <View style={{ marginBottom: 16 }}>
-          <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
+          <Text style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
             Интернет-ресурсы
           </Text>
           <HTMLContent html={orgPedConditions.internetResources} />
@@ -81,8 +81,8 @@ export const LiteraturePage: FC<ProgramPDFProps> = ({ program, pageNumber }) => 
 
       {orgPedConditions?.equipment && orgPedConditions.equipment.length > 0 && (
         <View style={{ marginBottom: 16 }}>
-          <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
-            Оборудование для аудиторных занятий
+          <Text style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
+            Оборудование для аудитор2ных занятий
           </Text>
           <Text style={{ fontSize: 12, lineHeight: 1.4 }}>
             {formatEquipmentList(orgPedConditions.equipment, orgPedConditions.otherEquipment)}
@@ -92,7 +92,7 @@ export const LiteraturePage: FC<ProgramPDFProps> = ({ program, pageNumber }) => 
 
       {orgPedConditions?.distanceEquipment && orgPedConditions.distanceEquipment.length > 0 && (
         <View style={{ marginBottom: 16 }}>
-          <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
+          <Text style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
             Оборудование для дистанционного обучения
           </Text>
           <Text style={{ fontSize: 12, lineHeight: 1.4 }}>
@@ -106,7 +106,7 @@ export const LiteraturePage: FC<ProgramPDFProps> = ({ program, pageNumber }) => 
 
       {orgPedConditions?.personnelProvision && (
         <View style={{ marginBottom: 16 }}>
-          <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
+          <Text style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
             Кадровое обеспечение
           </Text>
           <HTMLContent html={orgPedConditions.personnelProvision} />

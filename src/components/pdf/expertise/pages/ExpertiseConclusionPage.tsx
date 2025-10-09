@@ -14,7 +14,7 @@ export const ExpertiseConclusionPage: FC<ExpertisePDFProps> = ({ expertise, page
   return (
     <PDFPage title="Заключение эксперта" pageNumber={pageNumber! + 1}>
       <View style={{ marginTop: 20 }}>
-        <Text style={{ fontSize: 14, fontWeight: 'bold', marginBottom: 15 }}>
+        <Text style={{ fontSize: 12, fontWeight: 'bold', marginBottom: 15 }}>
           Экспертное заключение:
         </Text>
 

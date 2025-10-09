@@ -32,7 +32,7 @@ export const PDFPage: FC<Props> = ({
             right: 0,
             left: 0,
             textAlign: 'center',
-            fontSize: 10,
+            fontSize: 12,
           }}
           fixed
         >

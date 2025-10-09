@@ -218,7 +218,7 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
           parts.push(
             <Text
               key={`p-text-${parts.length}`}
-              style={{ marginBottom: 0, textAlign: 'justify', lineHeight: 1.5, fontSize: 10 }}
+              style={{ marginBottom: 0, textAlign: 'justify', lineHeight: 1.5, fontSize: 12 }}
             >
               {buffer as any}
             </Text>,
@@ -268,7 +268,7 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
                   style={{
                     marginBottom: 3,
                     textAlign: 'justify',
-                    fontSize: 10,
+                    fontSize: 12,
                     lineHeight: 1.4,
                   }}
                 >
@@ -302,7 +302,7 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
           <Text
             style={{
               fontStyle: 'italic',
-              fontSize: 10,
+              fontSize: 12,
               color: '#595959',
             }}
           >

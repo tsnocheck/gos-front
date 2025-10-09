@@ -36,7 +36,7 @@ export const PDFStyles = StyleSheet.create({
     right: 0,
     left: 0,
     textAlign: 'center',
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'Times-New-Roman',
   },
 });

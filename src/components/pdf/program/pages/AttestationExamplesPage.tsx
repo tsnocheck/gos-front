@@ -20,7 +20,7 @@ export const AttestationExamplesPage: FC<ProgramPDFProps> = ({ program, pageNumb
     <PDFPage title="Оценочные материалы" pageNumber={pageNumber}>
       {nonIntermediate.map((attestation, index) => (
         <View key={index} style={{ marginBottom: 16 }}>
-          <Text style={{ fontSize: 14, fontWeight: 'bold', textAlign: 'center', marginBottom: 8 }}>
+          <Text style={{ fontSize: 12, fontWeight: 'bold', textAlign: 'center', marginBottom: 8 }}>
             {attestation.name}
           </Text>
 
@@ -37,7 +37,7 @@ export const AttestationExamplesPage: FC<ProgramPDFProps> = ({ program, pageNumb
 
           {attestation.criteria && (
             <>
-              <Text style={{ fontSize: 14, fontWeight: 'bold', textAlign: 'center', marginTop: 6 }}>
+              <Text style={{ fontSize: 12, fontWeight: 'bold', textAlign: 'center', marginTop: 6 }}>
                 Критерии оценивания
               </Text>
               <HTMLContent
@@ -50,7 +50,7 @@ export const AttestationExamplesPage: FC<ProgramPDFProps> = ({ program, pageNumb
           {attestation.examples && (
             <>
               <Text
-                style={{ fontSize: 14, fontWeight: 'bold', textAlign: 'center', marginBottom: 4 }}
+                style={{ fontSize: 12, fontWeight: 'bold', textAlign: 'center', marginBottom: 4 }}
               >
                 Пример задания
               </Text>
