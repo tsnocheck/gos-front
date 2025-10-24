@@ -36,7 +36,7 @@ const ConstructorStep3: React.FC<Props> = ({ value, onChange }) => {
 
   return (
     <Form layout="vertical">
-      <Title level={4}>Лист согласования</Title>
+      <Title level={4}>Выбор соавторов</Title>
       {/* Соавторы */}
       <Form.Item label="Соавторы">
         <Space direction="vertical" style={{ width: '100%' }}>

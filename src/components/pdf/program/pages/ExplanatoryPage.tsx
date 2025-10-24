@@ -55,6 +55,11 @@ export const ExplanatoryPage: FC<ProgramPDFProps> = ({
       )}
 
       <Text style={PDFStyles.bold}>{standards[program.standard!] ?? ''}</Text>
+      {program.category && (
+        <Text style={{ ...PDFStyles.bold, textAlign: 'center', marginBottom: 4 }}>
+          {getValueFromDictionary(program.category)}
+        </Text>
+      )}
       <PDFTable.Self
         style={{
           marginBottom: 12,
@@ -93,13 +98,6 @@ export const ExplanatoryPage: FC<ProgramPDFProps> = ({
           )}
         </PDFTable.Tr>
       </PDFTable.Self>
-
-      {program.category && (
-        <Text style={PDFStyles.block}>
-          <Text style={PDFStyles.bold}>Категория слушателей: </Text>
-          {getValueFromDictionary(program.category)}
-        </Text>
-      )}
 
       {program.term && (
         <Text style={PDFStyles.block}>

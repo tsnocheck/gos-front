@@ -104,12 +104,13 @@ export interface Attestation {
   practice: number; // Часы практики
   distant: number; // Часы дистанционного обучения
   form: string; // Форма аттестации
-
-  /** НОВОЕ!!! */
   requirements?: string; // Описание требований к выполнению
   criteria?: string; // Критерии оценивания
   examples?: string; // Примеры заданий
   attempts?: number; // Количество попыток
+
+  /** НОВОЕ!! */
+  kad?: number; // Количество аудиторных дней
 }
 
 export interface NetworkOrg {
@@ -124,11 +125,16 @@ export interface OrgPedConditions {
   additionalLiterature?: string; // Дополнительная литература
   electronicMaterials?: string; // Электронные учебные материалы
   internetResources?: string; // Интернет-ресурсы
+  personnelProvision?: string; // Кадровое обеспечение
+
+  /** УСТАРЕЛО, УБРАТЬ */
   equipment?: Equipment[]; // Оборудование для аудиторных занятий (чекбоксы)
   otherEquipment?: string; // Иное оборудование (текст)
   distanceEquipment?: DistanceEquipment[]; // Оборудование для дистанционного обучения (чекбоксы)
   otherDistance?: string; // Иное оборудование для дистанционного обучения (текст)
-  personnelProvision?: string; // Кадровое обеспечение
+
+  /** НОВОЕ! */
+  _equipment?: string; // Технические средства обучения
 }
 
 export interface Program {
@@ -191,7 +197,11 @@ export interface Program {
 
   institution?: string; // Краткое название выбранного учреждения (например, "КОИРО")
   customInstitution?: string; // Название учреждения, если выбран вариант "Иное"
+
   title: string; // Название программы
+
+  /** НОВОЕ!! */
+  type?: string; // Вид программы
 
   author?: User;
 

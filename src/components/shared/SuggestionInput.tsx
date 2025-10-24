@@ -85,3 +85,7 @@ const SuggestionInput: React.FC<SuggestionInputProps> = ({
 };
 
 export default SuggestionInput;
+
+export const SomeComponent = () => {
+  return <div></div>;
+};

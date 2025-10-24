@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Select, Form, Typography } from 'antd';
-import type { ExtendedProgram } from '@/types';
+import { DictionaryStatus, type ExtendedProgram } from '@/types';
 import { useProgramDictionaries } from '@/hooks/useProgramDictionaries';
 import RecommendationSuggestionInput from '../shared/RecommendationSuggestionInput';
 import { RecommendationField } from '@/types/recommendation';
@@ -16,6 +16,10 @@ interface Props {
 const ConstructorStep2: React.FC<Props> = ({ value, onChange }) => {
   const { institutions: institutionList } = useProgramDictionaries();
 
+  const filteredInstitutions = useMemo(() => {
+    return institutionList?.filter((inst) => inst.status !== DictionaryStatus.INACTIVE) ?? [];
+  }, [institutionList]);
+
   return (
     <Form layout="vertical">
       <Title level={4}>Титульный лист программы</Title>
@@ -27,7 +31,7 @@ const ConstructorStep2: React.FC<Props> = ({ value, onChange }) => {
           }}
           placeholder="Выберите учреждение"
         >
-          {institutionList?.map((inst) => (
+          {filteredInstitutions?.map((inst) => (
             <Option key={inst.id} value={inst.id}>
               {inst.value}
             </Option>

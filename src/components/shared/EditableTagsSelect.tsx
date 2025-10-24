@@ -54,6 +54,7 @@ const EditableTagsSelect: React.FC<EditableTagsSelectProps> = ({
   }, []);
 
   const handleClose = (removedTag: string) => {
+    if (!value) return;
     const newTags = value.filter((tag) => tag !== removedTag);
     onChange(newTags);
   };
@@ -62,21 +63,27 @@ const EditableTagsSelect: React.FC<EditableTagsSelectProps> = ({
     setInputVisible(true);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setInputValue(e.target.value);
   };
 
   const handleInputConfirm = () => {
-    if (inputValue && !value.includes(inputValue)) {
-      onChange([...value, inputValue]);
+    if (inputValue) {
+      const currentValues = value || [];
+      if (!currentValues.includes(inputValue)) {
+        onChange([...currentValues, inputValue]);
+      }
     }
     setInputVisible(false);
     setInputValue('');
   };
 
   const handleSelectChange = (selectedValue: string) => {
-    if (selectedValue && !value.includes(selectedValue)) {
-      onChange([...value, selectedValue]);
+    if (selectedValue) {
+      const currentValues = value || [];
+      if (!currentValues.includes(selectedValue)) {
+        onChange([...currentValues, selectedValue]);
+      }
     }
     setInputVisible(false);
     setInputValue('');
@@ -86,21 +93,26 @@ const EditableTagsSelect: React.FC<EditableTagsSelectProps> = ({
     setInputValue(searchValue);
   };
 
-  const handleSelectKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && inputValue && !value.includes(inputValue)) {
-      // Если нажали Enter и есть введенный текст, который не входит в существующие теги
-      const existingOption = availableOptions.find(
-        (opt) =>
-          opt.label.toLowerCase() === inputValue.toLowerCase() ||
-          opt.value.toLowerCase() === inputValue.toLowerCase(),
-      );
+  const availableOptions = options.filter((option) => !value?.includes(option.value));
 
-      if (!existingOption) {
-        // Добавляем кастомный тег
-        onChange([...value, inputValue]);
-        setInputVisible(false);
-        setInputValue('');
-        e.preventDefault();
+  const handleSelectKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && inputValue) {
+      const currentValues = value || [];
+      if (!currentValues.includes(inputValue)) {
+        // Если нажали Enter и есть введенный текст, который не входит в существующие теги
+        const existingOption = availableOptions.find(
+          (opt) =>
+            opt.label.toLowerCase() === inputValue.toLowerCase() ||
+            opt.value.toLowerCase() === inputValue.toLowerCase(),
+        );
+
+        if (!existingOption) {
+          // Добавляем кастомный тег
+          onChange([...currentValues, inputValue]);
+          setInputVisible(false);
+          setInputValue('');
+          e.preventDefault();
+        }
       }
     }
   };
@@ -110,15 +122,18 @@ const EditableTagsSelect: React.FC<EditableTagsSelectProps> = ({
     setEditingValue(currentValue);
   };
 
-  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setEditingValue(e.target.value);
   };
 
   const handleEditConfirm = () => {
-    if (editingIndex !== null && editingValue && !value.includes(editingValue)) {
-      const newTags = [...value];
-      newTags[editingIndex] = editingValue;
-      onChange(newTags);
+    if (editingIndex !== null && editingValue) {
+      const currentValues = value || [];
+      if (!currentValues.includes(editingValue)) {
+        const newTags = [...currentValues];
+        newTags[editingIndex] = editingValue;
+        onChange(newTags);
+      }
     }
     setEditingIndex(null);
     setEditingValue('');
@@ -137,8 +152,6 @@ const EditableTagsSelect: React.FC<EditableTagsSelectProps> = ({
     const option = options.find((opt) => opt.value === tagValue);
     return option ? option.label : tagValue;
   };
-
-  const availableOptions = options.filter((option) => !value.includes(option.value));
 
   if (disabled) {
     return (
@@ -174,7 +187,7 @@ const EditableTagsSelect: React.FC<EditableTagsSelectProps> = ({
     <div
       style={{ ...style, minHeight: 32, border: '1px solid #d9d9d9', borderRadius: 4, padding: 4 }}
     >
-      {value.map((tag, index) => {
+      {value?.map((tag, index) => {
         if (editingIndex === index) {
           return options.length > 0 ? (
             <Select
@@ -192,28 +205,44 @@ const EditableTagsSelect: React.FC<EditableTagsSelectProps> = ({
               autoFocus
             />
           ) : (
-            <Input
+            <div
               key={`edit-${index}`}
-              size="small"
-              style={{ width: 120, marginRight: 8, marginBottom: 4 }}
-              value={editingValue}
-              onChange={handleEditChange}
-              onPressEnter={handleEditConfirm}
-              onBlur={handleEditConfirm}
-              suffix={
-                <div style={{ display: 'flex', gap: 2 }}>
-                  <CheckOutlined
-                    style={{ cursor: 'pointer', color: '#52c41a' }}
-                    onClick={handleEditConfirm}
-                  />
-                  <CloseOutlined
-                    style={{ cursor: 'pointer', color: '#ff4d4f' }}
-                    onClick={handleEditCancel}
-                  />
-                </div>
-              }
-              autoFocus
-            />
+              style={{
+                display: 'inline-flex',
+                flexDirection: 'column',
+                marginRight: 8,
+                marginBottom: 4,
+                position: 'relative',
+                fontSize: 16,
+              }}
+            >
+              <Input.TextArea
+                size="small"
+                style={{ minWidth: 300, maxWidth: 600, resize: 'vertical', fontSize: 14 }}
+                value={editingValue}
+                onChange={handleEditChange}
+                onBlur={handleEditConfirm}
+                autoSize={{ minRows: 1, maxRows: 6 }}
+                autoFocus
+              />
+              <div
+                style={{
+                  display: 'flex',
+                  gap: 8,
+                  marginTop: 4,
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <CheckOutlined
+                  style={{ cursor: 'pointer', color: '#52c41a', fontSize: 16 }}
+                  onClick={handleEditConfirm}
+                />
+                <CloseOutlined
+                  style={{ cursor: 'pointer', color: '#ff4d4f', fontSize: 16 }}
+                  onClick={handleEditCancel}
+                />
+              </div>
+            </div>
           );
         }
 
@@ -276,8 +305,9 @@ const EditableTagsSelect: React.FC<EditableTagsSelectProps> = ({
                     color: '#1890ff',
                   }}
                   onClick={() => {
-                    if (inputValue && !value.includes(inputValue)) {
-                      onChange([...value, inputValue]);
+                    const currentValues = value || [];
+                    if (inputValue && !currentValues.includes(inputValue)) {
+                      onChange([...currentValues, inputValue]);
                       setInputVisible(false);
                       setInputValue('');
                     }
@@ -291,30 +321,46 @@ const EditableTagsSelect: React.FC<EditableTagsSelectProps> = ({
             }
           />
         ) : (
-          <Input
-            size="small"
-            style={{ width: 120, marginRight: 8, marginBottom: 4 }}
-            value={inputValue}
-            onChange={handleInputChange}
-            onPressEnter={handleInputConfirm}
-            onBlur={handleInputConfirm}
-            suffix={
-              <div style={{ display: 'flex', gap: 2 }}>
-                <CheckOutlined
-                  style={{ cursor: 'pointer', color: '#52c41a' }}
-                  onClick={handleInputConfirm}
-                />
-                <CloseOutlined
-                  style={{ cursor: 'pointer', color: '#ff4d4f' }}
-                  onClick={() => {
-                    setInputVisible(false);
-                    setInputValue('');
-                  }}
-                />
-              </div>
-            }
-            autoFocus
-          />
+          <div
+            style={{
+              display: 'inline-flex',
+              flexDirection: 'column',
+              marginRight: 8,
+              marginBottom: 4,
+              position: 'relative',
+            }}
+          >
+            <Input.TextArea
+              size="small"
+              style={{ minWidth: 300, maxWidth: 600, resize: 'vertical' }}
+              value={inputValue}
+              onChange={handleInputChange}
+              onBlur={handleInputConfirm}
+              autoSize={{ minRows: 2, maxRows: 6 }}
+              placeholder={placeholder}
+              autoFocus
+            />
+            <div
+              style={{
+                display: 'flex',
+                gap: 8,
+                marginTop: 4,
+                justifyContent: 'flex-end',
+              }}
+            >
+              <CheckOutlined
+                style={{ cursor: 'pointer', color: '#52c41a', fontSize: 16 }}
+                onClick={handleInputConfirm}
+              />
+              <CloseOutlined
+                style={{ cursor: 'pointer', color: '#ff4d4f', fontSize: 16 }}
+                onClick={() => {
+                  setInputVisible(false);
+                  setInputValue('');
+                }}
+              />
+            </div>
+          </div>
         )
       ) : (
         <Tag

@@ -15,7 +15,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 const steps = [
   { title: 'Титульный лист', component: ConstructorStep2 },
-  { title: 'Лист согласования', component: ConstructorStep3 },
+  { title: 'Соавторы', component: ConstructorStep3 },
   { title: 'Список сокращений', component: ConstructorStep4 },
   { title: 'Характеристика программы', component: ConstructorStep5 },
   { title: 'Учебный план', component: ConstructorStep6 },

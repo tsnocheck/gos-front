@@ -136,6 +136,16 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
         />
       </Form.Item>
 
+      <Form.Item name="category" label="Категория слушателей">
+        <Select options={categories?.map((c) => ({ value: c.id, label: c.value }))} />
+      </Form.Item>
+
+      {value.category && (
+        <div style={{ textAlign: 'center', marginBottom: 10, fontWeight: 'bold' }}>
+          {getDictionaryById(value.category)?.value ?? value.category}
+        </div>
+      )}
+
       <Table
         bordered
         pagination={false}
@@ -172,10 +182,6 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
           },
         ]}
       />
-
-      <Form.Item name="category" label="Категория слушателей">
-        <Select options={categories?.map((c) => ({ value: c.id, label: c.value }))} />
-      </Form.Item>
 
       <Form.Item name="educationForm" label="Форма обучения">
         <Select
