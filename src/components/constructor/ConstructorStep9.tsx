@@ -1,34 +1,9 @@
 import React, { useCallback } from 'react';
-import { Form, Input, Typography, Checkbox } from 'antd';
-import { DistanceEquipment, Equipment, type ExtendedProgram } from '../../types';
+import { Form, Typography } from 'antd';
+import type { ExtendedProgram } from '@/types';
 import WYSIWYGEditor from '../shared/WYSIWYGEditor';
 
 const { Title } = Typography;
-
-const equipmentList: { value: Equipment; label: string }[] = [
-  { value: Equipment.COMPUTER, label: 'Компьютер' },
-  { value: Equipment.PROJECTOR, label: 'Проектор' },
-  { value: Equipment.INTERACTIVE_BOARD, label: 'Интерактивная доска' },
-  { value: Equipment.SPEAKERS, label: 'Колонки' },
-  { value: Equipment.MARKER_BOARDS, label: 'Маркерные доски или флипчарты' },
-  { value: Equipment.OTHER, label: 'Иное' },
-];
-
-const distanceEquipmentList: { value: DistanceEquipment; label: string }[] = [
-  {
-    value: DistanceEquipment.PC_INTERNET,
-    label: 'Персональный компьютер с интернетом',
-  },
-  {
-    value: DistanceEquipment.AUDIO_DEVICES,
-    label: 'Колонки/наушники или встроенный динамик',
-  },
-  {
-    value: DistanceEquipment.SOFTWARE,
-    label: 'Стандартное ПО (браузер, редактор, PDF)',
-  },
-  { value: DistanceEquipment.OTHER_DISTANCE, label: 'Иное' },
-];
 
 interface Props {
   value: ExtendedProgram;
@@ -107,48 +82,25 @@ const ConstructorStep9: React.FC<Props> = ({ value, onChange }) => {
           value={value.orgPedConditions?.internetResources}
           onChange={(val) => update('internetResources', val)}
         />
-      </div>
 
-      <Form.Item label="Оборудование для аудиторных занятий">
-        <Checkbox.Group
-          options={equipmentList}
+        <WYSIWYGEditor
+          name="equipment"
+          label="Технические средства обучения"
+          placeholder="Введите технические средства обучения..."
+          rows={3}
           value={value.orgPedConditions?.equipment}
-          onChange={(val) => update('equipment', val as Equipment[])}
+          onChange={(val) => update('equipment', val)}
         />
-        {value.orgPedConditions?.equipment?.includes(Equipment.OTHER) && (
-          <Input
-            style={{ marginTop: 8 }}
-            placeholder="Укажите оборудование..."
-            value={value.orgPedConditions?.otherEquipment}
-            onChange={(e) => update('otherEquipment', e.target.value)}
-          />
-        )}
-      </Form.Item>
 
-      <Form.Item label="Оборудование для дистанционного обучения">
-        <Checkbox.Group
-          options={distanceEquipmentList}
-          value={value.orgPedConditions?.distanceEquipment}
-          onChange={(val) => update('distanceEquipment', val as DistanceEquipment[])}
+        <WYSIWYGEditor
+          name="personnelProvision"
+          label="Кадровое обеспечение"
+          placeholder="Введите список кадрового обеспечения"
+          rows={3}
+          value={value.orgPedConditions?.personnelProvision}
+          onChange={(val) => update('personnelProvision', val)}
         />
-        {value.orgPedConditions?.distanceEquipment?.includes(DistanceEquipment.OTHER_DISTANCE) && (
-          <Input
-            style={{ marginTop: 8 }}
-            placeholder="Укажите дополнительное оборудование..."
-            value={value.orgPedConditions?.otherDistance}
-            onChange={(e) => update('otherDistance', e.target.value)}
-          />
-        )}
-      </Form.Item>
-
-      <WYSIWYGEditor
-        name="personnelProvision"
-        label="Кадровое обеспечение"
-        placeholder="Введите список кадрового обеспечения"
-        rows={3}
-        value={value.orgPedConditions?.personnelProvision}
-        onChange={(val) => update('personnelProvision', val)}
-      />
+      </div>
     </Form>
   );
 };

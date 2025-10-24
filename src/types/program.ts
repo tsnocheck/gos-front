@@ -30,22 +30,6 @@ export enum ProgramSection {
   VR = 'vr',
 }
 
-export enum Equipment {
-  COMPUTER = 'computer',
-  PROJECTOR = 'projector',
-  INTERACTIVE_BOARD = 'interactive_board',
-  SPEAKERS = 'speakers',
-  MARKER_BOARDS = 'marker_boards',
-  OTHER = 'other',
-}
-
-export enum DistanceEquipment {
-  PC_INTERNET = 'pc-internet',
-  AUDIO_DEVICES = 'audio-devices',
-  SOFTWARE = 'software',
-  OTHER_DISTANCE = 'other-distance',
-}
-
 export const programSection: {
   full: Record<ProgramSection, string>;
   short: Record<ProgramSection, string>;
@@ -127,14 +111,8 @@ export interface OrgPedConditions {
   internetResources?: string; // Интернет-ресурсы
   personnelProvision?: string; // Кадровое обеспечение
 
-  /** УСТАРЕЛО, УБРАТЬ */
-  equipment?: Equipment[]; // Оборудование для аудиторных занятий (чекбоксы)
-  otherEquipment?: string; // Иное оборудование (текст)
-  distanceEquipment?: DistanceEquipment[]; // Оборудование для дистанционного обучения (чекбоксы)
-  otherDistance?: string; // Иное оборудование для дистанционного обучения (текст)
-
   /** НОВОЕ! */
-  _equipment?: string; // Технические средства обучения
+  equipment?: string; // Технические средства обучения
 }
 
 export interface Program {
