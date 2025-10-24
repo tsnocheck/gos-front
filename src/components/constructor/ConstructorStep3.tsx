@@ -21,7 +21,11 @@ const ConstructorStep3: React.FC<Props> = ({ value, onChange }) => {
 
   const getAuthorNameById = (id: string) => {
     const author = authors.find((author) => author.id === id);
-    return `${author?.lastName ?? ''} ${author?.firstName ?? ''} ${author?.middleName ?? ''}`;
+    if (author) {
+      return `${author?.lastName ?? ''} ${author?.firstName ?? ''} ${author?.middleName ?? ''}`;
+    }
+    // Если автор не найден, возвращаем сам id (это может быть вручную введенное имя)
+    return id;
   };
 
   const addCoAuthor = () => onChange({ coAuthorIds: [...(value.coAuthorIds ?? []), ''] });
@@ -43,12 +47,16 @@ const ConstructorStep3: React.FC<Props> = ({ value, onChange }) => {
           {value.coAuthorIds?.map((authorId, index) => (
             <Space key={index} style={{ width: '100%' }}>
               <Select
-                value={getAuthorNameById(authorId)}
-                onChange={(v) => updateCoAuthor(index, v)}
+                mode="tags"
+                maxCount={1}
+                value={authorId ? [getAuthorNameById(authorId)] : []}
+                onChange={(values) => updateCoAuthor(index, values[0] || '')}
                 loading={loadingAuthors}
-                placeholder={`Выберите соавтора ${index + 1}`}
+                placeholder="Выберите из списка или введите вручную (ФИО)"
                 style={{ flex: 1, minWidth: 400 }}
                 allowClear
+                showSearch
+                optionFilterProp="children"
               >
                 {availableAuthors.map((u) => (
                   <Option key={u.id} value={u.id}>
@@ -68,11 +76,10 @@ const ConstructorStep3: React.FC<Props> = ({ value, onChange }) => {
           <Button
             type="dashed"
             onClick={addCoAuthor}
-            {...{ icon: availableAuthors.length && <PlusOutlined /> }}
+            icon={<PlusOutlined />}
             style={{ width: '100%' }}
-            disabled={!availableAuthors.length}
           >
-            {availableAuthors.length ? 'Добавить соавтора' : 'Нет доступных авторов'}
+            Добавить соавтора
           </Button>
         </Space>
       </Form.Item>

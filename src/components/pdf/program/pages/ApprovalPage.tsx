@@ -10,13 +10,36 @@ export const ApprovalPage: FC<ProgramPDFProps> = ({ program, authors, pageNumber
   const programType =
     program.type || 'Дополнительная профессиональная программа повышения квалификации';
 
+  // Формируем список всех авторов (включая вручную введенных соавторов)
+  const allAuthors = [
+    ...authors.map((author) => ({
+      name: `${author.lastName ?? ''} ${author.firstName ?? ''} ${author.middleName ?? ''}`.trim(),
+      isUser: true,
+    })),
+  ];
+
+  // Добавляем вручную введенных соавторов (которые не являются объектами User)
+  if (program.coAuthorIds) {
+    program.coAuthorIds.forEach((id) => {
+      // Проверяем, не является ли это уже существующим автором
+      const isExistingAuthor = authors.some((author) => author.id === id);
+      if (!isExistingAuthor && id) {
+        // Это вручную введенное имя
+        allAuthors.push({
+          name: id,
+          isUser: false,
+        });
+      }
+    });
+  }
+
   return (
     <PDFPage title="ЛИСТ СОГЛАСОВАНИЯ" pageNumber={pageNumber}>
       <Text style={{ marginBottom: 10, textAlign: 'justify' }}>
         <Text style={{ fontWeight: 'bold', fontSize: 12 }}>Разработчик(и) программы: {'\n'}</Text>
-        {authors.map(({ lastName, firstName, middleName }, idx) => (
+        {allAuthors.map((author, idx) => (
           <Text key={idx}>
-            {(lastName ?? '') + ' ' + (firstName ?? '') + ' ' + (middleName ?? '')}
+            {author.name}
             {'\n'}
           </Text>
         ))}
