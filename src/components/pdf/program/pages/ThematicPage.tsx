@@ -12,6 +12,13 @@ export const ThematicPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
   const modulesBySection = (section: ProgramSection) =>
     program.modules?.filter((m) => m.section === section) || [];
 
+  // Получаем вид программы или используем значение по умолчанию
+  const programType =
+    program.type || 'дополнительной профессиональной программы повышения квалификации';
+
+  // Преобразуем в нижний регистр для вставки в текст
+  const programTypeInText = programType.toLowerCase();
+
   const ModuleThematicTable: FC<{ topics: Topic[] }> = ({ topics }) => {
     const totals = (topics || []).reduce(
       (acc, t) => {
@@ -235,10 +242,7 @@ export const ThematicPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
     >
       <Text style={{ textAlign: 'center', fontWeight: 'bold', lineHeight: 1 }}>
         РАБОЧИЕ ПРОГРАММЫ{'\n'}
-        <Text style={{ fontWeight: 'normal' }}>
-          образовательных модулей дополнительной профессиональной программы повышения квалификации{' '}
-          {'\n'}
-        </Text>
+        <Text style={{ fontWeight: 'normal' }}>образовательных модулей {programTypeInText} {'\n'}</Text>
         <Text style={PDFStyles.italic}>«{program.title ?? 'Название программы'}»</Text>
       </Text>
 

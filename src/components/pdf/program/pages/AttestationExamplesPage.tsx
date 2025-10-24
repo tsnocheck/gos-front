@@ -3,17 +3,23 @@ import type { ProgramPDFProps } from '@/types';
 import { View, Text } from '@react-pdf/renderer';
 import { PDFPage } from '../../shared/ui/PDFPage';
 import HTMLContent from '../../shared/ui/HTMLContent';
+import { isEmptyHTMLContent } from '../../shared/utils';
 
 export const AttestationExamplesPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
   const nonIntermediate =
     program.attestations?.filter((a) => a.moduleCode === 'open' || a.moduleCode === 'close') ?? [];
 
-  if (nonIntermediate.length === 0) {
-    return (
-      <PDFPage title="Оценочные материалы" pageNumber={pageNumber}>
-        <Text>Примеры заданий не указаны</Text>
-      </PDFPage>
-    );
+  // Проверяем, есть ли у аттестаций какой-либо контент (примеры или критерии)
+  const hasContent = nonIntermediate.some(
+    (a) =>
+      !isEmptyHTMLContent(a.examples) ||
+      !isEmptyHTMLContent(a.criteria) ||
+      !isEmptyHTMLContent(a.requirements),
+  );
+
+  // Не отображаем страницу, если нет аттестаций или контента
+  if (nonIntermediate.length === 0 || !hasContent) {
+    return null;
   }
 
   return (

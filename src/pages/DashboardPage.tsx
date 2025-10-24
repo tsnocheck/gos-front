@@ -235,7 +235,7 @@ export const DashboardPage: React.FC = () => {
                   link: '/help/create-program',
                 },
                 { title: 'Процесс экспертизы', link: '/help/expertise' },
-                { title: 'Работа с справочниками', link: '/help/dictionaries' },
+                { title: 'Работа со справочниками', link: '/help/dictionaries' },
               ]}
               renderItem={(item) => (
                 <List.Item>

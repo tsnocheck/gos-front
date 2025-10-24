@@ -19,6 +19,7 @@ import {
   isUnderline,
   isStrikethrough,
   getHeadingLevel,
+  getTextAlign,
 } from '@/utils/htmlToPdf';
 
 interface HTMLContentProps {
@@ -29,7 +30,8 @@ interface HTMLContentProps {
 const CONTENT_MAX_WIDTH = 530; // page width (A4 ~595) minus horizontal padding (30 * 2)
 const PAGE_MAX_HEIGHT = 720; // A4 usable height (842 - vertical paddings)
 
-// Reworked: do NOT upscale small images to full width; only downscale if they exceed limits.
+// Улучшенная функция масштабирования изображений
+// Гарантирует, что изображение всегда вписывается на страницу
 // Optional attribute: data-fullwidth="true" — force width stretch to CONTENT_MAX_WIDTH (with proportional height).
 function buildImageStyle(node: HTMLNode) {
   const attribs: any = (node as any).attribs || {};
@@ -37,37 +39,45 @@ function buildImageStyle(node: HTMLNode) {
   const attrW = parseInt(attribs.width || attribs['data-width'], 10);
   const attrH = parseInt(attribs.height || attribs['data-height'], 10);
 
-  // If both dimensions provided
+  // Если оба размера указаны
   if (!isNaN(attrW) && attrW > 0 && !isNaN(attrH) && attrH > 0) {
-    let scale = 1;
+    let scale;
+
     if (forceFull) {
+      // Принудительно растянуть на всю ширину
       scale = CONTENT_MAX_WIDTH / attrW;
     } else {
-      if (attrW > CONTENT_MAX_WIDTH) scale = Math.min(scale, CONTENT_MAX_WIDTH / attrW);
-      if (attrH > PAGE_MAX_HEIGHT) scale = Math.min(scale, PAGE_MAX_HEIGHT / attrH);
+      // Вычисляем масштаб, чтобы вписать в доступное пространство
+      const scaleByWidth = CONTENT_MAX_WIDTH / attrW;
+      const scaleByHeight = PAGE_MAX_HEIGHT / attrH;
+      // Берём меньший масштаб, чтобы изображение вписалось в оба лимита
+      scale = Math.min(scaleByWidth, scaleByHeight);
+      // Не увеличиваем маленькие изображения
+      if (scale > 1) scale = 1;
     }
-    // Prevent upscaling if scale > 1 and not forced
-    if (!forceFull && scale > 1) scale = 1;
+
     return { width: Math.round(attrW * scale), height: Math.round(attrH * scale) };
   }
 
-  // Only width specified
+  // Только ширина указана
   if (!isNaN(attrW) && attrW > 0) {
     if (forceFull) {
       return {
-        width: CONTENT_MAX_WIDTH, // height will auto preserve intrinsic aspect
+        width: CONTENT_MAX_WIDTH, // высота будет пропорциональной
       };
     }
     return { width: Math.min(attrW, CONTENT_MAX_WIDTH) };
   }
 
-  // Only height specified
+  // Только высота указана
   if (!isNaN(attrH) && attrH > 0) {
     return { height: Math.min(attrH, PAGE_MAX_HEIGHT), maxWidth: CONTENT_MAX_WIDTH };
   }
 
-  // No size hints: constrain only by max values, let intrinsic size drive actual dimensions
-  return { maxWidth: CONTENT_MAX_WIDTH, maxHeight: PAGE_MAX_HEIGHT };
+  // Без указания размеров: ограничиваем максимальными значениями
+  // Это гарантирует, что даже большие изображения будут вписаны
+  // Используем более агрессивный лимит для безопасности
+  return { maxWidth: CONTENT_MAX_WIDTH - 20, maxHeight: PAGE_MAX_HEIGHT - 60 };
 }
 
 const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
@@ -182,7 +192,7 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
       const src = (node as any).attribs?.src || '';
       const imgStyle = buildImageStyle(node);
       return (
-        <View key={index} style={{ marginVertical: 12, alignItems: 'center' }} wrap={false}>
+        <View key={index} style={{ marginVertical: 12, alignItems: 'center' }} wrap={true}>
           <Image src={src} style={imgStyle as any} />
         </View>
       );
@@ -210,6 +220,12 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
 
     // Параграф с улучшенным форматированием
     if (isParagraph(node) || (node.type === 'tag' && node.name === 'div')) {
+      // Получаем выравнивание из класса Quill
+      const alignValue = getTextAlign(node) || 'left';
+      const alignment = (
+        ['left', 'center', 'right', 'justify'].includes(alignValue) ? alignValue : 'left'
+      ) as 'left' | 'center' | 'right' | 'justify';
+
       // Собираем текстовые фрагменты и отделяем изображения как блоки
       const parts: React.ReactElement[] = [];
       let buffer: (string | React.ReactElement)[] = [];
@@ -218,7 +234,7 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
           parts.push(
             <Text
               key={`p-text-${parts.length}`}
-              style={{ marginBottom: 0, textAlign: 'justify', lineHeight: 1.5, fontSize: 12 }}
+              style={{ marginBottom: 0, textAlign: alignment, lineHeight: 1.5, fontSize: 12 }}
             >
               {buffer as any}
             </Text>,
@@ -235,7 +251,7 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
             <View
               key={`p-img-${childIndex}`}
               style={{ marginVertical: 10, alignItems: 'center' }}
-              wrap={false}
+              wrap={true}
             >
               <Image src={src} style={imgStyle as any} />
             </View>,
@@ -258,6 +274,11 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     // Список с улучшенным форматированием
     if (isList(node)) {
       const isOrdered = node.name === 'ol';
+      const alignValue = getTextAlign(node) || 'left';
+      const alignment = (
+        ['left', 'center', 'right', 'justify'].includes(alignValue) ? alignValue : 'left'
+      ) as 'left' | 'center' | 'right' | 'justify';
+
       return (
         <View key={index} style={{ marginBottom: 8, marginLeft: 15 }}>
           {(node.children || []).map((child, childIndex) => {
@@ -267,7 +288,7 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
                   key={`${index}-${childIndex}`}
                   style={{
                     marginBottom: 3,
-                    textAlign: 'justify',
+                    textAlign: alignment,
                     fontSize: 12,
                     lineHeight: 1.4,
                   }}

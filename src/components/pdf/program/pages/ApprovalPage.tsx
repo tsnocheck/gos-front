@@ -6,6 +6,10 @@ import { PDFPage } from '../../shared/ui/PDFPage';
 import { getExpertsFromExpertises } from '@/utils/getExpertsFromExpertises.ts';
 
 export const ApprovalPage: FC<ProgramPDFProps> = ({ program, authors, pageNumber }) => {
+  // Получаем вид программы или используем значение по умолчанию
+  const programType =
+    program.type || 'Дополнительная профессиональная программа повышения квалификации';
+
   return (
     <PDFPage title="ЛИСТ СОГЛАСОВАНИЯ" pageNumber={pageNumber}>
       <Text style={{ marginBottom: 10, textAlign: 'justify' }}>
@@ -21,12 +25,11 @@ export const ApprovalPage: FC<ProgramPDFProps> = ({ program, authors, pageNumber
       {program?.expertises?.length && (
         <>
           <Text style={{ marginBottom: 5, textAlign: 'justify' }}>
-            Дополнительная профессиональная программа повышения квалификации "
-            {program.title || 'Название Программы'}", прошла экспертизу:
+            {programType} "{program.title || 'Название Программы'}", прошла экспертизу:
           </Text>
 
           {getExpertsFromExpertises(program.expertises).map((expert, index) => (
-            <Text style={{ marginBottom: 5 }}>
+            <Text style={{ marginBottom: 5 }} key={index}>
               Эксперт {index + 1}: {expert.lastName + ' ' + expert.firstName}
             </Text>
           ))}
@@ -34,9 +37,9 @@ export const ApprovalPage: FC<ProgramPDFProps> = ({ program, authors, pageNumber
       )}
 
       <Text style={{ textAlign: 'justify' }}>
-        Дополнительная профессиональная программа повышения квалификации "
-        {program.title || 'Название Программы'}" утверждена Учёным советом Калининградского
-        областного института развития образования (протокол № ___ от ______ {currentYear} г.)
+        {programType} "{program.title || 'Название Программы'}" утверждена Учёным советом
+        Калининградского областного института развития образования (протокол № ___ от ______{' '}
+        {currentYear} г.)
       </Text>
     </PDFPage>
   );

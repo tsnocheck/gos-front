@@ -43,7 +43,7 @@ const ConstructorStep4: React.FC<Props> = ({ value, onChange }) => {
 
   return (
     <div>
-      <Title level={4}>Список сокращений</Title>
+      <Title level={4}>Список сокращений и условных обозначений</Title>
       <Form
         form={form}
         layout="inline"

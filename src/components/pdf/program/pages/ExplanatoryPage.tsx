@@ -1,7 +1,8 @@
-import { Text } from '@react-pdf/renderer';
+import { Text, View } from '@react-pdf/renderer';
 import { useCallback, type FC } from 'react';
 import { Standard, standards, type ProgramPDFProps } from '@/types';
 import { PDFPage, PDFTable, PDFList, PDFStyles } from '../../shared';
+import HTMLContent from '../../shared/ui/HTMLContent';
 
 export const ExplanatoryPage: FC<ProgramPDFProps> = ({
   program,
@@ -40,9 +41,10 @@ export const ExplanatoryPage: FC<ProgramPDFProps> = ({
 
   return (
     <PDFPage title="ПОЯСНИТЕЛЬНАЯ ЗАПИСКА" pageNumber={pageNumber}>
-      <Text style={PDFStyles.block}>
-        <Text style={PDFStyles.bold}>Актуальность разработки программы:</Text> {program.relevance}
-      </Text>
+      <View style={PDFStyles.block}>
+        <Text style={PDFStyles.bold}>Актуальность разработки программы:</Text>
+        {program.relevance && <HTMLContent html={program.relevance} />}
+      </View>
       <Text style={PDFStyles.block}>
         <Text style={PDFStyles.bold}>Цель реализации программы:</Text> {program.goal}
       </Text>

@@ -171,6 +171,22 @@ export function isCriteriaTable(node: HTMLNode): boolean {
 }
 
 /**
+ * Получает выравнивание текста из атрибутов класса Quill
+ * Возвращает: 'left' | 'center' | 'right' | 'justify' | undefined
+ */
+export function getTextAlign(node: HTMLNode): string | undefined {
+  const classStr = getNodeClass(node);
+  if (!classStr) return undefined;
+
+  if (classStr.includes('ql-align-right')) return 'right';
+  if (classStr.includes('ql-align-center')) return 'center';
+  if (classStr.includes('ql-align-justify')) return 'justify';
+  if (classStr.includes('ql-align-left')) return 'left';
+
+  return undefined;
+}
+
+/**
  * Очищает HTML от потенциально опасных тегов
  */
 export function sanitizeHTML(html: string): string {

@@ -4,6 +4,7 @@ import { standards, type ExtendedProgram } from '@/types';
 import { useProgramDictionaries } from '@/hooks/useProgramDictionaries';
 import RecommendationSuggestionInput from '../shared/RecommendationSuggestionInput';
 import EditableTagsSelect from '../shared/EditableTagsSelect';
+import WYSIWYGEditor from '../shared/WYSIWYGEditor';
 import { RecommendationField } from '@/types/recommendation';
 
 const { Title } = Typography;
@@ -37,13 +38,12 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
       <Title level={4}>Характеристика программы</Title>
 
       <Form.Item name="relevance">
-        <RecommendationSuggestionInput
+        <WYSIWYGEditor
+          name="relevance"
           label="Актуальность разработки программы"
           value={value.relevance}
           onChange={(val) => onChange({ relevance: val })}
           placeholder="Введите актуальность программы"
-          type={RecommendationField.RELEVANCE}
-          rows={2}
         />
       </Form.Item>
 

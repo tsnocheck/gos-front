@@ -23,13 +23,14 @@ const ConstructorStep2: React.FC<Props> = ({ value, onChange }) => {
   return (
     <Form layout="vertical">
       <Title level={4}>Титульный лист программы</Title>
-      <Form.Item label="Учреждение">
+      <Form.Item label="Организация, реализующая программу ДПО">
         <Select
           value={value.institution}
           onChange={(v) => {
             onChange({ institution: v, customInstitution: '' });
           }}
-          placeholder="Выберите учреждение"
+          placeholder="Выберите организацию"
+          style={{ width: '100%' }}
         >
           {filteredInstitutions?.map((inst) => (
             <Option key={inst.id} value={inst.id}>
@@ -42,14 +43,29 @@ const ConstructorStep2: React.FC<Props> = ({ value, onChange }) => {
       {value.institution === 'other' && (
         <Form.Item>
           <RecommendationSuggestionInput
-            label="Ваше учреждение"
+            label="Ваша организация"
             value={value.customInstitution}
             onChange={(val) => onChange({ customInstitution: val })}
-            placeholder="Введите наименование учреждения"
+            placeholder="Введите наименование организации"
             type={RecommendationField.CUSTOM_INSTITUTION}
           />
         </Form.Item>
       )}
+      <Form.Item label="Вид дополнительной профессиональной программы">
+        <Select
+          value={value.type}
+          onChange={(v) => onChange({ type: v })}
+          placeholder="Выберите вид программы"
+          style={{ width: '100%' }}
+        >
+          <Option value="Дополнительная профессиональная программа повышения квалификации">
+            Дополнительная профессиональная программа повышения квалификации
+          </Option>
+          <Option value="Дополнительная профессиональная программа профессиональной переподготовки">
+            Дополнительная профессиональная программа профессиональной переподготовки
+          </Option>
+        </Select>
+      </Form.Item>
       <Form.Item>
         <RecommendationSuggestionInput
           label="Название программы"
