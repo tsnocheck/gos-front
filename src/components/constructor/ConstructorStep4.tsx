@@ -17,14 +17,26 @@ const ConstructorStep4: React.FC<Props> = ({ value, onChange }) => {
 
   const abbreviations = value.abbreviations || [];
 
+  // Сортируем аббревиатуры для отображения в таблице
+  const sortedAbbreviations = [...abbreviations].sort((a, b) =>
+    a.abbreviation.localeCompare(b.abbreviation, 'ru'),
+  );
+
   const handleAdd = (values: Abbreviation) => {
     onChange({ abbreviations: [...abbreviations, values] });
     form.resetFields();
   };
 
   const handleEdit = (index: number) => {
-    setEditingIndex(index);
-    form.setFieldsValue(abbreviations[index]);
+    // Получаем элемент из отсортированного массива
+    const itemToEdit = sortedAbbreviations[index];
+    // Находим индекс этого элемента в исходном массиве
+    const originalIndex = abbreviations.findIndex(
+      (item) =>
+        item.abbreviation === itemToEdit.abbreviation && item.fullname === itemToEdit.fullname,
+    );
+    setEditingIndex(originalIndex);
+    form.setFieldsValue(itemToEdit);
   };
 
   const handleSaveEdit = (values: Abbreviation) => {
@@ -36,8 +48,17 @@ const ConstructorStep4: React.FC<Props> = ({ value, onChange }) => {
   };
 
   const handleDelete = (index: number) => {
+    // Получаем элемент из отсортированного массива
+    const itemToDelete = sortedAbbreviations[index];
+    // Находим индекс этого элемента в исходном массиве и удаляем
     onChange({
-      abbreviations: abbreviations.filter((_, idx) => idx !== index),
+      abbreviations: abbreviations.filter(
+        (item) =>
+          !(
+            item.abbreviation === itemToDelete.abbreviation &&
+            item.fullname === itemToDelete.fullname
+          ),
+      ),
     });
   };
 
@@ -84,7 +105,7 @@ const ConstructorStep4: React.FC<Props> = ({ value, onChange }) => {
       </Form>
 
       <Table
-        dataSource={abbreviations}
+        dataSource={sortedAbbreviations}
         rowKey={(_, i) => String(i)}
         pagination={false}
         columns={[
