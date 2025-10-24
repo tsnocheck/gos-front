@@ -11,7 +11,7 @@ import ConstructorStep9 from '../components/constructor/ConstructorStep9';
 import ViewProgramModal from '../components/shared/ViewProgramModal';
 import type { ExtendedProgram } from '@/types';
 import { useCreateProgram, useProgram, useUpdateProgram } from '@/queries/programs';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { EyeOutlined } from '@ant-design/icons';
 
 const steps = [
@@ -30,26 +30,44 @@ const { Title } = Typography;
 const ProgramsConstructorPage: React.FC = () => {
   const params = useParams();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [currentStep, setCurrentStep] = useState(0);
+  // Получаем текущий шаг из URL или устанавливаем 0 по умолчанию
+  const initialStep = useMemo(() => {
+    const stepParam = searchParams.get('step');
+    const stepNumber = stepParam ? parseInt(stepParam, 10) : 0;
+    return stepNumber >= 0 && stepNumber < steps.length ? stepNumber : 0;
+  }, []);
+
+  const [currentStep, setCurrentStep] = useState(initialStep);
   const [formData, setFormData] = useState<ExtendedProgram>({ title: '' });
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const createProgram = useCreateProgram();
   const updateProgram = useUpdateProgram();
   const { data: programData, isSuccess } = useProgram(params.id ?? '');
 
-  const StepComponent = useMemo(() => steps[currentStep].component, [currentStep]);
-
   const isPending = useMemo(
     () => createProgram.isPending || updateProgram.isPending,
     [createProgram, updateProgram],
   );
 
+  const updateStepInUrl = useCallback(
+    (step: number) => {
+      setSearchParams({ step: step.toString() });
+    },
+    [setSearchParams],
+  );
+
   const handleNext = () => {
-    setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+    const nextStep = Math.min(currentStep + 1, steps.length - 1);
+    setCurrentStep(nextStep);
+    updateStepInUrl(nextStep);
   };
+
   const handlePrev = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 0));
+    const prevStep = Math.max(currentStep - 1, 0);
+    setCurrentStep(prevStep);
+    updateStepInUrl(prevStep);
   };
 
   const handleChange = useCallback((data: ExtendedProgram) => {
@@ -86,6 +104,8 @@ const ProgramsConstructorPage: React.FC = () => {
     }
   }, [isSuccess, programData]);
 
+  const StepComponent = steps[currentStep].component;
+
   return (
     <div style={{ padding: 24 }}>
       <Title style={{ marginBottom: 32 }} level={2}>
@@ -95,7 +115,10 @@ const ProgramsConstructorPage: React.FC = () => {
       <Steps
         current={currentStep}
         items={steps.map((item) => ({ title: item.title }))}
-        onChange={(stepIndex) => setCurrentStep(stepIndex)}
+        onChange={(stepIndex) => {
+          setCurrentStep(stepIndex);
+          updateStepInUrl(stepIndex);
+        }}
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr)',
@@ -122,21 +145,21 @@ const ProgramsConstructorPage: React.FC = () => {
           <Button
             type="primary"
             variant="solid"
-            color="orange"
+            color="green"
             disabled={isPending}
-            onClick={() => handleFinish(true)}
+            onClick={() => handleFinish(false)}
           >
-            Сохранить и выйти
+            Сохранить
           </Button>
           {params.id && (
             <Button
               type="primary"
               variant="solid"
-              color="green"
+              color="orange"
               disabled={isPending}
-              onClick={() => handleFinish(false)}
+              onClick={() => handleFinish(true)}
             >
-              Сохранить
+              Сохранить и выйти
             </Button>
           )}
         </div>
