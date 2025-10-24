@@ -201,7 +201,7 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
           <Select
             value={v}
             onChange={(val) => handleUpdate<Attestation>('attestations', i, 'moduleCode', val)}
-            style={{ width: 200 }}
+            style={{ width: 170 }}
           >
             <Option value="open" disabled={disableOpen}>
               Входной контроль
@@ -230,7 +230,7 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
       ),
     },
     ...['lecture', 'practice', 'distant', 'kad'].map((field) => ({
-      title: `${fieldsTranslate[field]}ч.`,
+      title: `${fieldsTranslate[field]}${field !== 'kad' ? 'ч.' : ''}`,
       dataIndex: field,
       render: (v: number, _: Attestation, i: number) => (
         <Input

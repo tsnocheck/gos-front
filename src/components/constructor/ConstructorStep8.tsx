@@ -1,6 +1,6 @@
 import React from 'react';
 import { Input, Typography, Card } from 'antd';
-import type { Attestation, ExtendedProgram } from '@/types';
+import { type Attestation, type ExtendedProgram, ProgramSection, programSection } from '@/types';
 import WYSIWYGEditor from '../shared/WYSIWYGEditor';
 import RecommendationSuggestionInput from '../shared/RecommendationSuggestionInput';
 import { RecommendationField } from '@/types/recommendation';
@@ -11,6 +11,11 @@ interface Props {
   value: ExtendedProgram;
   onChange: (data: ExtendedProgram) => void;
 }
+
+const getModuleShortName = (moduleCode: string) => {
+  const [module, code] = moduleCode.split(' ');
+  return programSection.short[module as ProgramSection] + ' ' + code;
+};
 
 const ConstructorStep8: React.FC<Props> = ({ value, onChange }) => {
   const attestations = value.attestations ?? [];
@@ -37,7 +42,12 @@ const ConstructorStep8: React.FC<Props> = ({ value, onChange }) => {
               <div
                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
               >
-                <span>{a.name || 'Аттестация'}</span>
+                <span>
+                  <span style={{ fontWeight: 'bold' }}>{a.name || 'Аттестация'}</span>{' '}
+                  {a.moduleCode && !['open', 'close'].includes(a.moduleCode) && (
+                    <span>(раздел программы {getModuleShortName(a.moduleCode)})</span>
+                  )}
+                </span>
                 <span style={{ color: '#888', fontSize: 12 }}>{a.form}</span>
               </div>
             }
