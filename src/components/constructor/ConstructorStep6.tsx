@@ -36,12 +36,14 @@ const emptyAttestation: Attestation = {
   practice: 0,
   distant: 0,
   form: '',
+  kad: 0,
 };
 
 const fieldsTranslate: Record<string, string> = {
   lecture: 'Лекц. ',
   practice: 'Практ. ',
   distant: 'Дист. ',
+  kad: 'Кол-во ауд. дней',
 };
 
 const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
@@ -222,12 +224,12 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
       render: (v: string, _: Attestation, i: number) => (
         <Input
           value={v}
-          style={{ width: 300 }}
+          style={{ width: 200 }}
           onChange={(e) => handleUpdate<Attestation>('attestations', i, 'name', e.target.value)}
         />
       ),
     },
-    ...['lecture', 'practice', 'distant'].map((field) => ({
+    ...['lecture', 'practice', 'distant', 'kad'].map((field) => ({
       title: `${fieldsTranslate[field]}ч.`,
       dataIndex: field,
       render: (v: number, _: Attestation, i: number) => (
@@ -263,7 +265,7 @@ const ConstructorStep6: React.FC<Props> = ({ value, onChange }) => {
           value={v}
           onChange={(val) => handleUpdate<Attestation>('attestations', i, 'form', val)}
           options={attestationForms.map((value) => ({ value }))}
-          style={{ width: 200 }}
+          style={{ width: 150 }}
         />
       ),
     },

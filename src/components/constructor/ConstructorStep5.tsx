@@ -137,7 +137,18 @@ const ConstructorStep5: React.FC<Props> = ({ value, onChange }) => {
       </Form.Item>
 
       <Form.Item name="category" label="Категория слушателей">
-        <Select options={categories?.map((c) => ({ value: c.id, label: c.value }))} />
+        <Select
+          showSearch
+          mode="tags"
+          maxCount={1}
+          placeholder="Выберите или введите категорию слушателей"
+          options={categories?.map((c) => ({ value: c.id, label: c.value }))}
+          filterOption={(input, option) =>
+            (option?.label ?? '').toString().toLowerCase().includes(input.toLowerCase())
+          }
+          value={value.category ? [value.category] : []}
+          onChange={(val) => onChange({ category: val[0] })}
+        />
       </Form.Item>
 
       {value.category && (

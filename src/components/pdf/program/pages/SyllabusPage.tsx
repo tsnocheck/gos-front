@@ -6,7 +6,7 @@ import { PDFTable } from '../../shared';
 import React from 'react';
 import { Text } from '@react-pdf/renderer';
 
-const TOTAL_COLS = 8;
+const TOTAL_COLS = 9;
 
 export const SyllabusPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
   const modulesBySection = (section: ProgramSection) =>
@@ -17,10 +17,11 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
 
   const TotalRow: FC = () => {
     const total = [...(program.modules ?? []), ...(program.attestations ?? [])].reduce(
-      (acc, { lecture, distant, practice }) => {
+      (acc, { lecture, distant, practice, kad }) => {
         acc.lecture += lecture;
         acc.distant += distant;
         acc.practice += practice;
+        acc.kad += kad || 0;
 
         return acc;
       },
@@ -28,6 +29,7 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
         lecture: 0,
         practice: 0,
         distant: 0,
+        kad: 0,
       },
     );
 
@@ -39,6 +41,7 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
         <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{total.lecture || '-'}</PDFTable.Td>
         <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{total.practice || '-'}</PDFTable.Td>
         <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{total.distant || '-'}</PDFTable.Td>
+        <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{total.kad || '-'}</PDFTable.Td>
         <PDFTable.Td style={calcWidth(2 / TOTAL_COLS)}></PDFTable.Td>
       </PDFTable.Tr>
     );
@@ -53,6 +56,7 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
         <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{attestation.lecture || '-'}</PDFTable.Td>
         <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{attestation.practice || '-'}</PDFTable.Td>
         <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{attestation.distant || '-'}</PDFTable.Td>
+        <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{attestation.kad || '-'}</PDFTable.Td>
         <PDFTable.Td style={calcWidth(2 / TOTAL_COLS)}>{attestation.form}</PDFTable.Td>
       </PDFTable.Tr>
     ));
@@ -69,6 +73,7 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
           <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{module.lecture || '-'}</PDFTable.Td>
           <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{module.practice || '-'}</PDFTable.Td>
           <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{module.distant || '-'}</PDFTable.Td>
+          <PDFTable.Td style={calcWidth(1 / TOTAL_COLS)}>{module.kad || '-'}</PDFTable.Td>
           <PDFTable.Td style={calcWidth(2 / TOTAL_COLS)}></PDFTable.Td>
         </PDFTable.Tr>
 
@@ -106,7 +111,7 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
           <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}>
             Структурный компонент программы / образовательный модуль
           </PDFTable.Th>
-          <PDFTable.Th style={calcWidth(3 / TOTAL_COLS)}>Формы организации, часы</PDFTable.Th>
+          <PDFTable.Th style={calcWidth(4 / TOTAL_COLS)}>Формы организации, часы</PDFTable.Th>
           <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}>Формы контроля</PDFTable.Th>
         </PDFTable.Tr>
 
@@ -116,6 +121,7 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
           <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}></PDFTable.Th>
           <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}>Ауд. зан.</PDFTable.Th>
           <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}>Сам. раб.</PDFTable.Th>
+          <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}></PDFTable.Th>
           <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}></PDFTable.Th>
         </PDFTable.Tr>
 
@@ -126,6 +132,7 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
           <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}>Лекц. зан.</PDFTable.Th>
           <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}>Практ. зан.</PDFTable.Th>
           <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}>Дист. обучение</PDFTable.Th>
+          <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}>Кол-во ауд. дней</PDFTable.Th>
           <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}></PDFTable.Th>
         </PDFTable.Tr>
 
