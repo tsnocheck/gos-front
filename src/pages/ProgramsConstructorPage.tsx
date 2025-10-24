@@ -8,10 +8,11 @@ import ConstructorStep6 from '../components/constructor/ConstructorStep6';
 import ConstructorStep7 from '../components/constructor/ConstructorStep7';
 import ConstructorStep8 from '../components/constructor/ConstructorStep8';
 import ConstructorStep9 from '../components/constructor/ConstructorStep9';
-import ConstructorStep10 from '../components/constructor/ConstructorStep10';
+import ViewProgramModal from '../components/shared/ViewProgramModal';
 import type { ExtendedProgram } from '@/types';
 import { useCreateProgram, useProgram, useUpdateProgram } from '@/queries/programs';
 import { useNavigate, useParams } from 'react-router-dom';
+import { EyeOutlined } from '@ant-design/icons';
 
 const steps = [
   { title: 'Титульный лист', component: ConstructorStep2 },
@@ -22,7 +23,6 @@ const steps = [
   { title: 'Учебно-тематический план', component: ConstructorStep7 },
   { title: 'Формы аттестации', component: ConstructorStep8 },
   { title: 'Орг.-пед. условия', component: ConstructorStep9 },
-  { title: 'Предпросмотр программы', component: ConstructorStep10 },
 ];
 
 const { Title } = Typography;
@@ -33,6 +33,7 @@ const ProgramsConstructorPage: React.FC = () => {
 
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<ExtendedProgram>({ title: '' });
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const createProgram = useCreateProgram();
   const updateProgram = useUpdateProgram();
   const { data: programData, isSuccess } = useProgram(params.id ?? '');
@@ -115,28 +116,37 @@ const ProgramsConstructorPage: React.FC = () => {
               Далее
             </Button>
           )}
+          <Button type="default" icon={<EyeOutlined />} onClick={() => setPreviewModalOpen(true)}>
+            Предпросмотр программы
+          </Button>
           <Button
             type="primary"
             variant="solid"
-            color="green"
+            color="orange"
             disabled={isPending}
-            onClick={() => handleFinish(false)}
+            onClick={() => handleFinish(true)}
           >
-            Сохранить
+            Сохранить и выйти
           </Button>
           {params.id && (
             <Button
               type="primary"
               variant="solid"
-              color="orange"
+              color="green"
               disabled={isPending}
-              onClick={() => handleFinish(true)}
+              onClick={() => handleFinish(false)}
             >
-              Сохранить и выйти
+              Сохранить
             </Button>
           )}
         </div>
       </div>
+
+      <ViewProgramModal
+        open={previewModalOpen}
+        program={formData}
+        onClose={() => setPreviewModalOpen(false)}
+      />
     </div>
   );
 };

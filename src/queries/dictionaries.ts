@@ -53,7 +53,7 @@ export const useCreateDictionary = () => {
   return useMutation({
     mutationFn: dictionaryService.createDictionary,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: dictionaryKeys.all });
+      queryClient.refetchQueries({ queryKey: dictionaryKeys.all });
     },
   });
 };
@@ -64,7 +64,7 @@ export const useUpdateDictionary = () => {
     mutationFn: ({ id, data }: { id: string; data: UpdateDictionaryData }) =>
       dictionaryService.updateDictionary(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: dictionaryKeys.all });
+      queryClient.refetchQueries({ queryKey: dictionaryKeys.all });
     },
   });
 };
@@ -74,7 +74,7 @@ export const useDeleteDictionary = () => {
   return useMutation({
     mutationFn: dictionaryService.deleteDictionary,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: dictionaryKeys.all });
+      queryClient.refetchQueries({ queryKey: dictionaryKeys.all });
     },
   });
 };

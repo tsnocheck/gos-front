@@ -1,5 +1,5 @@
 import { apiClient } from '../lib/api';
-import { type Dictionary, DictionaryType, type DictionaryStatus } from '../types';
+import { type Dictionary, DictionaryType, type DictionaryStatus } from '@/types';
 
 export interface CreateDictionaryData {
   type: DictionaryType;
