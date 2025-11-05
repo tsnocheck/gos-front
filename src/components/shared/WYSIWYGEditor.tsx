@@ -1,9 +1,18 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { Typography, Card } from 'antd';
+import { Typography, Card, Button, Modal, InputNumber, Space } from 'antd';
+import { TableOutlined } from '@ant-design/icons';
+import { registerTableBlots } from './tableBlot';
 
 const { Text } = Typography;
+
+// Регистрируем поддержку таблиц один раз
+let tableRegistered = false;
+if (!tableRegistered) {
+  registerTableBlots();
+  tableRegistered = true;
+}
 
 interface WYSIWYGEditorProps {
   name: string;
@@ -23,11 +32,53 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
   placeholder,
 }) => {
   const quillRef = useRef<ReactQuill>(null);
+  const [isTableModalOpen, setIsTableModalOpen] = useState(false);
+  const [tableRows, setTableRows] = useState(3);
+  const [tableCols, setTableCols] = useState(3);
 
   const handleChange = (content: string) => {
     if (content !== value) {
       onChange(content);
     }
+  };
+
+  // Функция для вставки таблицы
+  const insertTable = () => {
+    const quill = quillRef.current?.getEditor();
+    if (quill) {
+      const range = quill.getSelection(true);
+
+      // Генерируем HTML для таблицы без inline стилей (будут применяться через CSS)
+      let tableHTML = '<table>';
+
+      // Добавляем заголовок
+      tableHTML += '<thead><tr>';
+      for (let col = 0; col < tableCols; col++) {
+        tableHTML += `<th>Заголовок ${col + 1}</th>`;
+      }
+      tableHTML += '</tr></thead>';
+
+      // Добавляем строки
+      tableHTML += '<tbody>';
+      for (let row = 0; row < tableRows; row++) {
+        tableHTML += '<tr>';
+        for (let col = 0; col < tableCols; col++) {
+          tableHTML += '<td><br></td>';
+        }
+        tableHTML += '</tr>';
+      }
+      tableHTML += '</tbody></table><p><br></p>';
+
+      // Вставляем таблицу как HTML
+      quill.clipboard.dangerouslyPasteHTML(range.index, tableHTML);
+      quill.setSelection(range.index + 1, 0);
+
+      setIsTableModalOpen(false);
+    }
+  };
+
+  const showTableModal = () => {
+    setIsTableModalOpen(true);
   };
 
   const modules = useMemo(
@@ -64,6 +115,12 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
     'blockquote',
     'link',
     'image',
+    'table',
+    'table-row',
+    'table-cell',
+    'table-header',
+    'table-body',
+    'table-head',
   ];
 
   return (
@@ -79,7 +136,42 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
         <Text strong style={{ fontSize: 14, color: '#262626' }}>
           {label}
         </Text>
+        <Button type="default" size="small" icon={<TableOutlined />} onClick={showTableModal}>
+          Вставить таблицу
+        </Button>
       </div>
+
+      <Modal
+        title="Создать таблицу"
+        open={isTableModalOpen}
+        onOk={insertTable}
+        onCancel={() => setIsTableModalOpen(false)}
+        okText="Вставить"
+        cancelText="Отмена"
+      >
+        <Space direction="vertical" style={{ width: '100%' }}>
+          <div>
+            <Text>Количество строк:</Text>
+            <InputNumber
+              min={1}
+              max={20}
+              value={tableRows}
+              onChange={(val) => setTableRows(val ?? 3)}
+              style={{ width: '100%', marginTop: 8 }}
+            />
+          </div>
+          <div>
+            <Text>Количество столбцов:</Text>
+            <InputNumber
+              min={1}
+              max={10}
+              value={tableCols}
+              onChange={(val) => setTableCols(val ?? 3)}
+              style={{ width: '100%', marginTop: 8 }}
+            />
+          </div>
+        </Space>
+      </Modal>
 
       <Card
         size="small"
@@ -88,7 +180,7 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
           border: '1px solid #f0f0f0',
         }}
-        bodyStyle={{ padding: 0 }}
+        styles={{ body: { padding: 0 } }}
       >
         <div
           style={
@@ -172,6 +264,49 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
           border-radius: 6px;
           border: 1px solid #d9d9d9;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Стили для таблиц - ключевая часть! */
+        .wysiwyg-editor-wrapper .ql-editor table {
+          border-collapse: collapse;
+          width: 100%;
+          margin: 12px 0;
+          display: table !important;
+        }
+
+        .wysiwyg-editor-wrapper .ql-editor table thead {
+          display: table-header-group !important;
+        }
+
+        .wysiwyg-editor-wrapper .ql-editor table tbody {
+          display: table-row-group !important;
+        }
+
+        .wysiwyg-editor-wrapper .ql-editor table tr {
+          display: table-row !important;
+        }
+
+        .wysiwyg-editor-wrapper .ql-editor table td,
+        .wysiwyg-editor-wrapper .ql-editor table th {
+          display: table-cell !important;
+          border: 1px solid #d9d9d9;
+          padding: 8px;
+          min-width: 50px;
+          vertical-align: top;
+        }
+
+        .wysiwyg-editor-wrapper .ql-editor table th {
+          background-color: #fafafa;
+          font-weight: bold;
+          text-align: center;
+        }
+
+        .wysiwyg-editor-wrapper .ql-editor table tr:hover {
+          background-color: #f5f5f5;
+        }
+
+        .wysiwyg-editor-wrapper .ql-editor table tbody tr:nth-child(even) {
+          background-color: #fafafa;
         }
       `}</style>
     </div>

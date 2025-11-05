@@ -242,7 +242,9 @@ export const ThematicPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
     >
       <Text style={{ textAlign: 'center', fontWeight: 'bold', lineHeight: 1 }}>
         РАБОЧИЕ ПРОГРАММЫ{'\n'}
-        <Text style={{ fontWeight: 'normal' }}>образовательных модулей {programTypeInText} {'\n'}</Text>
+        <Text style={{ fontWeight: 'normal' }}>
+          образовательных модулей {programTypeInText} {'\n'}
+        </Text>
         <Text style={PDFStyles.italic}>«{program.title ?? 'Название программы'}»</Text>
       </Text>
 

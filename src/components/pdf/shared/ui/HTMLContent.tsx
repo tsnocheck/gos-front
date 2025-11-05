@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View, Link, Image } from '@react-pdf/renderer';
-import { PDFTable } from './PDFTable';
+import { WYSIWYGPDFTable } from './WYSIWYGPDFTable';
 import {
   parseHTMLToPDFStructure,
   sanitizeHTML,
@@ -338,13 +338,11 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     // Таблица
     if (isTable(node)) {
       return (
-        <View key={index} style={{ marginVertical: 8 }}>
-          <PDFTable.Self>
-            {(node.children || []).map((child, childIndex) =>
-              renderTableElement(child, `${index}-${childIndex}`),
-            )}
-          </PDFTable.Self>
-        </View>
+        <WYSIWYGPDFTable.Table key={index} style={{ marginVertical: 8 }}>
+          {(node.children || []).map((child, childIndex) =>
+            renderTableElement(child, `${index}-${childIndex}`),
+          )}
+        </WYSIWYGPDFTable.Table>
       );
     }
 
@@ -366,6 +364,11 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     node: HTMLNode,
     index: string | number,
   ): React.ReactElement | null => {
+    // Пропускаем colgroup (используется quill-better-table для определения ширины столбцов)
+    if (node.type === 'tag' && node.name === 'colgroup') {
+      return null;
+    }
+
     // Заголовок таблицы (thead)
     if (node.type === 'tag' && node.name === 'thead') {
       return (
@@ -373,11 +376,11 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
           {(node.children || []).map((child, childIndex) => {
             if (isTableRow(child)) {
               return (
-                <PDFTable.Tr key={`${index}-${childIndex}`} isHeader>
+                <WYSIWYGPDFTable.Row key={`${index}-${childIndex}`} isHeader>
                   {(child.children || []).map((cell, cellIndex) =>
                     renderTableCell(cell, `${index}-${childIndex}-${cellIndex}`, true),
                   )}
-                </PDFTable.Tr>
+                </WYSIWYGPDFTable.Row>
               );
             }
             return null;
@@ -393,11 +396,11 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
           {(node.children || []).map((child, childIndex) => {
             if (isTableRow(child)) {
               return (
-                <PDFTable.Tr key={`${index}-${childIndex}`}>
+                <WYSIWYGPDFTable.Row key={`${index}-${childIndex}`}>
                   {(child.children || []).map((cell, cellIndex) =>
                     renderTableCell(cell, `${index}-${childIndex}-${cellIndex}`, false),
                   )}
-                </PDFTable.Tr>
+                </WYSIWYGPDFTable.Row>
               );
             }
             return null;
@@ -408,12 +411,14 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
 
     // Строка таблицы (если не в thead/tbody)
     if (isTableRow(node)) {
+      // Определяем, является ли строка заголовочной по наличию th элементов
+      const hasThCells = (node.children || []).some((child) => child.name === 'th');
       return (
-        <PDFTable.Tr key={index}>
+        <WYSIWYGPDFTable.Row key={index} isHeader={hasThCells}>
           {(node.children || []).map((child, childIndex) =>
-            renderTableCell(child, `${index}-${childIndex}`, false),
+            renderTableCell(child, `${index}-${childIndex}`, hasThCells),
           )}
-        </PDFTable.Tr>
+        </WYSIWYGPDFTable.Row>
       );
     }
 
@@ -427,12 +432,100 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     isHeader: boolean,
   ): React.ReactElement | null => {
     if (isTableCell(node)) {
-      const CellComponent = isHeader || node.name === 'th' ? PDFTable.Th : PDFTable.Td;
-      return (
-        <CellComponent key={index}>
-          {(node.children || []).map((child, childIndex) =>
+      const CellComponent =
+        isHeader || node.name === 'th' ? WYSIWYGPDFTable.HeaderCell : WYSIWYGPDFTable.Cell;
+      const attribs = (node as any).attribs || {};
+
+      // Извлекаем атрибуты colspan и width
+      const colspan = attribs.colspan ? parseInt(attribs.colspan, 10) : undefined;
+      const width = attribs.width || attribs['data-width'] || undefined;
+
+      // Извлекаем стили из data-row атрибута (quill-better-table использует data-row)
+      const dataRow = attribs['data-row'];
+      const cellStyle: any = {};
+
+      // Парсим ширину из data-row если есть
+      if (dataRow) {
+        const widthMatch = dataRow.match(/width:\s*(\d+(?:\.\d+)?)(px|%)?/);
+        if (widthMatch) {
+          const widthValue = parseFloat(widthMatch[1]);
+          const widthUnit = widthMatch[2] || 'px';
+          if (widthUnit === '%') {
+            cellStyle.width = `${widthValue}%`;
+          } else {
+            // Конвертируем px в points для PDF (примерно 0.75)
+            cellStyle.width = widthValue * 0.75;
+          }
+        }
+      }
+
+      // Рендерим содержимое ячейки
+      // Проверяем, есть ли блочные элементы (параграфы, списки) внутри ячейки
+      const hasBlockElements = (node.children || []).some(
+        (child) =>
+          child.type === 'tag' &&
+          (child.name === 'p' ||
+            child.name === 'div' ||
+            child.name === 'ul' ||
+            child.name === 'ol' ||
+            child.name === 'blockquote'),
+      );
+
+      // Если есть блочные элементы, рендерим их отдельно
+      // Иначе рендерим как inline контент
+      const cellContent = hasBlockElements
+        ? (node.children || []).map((child, childIndex) => {
+            // Для параграфов и списков внутри ячейки
+            if (child.type === 'tag' && (child.name === 'p' || child.name === 'div')) {
+              return (
+                <Text key={`${index}-${childIndex}`} style={{ fontSize: 10, lineHeight: 1.3 }}>
+                  {(child.children || []).map((grandChild, grandChildIndex) =>
+                    renderInline(grandChild, `${index}-${childIndex}-${grandChildIndex}`),
+                  )}
+                </Text>
+              );
+            }
+            // Для списков
+            if (child.type === 'tag' && (child.name === 'ul' || child.name === 'ol')) {
+              const isOrdered = child.name === 'ol';
+              return (
+                <View key={`${index}-${childIndex}`} style={{ marginLeft: 10 }}>
+                  {(child.children || []).map((listItem, listItemIndex) => {
+                    if (isListItem(listItem)) {
+                      return (
+                        <Text
+                          key={`${index}-${childIndex}-${listItemIndex}`}
+                          style={{ fontSize: 10, marginBottom: 2 }}
+                        >
+                          {isOrdered ? `${listItemIndex + 1}. ` : '• '}
+                          {(listItem.children || []).map((listChild, listChildIndex) =>
+                            renderInline(
+                              listChild,
+                              `${index}-${childIndex}-${listItemIndex}-${listChildIndex}`,
+                            ),
+                          )}
+                        </Text>
+                      );
+                    }
+                    return null;
+                  })}
+                </View>
+              );
+            }
+            return renderInline(child, `${index}-${childIndex}`);
+          })
+        : (node.children || []).map((child, childIndex) =>
             renderInline(child, `${index}-${childIndex}`),
-          )}
+          );
+
+      return (
+        <CellComponent
+          key={index}
+          colspan={colspan}
+          width={width || cellStyle.width}
+          style={cellStyle}
+        >
+          {cellContent}
         </CellComponent>
       );
     }
