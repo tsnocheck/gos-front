@@ -1,5 +1,3 @@
-// Типы для форм
-
 export interface ExpertiseForm {
   criteriaEvaluation: Record<
     string,

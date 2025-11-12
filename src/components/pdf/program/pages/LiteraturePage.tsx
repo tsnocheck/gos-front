@@ -7,8 +7,6 @@ import { hasAnyContent } from '../../shared/utils';
 
 export const LiteraturePage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
   const { orgPedConditions } = program;
-
-  // Проверяем, есть ли хоть какой-то контент
   const hasContent = hasAnyContent([
     orgPedConditions?.mainLiterature,
     orgPedConditions?.additionalLiterature,
@@ -17,8 +15,6 @@ export const LiteraturePage: FC<ProgramPDFProps> = ({ program, pageNumber }) => 
     orgPedConditions?.equipment,
     orgPedConditions?.personnelProvision,
   ]);
-
-  // Не отображаем страницу, если нет контента
   if (!hasContent) {
     return null;
   }

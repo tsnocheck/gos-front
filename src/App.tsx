@@ -4,11 +4,7 @@ import { ConfigProvider, Spin } from 'antd';
 import ruRU from 'antd/locale/ru_RU';
 import React, { Suspense, lazy, type JSX } from 'react';
 import { UserRole } from './types';
-
-// Components
 import { AppLayout } from './components/AppLayout';
-
-// Lazy loaded pages
 const LoginPage = lazy(() =>
   import('./pages/LoginPage').then((module) => ({ default: module.LoginPage })),
 );
@@ -64,7 +60,7 @@ const ForgotPasswordPage = lazy(() =>
     default: module.ForgotPasswordPage,
   })),
 );
-// Loading component
+
 const PageLoader = () => (
   <div
     style={{
@@ -79,8 +75,6 @@ const PageLoader = () => (
     <div style={{ marginTop: 16, fontSize: 16, color: '#666' }}>Загрузка страницы...</div>
   </div>
 );
-
-// Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -88,7 +82,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       refetchOnMount: false,
       refetchOnReconnect: false,
-      staleTime: 5 * 60 * 1000, // 5 минут
+      staleTime: 5 * 60 * 1000,
     },
     mutations: {
       retry: 1,

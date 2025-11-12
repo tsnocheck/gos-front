@@ -46,8 +46,6 @@ const pages = [
   RegulatoryPage,
   LiteraturePage,
 ];
-
-// Генератор PDF-документа по шагам
 export const ProgramPDF: React.FC<{
   program: ExtendedProgram;
   authors: User[];
@@ -85,8 +83,6 @@ export const ProgramPDFViewer: React.FC<{
     </div>
   );
 };
-
-// Компонент для скачивания PDF программы
 export const ProgramPDFDownloadButton: React.FC<{
   program: ExtendedProgram;
 }> = ({ program }) => {

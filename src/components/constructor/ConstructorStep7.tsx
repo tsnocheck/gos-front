@@ -22,8 +22,6 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
       modules: modules.map((m, i) => (i === moduleIndex ? { ...m, ...updated } : m)),
     });
   };
-
-  // Thematic plan (topics) per module
   const addTopic = (moduleIndex: number) => {
     const current = modules[moduleIndex]?.topics ?? [];
     updateModule(moduleIndex, {
@@ -49,8 +47,6 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
       topics: current.filter((_, i) => i !== idx),
     });
   };
-
-  // Network per module
   const addNetwork = (moduleIndex: number) => {
     const current = modules[moduleIndex]?.network ?? [];
     updateModule(moduleIndex, {
@@ -76,8 +72,6 @@ const ConstructorStep7: React.FC<Props> = ({ value, onChange }) => {
       network: current.filter((_, i) => i !== idx),
     });
   };
-
-  // Topic content editors inside a topic
   const ensureTopicContent = (
     moduleIndex: number,
     topicIndex: number,

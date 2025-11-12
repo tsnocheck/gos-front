@@ -27,56 +27,42 @@ interface HTMLContentProps {
   style?: any;
 }
 
-const CONTENT_MAX_WIDTH = 530; // page width (A4 ~595) minus horizontal padding (30 * 2)
-const PAGE_MAX_HEIGHT = 720; // A4 usable height (842 - vertical paddings)
-
-// Улучшенная функция масштабирования изображений
-// Гарантирует, что изображение всегда вписывается на страницу
-// Optional attribute: data-fullwidth="true" — force width stretch to CONTENT_MAX_WIDTH (with proportional height).
+const CONTENT_MAX_WIDTH = 530;
+const PAGE_MAX_HEIGHT = 720;
 function buildImageStyle(node: HTMLNode) {
   const attribs: any = (node as any).attribs || {};
   const forceFull = attribs['data-fullwidth'] === 'true';
   const attrW = parseInt(attribs.width || attribs['data-width'], 10);
   const attrH = parseInt(attribs.height || attribs['data-height'], 10);
-
-  // Если оба размера указаны
   if (!isNaN(attrW) && attrW > 0 && !isNaN(attrH) && attrH > 0) {
     let scale;
 
     if (forceFull) {
-      // Принудительно растянуть на всю ширину
+
       scale = CONTENT_MAX_WIDTH / attrW;
     } else {
-      // Вычисляем масштаб, чтобы вписать в доступное пространство
+
       const scaleByWidth = CONTENT_MAX_WIDTH / attrW;
       const scaleByHeight = PAGE_MAX_HEIGHT / attrH;
-      // Берём меньший масштаб, чтобы изображение вписалось в оба лимита
+
       scale = Math.min(scaleByWidth, scaleByHeight);
-      // Не увеличиваем маленькие изображения
+
       if (scale > 1) scale = 1;
     }
 
     return { width: Math.round(attrW * scale), height: Math.round(attrH * scale) };
   }
-
-  // Только ширина указана
   if (!isNaN(attrW) && attrW > 0) {
     if (forceFull) {
       return {
-        width: CONTENT_MAX_WIDTH, // высота будет пропорциональной
+        width: CONTENT_MAX_WIDTH,
       };
     }
     return { width: Math.min(attrW, CONTENT_MAX_WIDTH) };
   }
-
-  // Только высота указана
   if (!isNaN(attrH) && attrH > 0) {
     return { height: Math.min(attrH, PAGE_MAX_HEIGHT), maxWidth: CONTENT_MAX_WIDTH };
   }
-
-  // Без указания размеров: ограничиваем максимальными значениями
-  // Это гарантирует, что даже большие изображения будут вписаны
-  // Используем более агрессивный лимит для безопасности
   return { maxWidth: CONTENT_MAX_WIDTH - 20, maxHeight: PAGE_MAX_HEIGHT - 60 };
 }
 
@@ -87,23 +73,17 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
 
   const sanitizedHTML = sanitizeHTML(html);
   const nodes = parseHTMLToPDFStructure(sanitizedHTML);
-
-  // Отрисовка инлайн-узлов внутри Text
   const renderInline = (
     node: HTMLNode,
     index: string | number,
   ): string | React.ReactElement | null => {
-    // Текстовый узел
+
     if (node.type === 'text') {
       return node.data || '';
     }
-
-    // Перенос строки
     if (node.type === 'tag' && node.name === 'br') {
       return '\n';
     }
-
-    // Ссылка
     if (isLink(node)) {
       const href = (node as any).attribs?.href || '';
       return (
@@ -114,8 +94,6 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
         </Link>
       );
     }
-
-    // Жирный текст
     if (isBold(node)) {
       return (
         <Text key={index} style={{ fontWeight: 'bold' }}>
@@ -125,8 +103,6 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
         </Text>
       );
     }
-
-    // Курсив
     if (isItalic(node)) {
       return (
         <Text key={index} style={{ fontStyle: 'italic' }}>
@@ -136,8 +112,6 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
         </Text>
       );
     }
-
-    // Подчеркнутый текст
     if (isUnderline(node)) {
       return (
         <Text key={index} style={{ textDecoration: 'underline' }}>
@@ -147,8 +121,6 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
         </Text>
       );
     }
-
-    // Зачеркнутый текст
     if (isStrikethrough(node)) {
       return (
         <Text key={index} style={{ textDecoration: 'line-through' }}>
@@ -158,13 +130,9 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
         </Text>
       );
     }
-
-    // Изображения НЕ рендерим инлайном внутри <Text>, чтобы избежать наложения. Обрабатываются в блочном рендеринге и в параграфах отдельно.
     if (isImage(node)) {
-      return null; // сигнал параграфному рендеру, что здесь был img (он обработает отдельно)
+      return null;
     }
-
-    // Спан и прочие инлайн
     if (
       node.type === 'tag' &&
       (node.name === 'span' ||
@@ -178,16 +146,12 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
         renderInline(child, `${index}-${childIndex}`),
       ) as any;
     }
-
-    // По умолчанию — просто рендерим детей инлайн
     return (node.children || []).map((child, childIndex) =>
       renderInline(child, `${index}-${childIndex}`),
     ) as any;
   };
-
-  // Отрисовка блочных элементов
   const renderBlock = (node: HTMLNode, index: string | number): React.ReactElement | null => {
-    // Изображение (блочное)
+
     if (isImage(node)) {
       const src = (node as any).attribs?.src || '';
       const imgStyle = buildImageStyle(node);
@@ -197,8 +161,6 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
         </View>
       );
     }
-
-    // Заголовок
     if (isHeading(node)) {
       const level = getHeadingLevel(node);
       const headingStyle = {
@@ -217,16 +179,12 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
         </Text>
       );
     }
-
-    // Параграф с улучшенным форматированием
     if (isParagraph(node) || (node.type === 'tag' && node.name === 'div')) {
-      // Получаем выравнивание из класса Quill
+
       const alignValue = getTextAlign(node) || 'left';
       const alignment = (
         ['left', 'center', 'right', 'justify'].includes(alignValue) ? alignValue : 'left'
       ) as 'left' | 'center' | 'right' | 'justify';
-
-      // Собираем текстовые фрагменты и отделяем изображения как блоки
       const parts: React.ReactElement[] = [];
       let buffer: (string | React.ReactElement)[] = [];
       const flushBuffer = () => {
@@ -270,8 +228,6 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
         </View>
       );
     }
-
-    // Список с улучшенным форматированием
     if (isList(node)) {
       const isOrdered = node.name === 'ol';
       const alignValue = getTextAlign(node) || 'left';
@@ -307,8 +263,6 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
         </View>
       );
     }
-
-    // Цитата
     if (node.type === 'tag' && node.name === 'blockquote') {
       return (
         <View
@@ -334,8 +288,6 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
         </View>
       );
     }
-
-    // Таблица
     if (isTable(node)) {
       return (
         <WYSIWYGPDFTable.Table key={index} style={{ marginVertical: 8 }}>
@@ -345,8 +297,6 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
         </WYSIWYGPDFTable.Table>
       );
     }
-
-    // Если внутри другие блоки
     if (node.children && node.children.length > 0) {
       return (
         <View key={index}>
@@ -354,22 +304,16 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
         </View>
       );
     }
-
-    // Пусто
     return null;
   };
-
-  // Специальная функция для рендеринга элементов таблицы
   const renderTableElement = (
     node: HTMLNode,
     index: string | number,
   ): React.ReactElement | null => {
-    // Пропускаем colgroup (используется quill-better-table для определения ширины столбцов)
+
     if (node.type === 'tag' && node.name === 'colgroup') {
       return null;
     }
-
-    // Заголовок таблицы (thead)
     if (node.type === 'tag' && node.name === 'thead') {
       return (
         <React.Fragment key={index}>
@@ -388,8 +332,6 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
         </React.Fragment>
       );
     }
-
-    // Тело таблицы (tbody)
     if (node.type === 'tag' && node.name === 'tbody') {
       return (
         <React.Fragment key={index}>
@@ -408,10 +350,8 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
         </React.Fragment>
       );
     }
-
-    // Строка таблицы (если не в thead/tbody)
     if (isTableRow(node)) {
-      // Определяем, является ли строка заголовочной по наличию th элементов
+
       const hasThCells = (node.children || []).some((child) => child.name === 'th');
       return (
         <WYSIWYGPDFTable.Row key={index} isHeader={hasThCells}>
@@ -424,8 +364,6 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
 
     return null;
   };
-
-  // Специальная функция для рендеринга ячеек таблицы
   const renderTableCell = (
     node: HTMLNode,
     index: string | number,
@@ -435,16 +373,10 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
       const CellComponent =
         isHeader || node.name === 'th' ? WYSIWYGPDFTable.HeaderCell : WYSIWYGPDFTable.Cell;
       const attribs = (node as any).attribs || {};
-
-      // Извлекаем атрибуты colspan и width
       const colspan = attribs.colspan ? parseInt(attribs.colspan, 10) : undefined;
       const width = attribs.width || attribs['data-width'] || undefined;
-
-      // Извлекаем стили из data-row атрибута (quill-better-table использует data-row)
       const dataRow = attribs['data-row'];
       const cellStyle: any = {};
-
-      // Парсим ширину из data-row если есть
       if (dataRow) {
         const widthMatch = dataRow.match(/width:\s*(\d+(?:\.\d+)?)(px|%)?/);
         if (widthMatch) {
@@ -453,14 +385,12 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
           if (widthUnit === '%') {
             cellStyle.width = `${widthValue}%`;
           } else {
-            // Конвертируем px в points для PDF (примерно 0.75)
+
             cellStyle.width = widthValue * 0.75;
           }
         }
       }
 
-      // Рендерим содержимое ячейки
-      // Проверяем, есть ли блочные элементы (параграфы, списки) внутри ячейки
       const hasBlockElements = (node.children || []).some(
         (child) =>
           child.type === 'tag' &&
@@ -471,11 +401,9 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
             child.name === 'blockquote'),
       );
 
-      // Если есть блочные элементы, рендерим их отдельно
-      // Иначе рендерим как inline контент
       const cellContent = hasBlockElements
         ? (node.children || []).map((child, childIndex) => {
-            // Для параграфов и списков внутри ячейки
+
             if (child.type === 'tag' && (child.name === 'p' || child.name === 'div')) {
               return (
                 <Text key={`${index}-${childIndex}`} style={{ fontSize: 10, lineHeight: 1.3 }}>
@@ -485,7 +413,7 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
                 </Text>
               );
             }
-            // Для списков
+
             if (child.type === 'tag' && (child.name === 'ul' || child.name === 'ol')) {
               const isOrdered = child.name === 'ol';
               return (

@@ -7,14 +7,12 @@ import type { LoginCredentials } from '@/types';
 
 const { Title, Text } = Typography;
 
-// Константы
 const DEFAULT_ROUTE = '/dashboard';
 const DEFAULT_CREDENTIALS = {
   email: 'admin@gos.ru',
   password: 'admin123456',
 } as const;
 
-// Стили
 const CONTAINER_STYLES = {
   minHeight: '100vh',
   background: 'linear-gradient(135deg, #1890ff 0%, #722ed1 100%)',
@@ -45,14 +43,12 @@ const TITLE_STYLES = {
   color: '#1890ff',
 };
 
-// Типы
 interface LocationState {
   from?: {
     pathname: string;
   };
 }
 
-// Правила валидации
 const EMAIL_RULES = [
   { required: true, message: 'Введите email!' },
   { type: 'email' as const, message: 'Введите корректный email!' },
@@ -65,13 +61,11 @@ export const LoginPage: React.FC = () => {
   const location = useLocation();
   const loginMutation = useLogin();
 
-  // Мемоизация redirect пути
   const redirectPath = useMemo(() => {
     const state = location.state as LocationState;
     return state?.from?.pathname || DEFAULT_ROUTE;
   }, [location.state]);
 
-  // Мемоизированный обработчик отправки формы
   const handleSubmit = useCallback(
     async (values: LoginCredentials) => {
       try {
@@ -89,7 +83,6 @@ export const LoginPage: React.FC = () => {
     [loginMutation, navigate, redirectPath],
   );
 
-  // Мемоизация стилей строки
   const rowStyle = useMemo(
     () => ({
       width: '100%',
@@ -98,7 +91,6 @@ export const LoginPage: React.FC = () => {
     [],
   );
 
-  // Мемоизация стилей кнопки
   const buttonStyle = useMemo(
     () => ({
       marginBottom: 16,
@@ -106,7 +98,6 @@ export const LoginPage: React.FC = () => {
     [],
   );
 
-  // Мемоизация стилей для ссылки "Забыли пароль"
   const forgotPasswordStyle = useMemo(
     () => ({
       textAlign: 'center' as const,

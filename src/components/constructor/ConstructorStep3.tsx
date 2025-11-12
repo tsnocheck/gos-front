@@ -24,7 +24,7 @@ const ConstructorStep3: React.FC<Props> = ({ value, onChange }) => {
     if (author) {
       return `${author?.lastName ?? ''} ${author?.firstName ?? ''} ${author?.middleName ?? ''}`;
     }
-    // Если автор не найден, возвращаем сам id (это может быть вручную введенное имя)
+
     return id;
   };
 
@@ -41,7 +41,7 @@ const ConstructorStep3: React.FC<Props> = ({ value, onChange }) => {
   return (
     <Form layout="vertical">
       <Title level={4}>Выбор соавторов</Title>
-      {/* Соавторы */}
+      {}
       <Form.Item label="Соавторы">
         <Space direction="vertical" style={{ width: '100%' }}>
           {value.coAuthorIds?.map((authorId, index) => (

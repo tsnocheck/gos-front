@@ -106,7 +106,7 @@ export const ProgramDetailsModal: React.FC<ProgramDetailsModalProps> = ({
           <Tag color={getStatusColor(program.status!)}>{getStatusText(program.status!)}</Tag>
         </Descriptions.Item>
 
-        {/* Эксперт 1 */}
+        {}
         <Descriptions.Item label="ФИО эксперт 1">
           {expert1?.expert ? `${expert1.expert.lastName} ${expert1.expert.firstName}` : '-'}
         </Descriptions.Item>
@@ -129,7 +129,7 @@ export const ProgramDetailsModal: React.FC<ProgramDetailsModalProps> = ({
           {expert1 && <ExpertisePDFDownloadButton id={expert1.id} />}
         </Descriptions.Item>
 
-        {/* Эксперт 2 */}
+        {}
         <Descriptions.Item label="ФИО эксперт 2">
           {expert2?.expert ? `${expert2.expert.lastName} ${expert2.expert.firstName}` : '-'}
         </Descriptions.Item>
@@ -152,7 +152,7 @@ export const ProgramDetailsModal: React.FC<ProgramDetailsModalProps> = ({
           {expert2 && <ExpertisePDFDownloadButton id={expert2.id} />}
         </Descriptions.Item>
 
-        {/* Эксперт 3 */}
+        {}
         <Descriptions.Item label="ФИО эксперт 3">
           {expert3?.expert ? `${expert3.expert.lastName} ${expert3.expert.firstName}` : '-'}
         </Descriptions.Item>

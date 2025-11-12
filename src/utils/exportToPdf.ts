@@ -1,9 +1,7 @@
 import { jsPDF } from 'jspdf';
 import { sanitizeHTML, parseHTMLToPDFStructure, type HTMLNode } from './htmlToPdf';
 
-/**
  * Конвертирует HTML в PDF и скачивает файл
- */
 export function exportHTMLToPDF(
   html: string,
   filename: string = 'document.pdf',
@@ -23,27 +21,19 @@ export function exportHTMLToPDF(
     const pageHeight = doc.internal.pageSize.height;
     const margin = 20;
     const lineHeight = 7;
-
-    // Добавляем заголовок если указан
     if (title) {
       doc.setFontSize(16);
       doc.setFont('helvetica', 'bold');
       doc.text(title, margin, yPosition);
       yPosition += 15;
     }
-
-    // Обрабатываем HTML узлы
     nodes.forEach((node) => {
       yPosition = processNode(doc, node, yPosition, margin, lineHeight, pageHeight);
-
-      // Проверяем, нужна ли новая страница
       if (yPosition > pageHeight - margin) {
         doc.addPage();
         yPosition = 20;
       }
     });
-
-    // Сохраняем PDF
     doc.save(filename);
   } catch (error) {
     console.error('Ошибка при создании PDF:', error);
@@ -51,9 +41,7 @@ export function exportHTMLToPDF(
   }
 }
 
-/**
  * Обрабатывает HTML узел и добавляет его содержимое в PDF
- */
 function processNode(
   doc: jsPDF,
   node: HTMLNode,
@@ -62,7 +50,7 @@ function processNode(
   lineHeight: number,
   pageHeight: number,
 ): number {
-  // Текстовый узел
+
   if (node.type === 'text' && node.data) {
     const text = node.data.trim();
     if (text) {
@@ -79,8 +67,6 @@ function processNode(
     }
     return yPosition;
   }
-
-  // Заголовок
   if (node.type === 'tag' && /^h[1-6]$/.test(node.name || '')) {
     const level = parseInt((node.name || 'h1').substring(1));
     const fontSize = Math.max(12 - level, 8);
@@ -106,8 +92,6 @@ function processNode(
     doc.setFont('helvetica', 'normal');
     return yPosition;
   }
-
-  // Список
   if (node.type === 'tag' && (node.name === 'ul' || node.name === 'ol')) {
     if (node.children) {
       node.children.forEach((child, index) => {
@@ -139,8 +123,6 @@ function processNode(
     }
     return yPosition;
   }
-
-  // Параграф
   if (node.type === 'tag' && node.name === 'p') {
     yPosition += 3;
 
@@ -153,8 +135,6 @@ function processNode(
     yPosition += 5;
     return yPosition;
   }
-
-  // Жирный текст
   if (node.type === 'tag' && (node.name === 'strong' || node.name === 'b')) {
     doc.setFont('helvetica', 'bold');
 
@@ -167,8 +147,6 @@ function processNode(
     doc.setFont('helvetica', 'normal');
     return yPosition;
   }
-
-  // Курсив
   if (node.type === 'tag' && (node.name === 'em' || node.name === 'i')) {
     doc.setFont('helvetica', 'italic');
 
@@ -181,8 +159,6 @@ function processNode(
     doc.setFont('helvetica', 'normal');
     return yPosition;
   }
-
-  // Ссылка
   if (node.type === 'tag' && node.name === 'a') {
     doc.setTextColor(0, 0, 255);
 
@@ -195,8 +171,6 @@ function processNode(
     doc.setTextColor(0, 0, 0);
     return yPosition;
   }
-
-  // Обычный тег с детьми
   if (node.children && node.children.length > 0) {
     node.children.forEach((child) => {
       yPosition = processNode(doc, child, yPosition, margin, lineHeight, pageHeight);
@@ -206,9 +180,7 @@ function processNode(
   return yPosition;
 }
 
-/**
  * Создает PDF из массива HTML строк (для создания многостраничного документа)
- */
 export function exportMultipleHTMLToPDF(
   htmlPages: Array<{ html: string; title?: string }>,
   filename: string = 'document.pdf',
@@ -233,16 +205,12 @@ export function exportMultipleHTMLToPDF(
       const pageHeight = doc.internal.pageSize.height;
       const margin = 20;
       const lineHeight = 7;
-
-      // Добавляем заголовок страницы
       if (page.title) {
         doc.setFontSize(16);
         doc.setFont('helvetica', 'bold');
         doc.text(page.title, margin, yPosition);
         yPosition += 15;
       }
-
-      // Обрабатываем HTML узлы
       nodes.forEach((node) => {
         yPosition = processNode(doc, node, yPosition, margin, lineHeight, pageHeight);
 

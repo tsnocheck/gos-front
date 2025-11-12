@@ -2,8 +2,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { recommendationService } from '../services/recommendationService';
 import type { Recommendation } from '@/types';
 import type { RecommendationQueryParams } from '@/services/recommendationService';
-
-// Query keys
 export const recommendationKeys = {
   all: ['recommendations'] as const,
   lists: () => [...recommendationKeys.all, 'list'] as const,
@@ -16,8 +14,6 @@ export const recommendationKeys = {
     [...recommendationKeys.all, 'program', programId, params || {}] as const,
   detail: (id: string) => [...recommendationKeys.all, 'detail', id] as const,
 };
-
-// Queries
 export const useRecommendations = (params?: RecommendationQueryParams) => {
   return useQuery({
     queryKey: recommendationKeys.list(params),
@@ -72,14 +68,12 @@ export const useRecommendationStats = () => {
     staleTime: 5 * 60 * 1000,
   });
 };
-
-// Mutations
 export const useCreateRecommendation = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: recommendationService.createRecommendation,
     onSuccess: () => {
-      // Remove cached recommendations to ensure useRecommendations is cleared
+
       queryClient.refetchQueries({ queryKey: recommendationKeys.lists() });
       queryClient.refetchQueries({ queryKey: recommendationKeys.all });
       queryClient.invalidateQueries({ queryKey: recommendationKeys.lists() });
@@ -93,7 +87,7 @@ export const useUpdateRecommendation = () => {
     mutationFn: ({ id, data }: { id: string; data: Partial<Recommendation> }) =>
       recommendationService.updateRecommendation(id, data),
     onSuccess: (_, { id }) => {
-      // Remove cached recommendations to ensure useRecommendations is cleared
+
       queryClient.removeQueries({ queryKey: recommendationKeys.lists() });
       queryClient.removeQueries({ queryKey: recommendationKeys.all });
 

@@ -29,7 +29,6 @@ import type { CreateRecommendationPayload } from '@/services/recommendationServi
 const { Title } = Typography;
 const { Option } = Select;
 
-// Build options from RecommendationField enum and translations
 const recommendationFieldOptions = Object.values(RecommendationField) as RecommendationField[];
 
 const statusLabels: Record<RecommendationStatus, { color: string; label: string }> = {
@@ -86,7 +85,6 @@ const AdminRecommendationsPage: React.FC = () => {
     try {
       const values = await form.validateFields();
       if (editing) {
-        // Update: send only allowed fields for update
         const updatePayload: Record<string, any> = {};
         if (values.title !== undefined) updatePayload.title = values.title;
         if (values.content !== undefined) updatePayload.content = values.content;
@@ -96,7 +94,6 @@ const AdminRecommendationsPage: React.FC = () => {
         await updateMutation.mutateAsync({ id: editing.id, data: updatePayload });
         message.success('Рекомендация обновлена');
       } else {
-        // Create: backend accepts title, content, optional type and assignedToId
         const createPayload: CreateRecommendationPayload = {
           title: values.title,
           content: values.content,
@@ -121,7 +118,6 @@ const AdminRecommendationsPage: React.FC = () => {
       key: 'type',
       sorter: true,
       render: (val: Recommendation['type']) => {
-        // val is a RecommendationField value (string enum)
         return recommendationFieldTranslations[val as RecommendationField] ?? String(val);
       },
     },
@@ -240,7 +236,6 @@ const AdminRecommendationsPage: React.FC = () => {
               ))}
             </Select>
           </Form.Item>
-          {/* Status is editable only when editing an existing recommendation */}
           {editing && (
             <Form.Item name="status" label="Статус рекомендации" rules={[{ required: true }]}>
               <Select>

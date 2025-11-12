@@ -16,8 +16,6 @@ const ConstructorStep4: React.FC<Props> = ({ value, onChange }) => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const abbreviations = value.abbreviations || [];
-
-  // Сортируем аббревиатуры для отображения в таблице
   const sortedAbbreviations = [...abbreviations].sort((a, b) =>
     a.abbreviation.localeCompare(b.abbreviation, 'ru'),
   );
@@ -28,9 +26,9 @@ const ConstructorStep4: React.FC<Props> = ({ value, onChange }) => {
   };
 
   const handleEdit = (index: number) => {
-    // Получаем элемент из отсортированного массива
+
     const itemToEdit = sortedAbbreviations[index];
-    // Находим индекс этого элемента в исходном массиве
+
     const originalIndex = abbreviations.findIndex(
       (item) =>
         item.abbreviation === itemToEdit.abbreviation && item.fullname === itemToEdit.fullname,
@@ -48,9 +46,9 @@ const ConstructorStep4: React.FC<Props> = ({ value, onChange }) => {
   };
 
   const handleDelete = (index: number) => {
-    // Получаем элемент из отсортированного массива
+
     const itemToDelete = sortedAbbreviations[index];
-    // Находим индекс этого элемента в исходном массиве и удаляем
+
     onChange({
       abbreviations: abbreviations.filter(
         (item) =>

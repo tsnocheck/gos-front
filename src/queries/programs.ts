@@ -3,8 +3,6 @@ import { programService } from '../services/programService';
 import type { ProgramQueryParams, UpdateProgramData } from '../services/programService';
 import { adminKeys } from './admin';
 import { ExpertiseStatus, ProgramStatus } from '@/types';
-
-// Query keys
 export const programKeys = {
   all: ['programs'] as const,
   lists: () => [...programKeys.all, 'list'] as const,
@@ -16,8 +14,6 @@ export const programKeys = {
   versions: (id: string) => [...programKeys.detail(id), 'versions'] as const,
   stats: () => [...programKeys.all, 'stats'] as const,
 };
-
-// Queries
 export const usePrograms = (params?: ProgramQueryParams) => {
   return useQuery({
     queryKey: programKeys.list(params || {}),
@@ -88,8 +84,6 @@ export const useAvailableAuthors = () => {
     retry: false,
   });
 };
-
-// Mutations
 export const useCreateProgram = (onSuccessCallback?: () => void) => {
   const queryClient = useQueryClient();
 

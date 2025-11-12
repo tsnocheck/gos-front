@@ -43,8 +43,6 @@ export const PDFStyles = StyleSheet.create({
 
 export const PDFTableStyles = StyleSheet.create({
   self: {
-    // removed outer borders so each row/cell draws its own borders — this prevents a visible gap
-    // when the table is split across pages
     marginTop: 8,
     marginBottom: 8,
     display: 'flex',

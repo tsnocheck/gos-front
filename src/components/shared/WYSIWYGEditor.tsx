@@ -6,8 +6,6 @@ import { TableOutlined } from '@ant-design/icons';
 import { registerTableBlots } from './tableBlot';
 
 const { Text } = Typography;
-
-// Регистрируем поддержку таблиц один раз
 let tableRegistered = false;
 if (!tableRegistered) {
   registerTableBlots();
@@ -41,24 +39,16 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
       onChange(content);
     }
   };
-
-  // Функция для вставки таблицы
   const insertTable = () => {
     const quill = quillRef.current?.getEditor();
     if (quill) {
       const range = quill.getSelection(true);
-
-      // Генерируем HTML для таблицы без inline стилей (будут применяться через CSS)
       let tableHTML = '<table>';
-
-      // Добавляем заголовок
       tableHTML += '<thead><tr>';
       for (let col = 0; col < tableCols; col++) {
         tableHTML += `<th>Заголовок ${col + 1}</th>`;
       }
       tableHTML += '</tr></thead>';
-
-      // Добавляем строки
       tableHTML += '<tbody>';
       for (let row = 0; row < tableRows; row++) {
         tableHTML += '<tr>';
@@ -68,8 +58,6 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
         tableHTML += '</tr>';
       }
       tableHTML += '</tbody></table><p><br></p>';
-
-      // Вставляем таблицу как HTML
       quill.clipboard.dangerouslyPasteHTML(range.index, tableHTML);
       quill.setSelection(range.index + 1, 0);
 
@@ -265,8 +253,6 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
           border: 1px solid #d9d9d9;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
-
-        /* Стили для таблиц - ключевая часть! */
         .wysiwyg-editor-wrapper .ql-editor table {
           border-collapse: collapse;
           width: 100%;

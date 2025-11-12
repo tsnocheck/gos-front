@@ -264,7 +264,6 @@ export const AdminUsersPage: React.FC = () => {
         />
       </Card>
 
-      {/* Модальное окно создания/редактирования */}
       <Modal
         title={editingUser ? 'Редактирование пользователя' : 'Создание пользователя'}
         open={isCreateModalOpen}

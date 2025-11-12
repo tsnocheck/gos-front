@@ -12,14 +12,12 @@ export const PDFTable: Record<string, React.FC<CellProps | RowProps>> = {
     </View>
   ),
   Tr: (props: RowProps) => (
-    // prevent breaking a single row across pages by default
-    // if isHeader is true, mark the row as fixed so it can be repeated on each page
     <View style={[PDFTableStyles.row, props.style || {}]} wrap={props.wrap ?? false}>
       {props.children}
     </View>
   ),
   Th: (props: CellProps) => (
-    // prevent splitting header cell content across pages by default
+
     <View
       style={[PDFTableStyles.col, PDFTableStyles.headerCell, props.style || {}]}
       wrap={props.wrap ?? false}
@@ -28,7 +26,7 @@ export const PDFTable: Record<string, React.FC<CellProps | RowProps>> = {
     </View>
   ),
   Td: (props: CellProps) => (
-    // prevent splitting cell content across pages by default
+
     <View style={[PDFTableStyles.col, props.style || {}]} wrap={props.wrap ?? false}>
       <Text>{props.children}</Text>
     </View>

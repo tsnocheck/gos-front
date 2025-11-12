@@ -1,5 +1,3 @@
-// Общие типы для API-ответов
-
 export interface ApiResponse<T> {
   data: T;
   message?: string;

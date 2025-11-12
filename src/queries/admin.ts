@@ -1,4 +1,4 @@
-// Query keys
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { adminService, type GetUsersParams } from '../services/adminService.ts';
 import type { UserRole, UserStatus } from '@/types';
@@ -92,8 +92,6 @@ export const useDeleteUser = () => {
     },
   });
 };
-
-// Получение пользователей на модерации
 export const usePendingUsers = () => {
   return useQuery({
     queryKey: adminKeys.pending(),
@@ -103,8 +101,6 @@ export const usePendingUsers = () => {
     staleTime: 2 * 60 * 1000,
   });
 };
-
-// Получение пользователей по роли
 export const useUsersByRole = (role: UserRole) => {
   return useQuery({
     queryKey: adminKeys.byRole(role),
@@ -114,8 +110,6 @@ export const useUsersByRole = (role: UserRole) => {
     staleTime: 2 * 60 * 1000,
   });
 };
-
-// Получение пользователей по статусу
 export const useUsersByStatus = (status: UserStatus) => {
   return useQuery({
     queryKey: adminKeys.byStatus(status),
@@ -125,8 +119,6 @@ export const useUsersByStatus = (status: UserStatus) => {
     staleTime: 2 * 60 * 1000,
   });
 };
-
-// Подтверждение пользователя
 export const useApproveUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -136,8 +128,6 @@ export const useApproveUser = () => {
     },
   });
 };
-
-// Смена ролей пользователя
 export const useChangeUserRole = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -147,15 +137,11 @@ export const useChangeUserRole = () => {
     },
   });
 };
-
-// Отправка приглашения пользователю
 export const useSendInvitation = () => {
   return useMutation({
     mutationFn: adminService.sendInvitation,
   });
 };
-
-// Скрытие пользователя
 export const useHideUser = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -165,8 +151,6 @@ export const useHideUser = () => {
     },
   });
 };
-
-// Массовое подтверждение пользователей
 export const useBulkApproveUsers = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -176,8 +160,6 @@ export const useBulkApproveUsers = () => {
     },
   });
 };
-
-// Массовая смена статуса пользователей
 export const useBulkChangeStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -188,8 +170,6 @@ export const useBulkChangeStatus = () => {
     },
   });
 };
-
-// Массовая смена ролей пользователей
 export const useBulkChangeRole = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -200,8 +180,6 @@ export const useBulkChangeRole = () => {
     },
   });
 };
-
-// Получение статистики пользователей
 export const useUserStats = () => {
   return useQuery({
     queryKey: adminKeys.stats(),

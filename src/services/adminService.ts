@@ -52,7 +52,7 @@ export interface GetExpertsTableParams {
 }
 
 export const adminService = {
-  // Управление пользователями
+
   async getUsers(params?: GetUsersParams) {
     return apiClient.get<User[]>(`/admin/users`, { params });
   },
@@ -117,8 +117,6 @@ export const adminService = {
       totalPages: number;
     }>('/admin/experts/table', { params });
   },
-
-  // Массовые операции
   async bulkApproveUsers(userIds: string[]): Promise<void> {
     await apiClient.post('/admin/users/bulk-approve', { userIds });
   },
@@ -130,8 +128,6 @@ export const adminService = {
   async bulkChangeRole(userIds: string[], roles: UserRole[]): Promise<void> {
     await apiClient.patch('/admin/users/bulk-role', { userIds, roles });
   },
-
-  // Статистика
   async getUserStats(): Promise<{
     total: number;
     active: number;

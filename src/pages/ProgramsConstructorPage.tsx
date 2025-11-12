@@ -32,7 +32,6 @@ const ProgramsConstructorPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Получаем текущий шаг из URL или устанавливаем 0 по умолчанию
   const initialStep = useMemo(() => {
     const stepParam = searchParams.get('step');
     const stepNumber = stepParam ? parseInt(stepParam, 10) : 0;

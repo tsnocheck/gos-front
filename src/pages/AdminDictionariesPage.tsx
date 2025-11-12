@@ -162,7 +162,6 @@ export const AdminDictionariesPage: React.FC = () => {
     }
   };
 
-  // Колонки для таблицы справочников
   const mainColumns = [
     {
       title: 'Справочник',
@@ -181,7 +180,6 @@ export const AdminDictionariesPage: React.FC = () => {
     },
   ];
 
-  // Колонки для модалки
   const getColumns = (_: DictionaryType, onEdit: (record: Dictionary) => void) => {
     const isInstitutions = openType === DictionaryType.INSTITUTIONS;
 

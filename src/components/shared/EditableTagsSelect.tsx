@@ -30,21 +30,17 @@ const EditableTagsSelect: React.FC<EditableTagsSelectProps> = ({
   const [inputValue, setInputValue] = useState('');
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editingValue, setEditingValue] = useState('');
-
-  // Добавляем стили для скрытия стрелочек у input type="number"
   useEffect(() => {
     if (typeof document !== 'undefined' && !document.getElementById('number-input-styles')) {
       const style = document.createElement('style');
       style.id = 'number-input-styles';
       style.textContent = `
-        /* Chrome, Safari, Edge, Opera */
+        
         input[type=number]::-webkit-outer-spin-button,
         input[type=number]::-webkit-inner-spin-button {
           -webkit-appearance: none;
           margin: 0;
         }
-
-        /* Firefox */
         input[type=number] {
           -moz-appearance: textfield;
         }
@@ -99,7 +95,7 @@ const EditableTagsSelect: React.FC<EditableTagsSelectProps> = ({
     if (e.key === 'Enter' && inputValue) {
       const currentValues = value || [];
       if (!currentValues.includes(inputValue)) {
-        // Если нажали Enter и есть введенный текст, который не входит в существующие теги
+
         const existingOption = availableOptions.find(
           (opt) =>
             opt.label.toLowerCase() === inputValue.toLowerCase() ||
@@ -107,7 +103,7 @@ const EditableTagsSelect: React.FC<EditableTagsSelectProps> = ({
         );
 
         if (!existingOption) {
-          // Добавляем кастомный тег
+
           onChange([...currentValues, inputValue]);
           setInputVisible(false);
           setInputValue('');

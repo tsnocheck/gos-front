@@ -145,7 +145,7 @@ export const ExpertiseFormModal: React.FC<ExpertiseFormModalProps> = ({
 
   useEffect(() => {
     if (expertise && open) {
-      // Преобразуем критерии из expertise в формат для таблицы
+
       const data: CriterionData[] = [];
 
       criteriaConfig.forEach((section) => {
@@ -183,8 +183,6 @@ export const ExpertiseFormModal: React.FC<ExpertiseFormModalProps> = ({
   const handleSubmit = async () => {
     try {
       const formValues = await form.validateFields();
-
-      // Преобразуем данные критериев обратно в формат ExpertiseCriterions
       const criterions: Partial<ExpertiseCriterions> = {};
 
       criteriaData.forEach((item) => {
@@ -206,8 +204,6 @@ export const ExpertiseFormModal: React.FC<ExpertiseFormModalProps> = ({
       console.error('Validation failed:', error);
     }
   };
-
-  // Создаем расширенные данные с полями для замечаний и рекомендаций
   const expandedData: Array<
     | CriterionData
     | { key: string; isComment?: boolean; isRecommendation?: boolean; parentKey?: string }
@@ -229,8 +225,6 @@ export const ExpertiseFormModal: React.FC<ExpertiseFormModalProps> = ({
       const criterionData = criteriaData.find((c) => c.key === item.key);
       if (criterionData) {
         expandedData.push(criterionData);
-
-        // Если ответ "нет", добавляем поля для замечаний и рекомендаций
         if (!criterionData.value) {
           expandedData.push({
             key: `${item.key}-comment`,
@@ -295,8 +289,6 @@ export const ExpertiseFormModal: React.FC<ExpertiseFormModalProps> = ({
             </div>
           );
         }
-
-        // Если это заголовок секции
         if (!record.number && text) {
           return <strong style={{ fontSize: '16px' }}>{text}</strong>;
         }
@@ -311,7 +303,7 @@ export const ExpertiseFormModal: React.FC<ExpertiseFormModalProps> = ({
       align: 'center' as const,
       render: (_: unknown, record: any) => {
         if (record.isComment || record.isRecommendation) return null;
-        if (!record.number) return null; // Заголовок секции
+        if (!record.number) return null;
 
         return (
           <Checkbox
@@ -328,7 +320,7 @@ export const ExpertiseFormModal: React.FC<ExpertiseFormModalProps> = ({
       align: 'center' as const,
       render: (_: unknown, record: any) => {
         if (record.isComment || record.isRecommendation) return null;
-        if (!record.number) return null; // Заголовок секции
+        if (!record.number) return null;
 
         return (
           <Checkbox

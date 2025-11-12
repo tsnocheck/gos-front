@@ -19,7 +19,7 @@ export const ViewProgramModal: React.FC<ViewProgramModalProps> = ({
   onClose,
   width = '90vw',
 }) => {
-  // Загружаем программу только если передан programId и нет programProp
+
   const shouldFetchProgram = !!programId && !programProp;
   const { data: fetchedProgram } = useProgram(shouldFetchProgram ? programId : '');
 

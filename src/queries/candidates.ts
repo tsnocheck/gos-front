@@ -1,8 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { candidateService, type UpdateCandidateData } from '../services/candidateService';
 import { adminKeys } from '@/queries/admin.ts';
-
-// Query keys
 export const candidateKeys = {
   all: ['candidates'] as const,
   lists: () => [...candidateKeys.all, 'list'] as const,
@@ -10,8 +8,6 @@ export const candidateKeys = {
   stats: () => [...candidateKeys.all, 'stats'] as const,
   detail: (id: string) => [...candidateKeys.all, 'detail', id] as const,
 };
-
-// Queries
 export const useCandidates = () => {
   return useQuery({
     queryKey: candidateKeys.list(),
@@ -36,8 +32,6 @@ export const useCandidateStats = () => {
     staleTime: 5 * 60 * 1000,
   });
 };
-
-// Mutations
 export const useCreateCandidate = () => {
   const queryClient = useQueryClient();
   return useMutation({
