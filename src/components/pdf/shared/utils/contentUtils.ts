@@ -1,6 +1,3 @@
- * Проверяет, является ли HTML контент пустым
- * @param html - HTML строка для проверки
- * @returns true, если контент пустой или содержит только пробелы/пустые теги
 export function isEmptyHTMLContent(html: string | undefined | null): boolean {
   if (!html) return true;
 
@@ -11,9 +8,6 @@ export function isEmptyHTMLContent(html: string | undefined | null): boolean {
   return textOnly === '';
 }
 
- * Проверяет, есть ли хоть какое-то заполненное поле в объекте
- * @param fields - массив значений для проверки
- * @returns true, если хотя бы одно поле не пустое
 export function hasAnyContent(fields: Array<string | undefined | null>): boolean {
   return fields.some((field) => !isEmptyHTMLContent(field));
 }

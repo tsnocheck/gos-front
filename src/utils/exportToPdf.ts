@@ -1,7 +1,6 @@
 import { jsPDF } from 'jspdf';
 import { sanitizeHTML, parseHTMLToPDFStructure, type HTMLNode } from './htmlToPdf';
 
- * Конвертирует HTML в PDF и скачивает файл
 export function exportHTMLToPDF(
   html: string,
   filename: string = 'document.pdf',
@@ -41,7 +40,6 @@ export function exportHTMLToPDF(
   }
 }
 
- * Обрабатывает HTML узел и добавляет его содержимое в PDF
 function processNode(
   doc: jsPDF,
   node: HTMLNode,
@@ -180,7 +178,6 @@ function processNode(
   return yPosition;
 }
 
- * Создает PDF из массива HTML строк (для создания многостраничного документа)
 export function exportMultipleHTMLToPDF(
   htmlPages: Array<{ html: string; title?: string }>,
   filename: string = 'document.pdf',
