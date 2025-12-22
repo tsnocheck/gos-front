@@ -47,7 +47,6 @@ declare module 'react-quill-new' {
   }
 
   export default ReactQuill;
-  export { Quill };
 }
 
 declare module 'quill-resize-image' {

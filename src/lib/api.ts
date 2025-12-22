@@ -22,10 +22,8 @@ class ApiClient {
   }
 
   private setupInterceptors() {
-
     this.client.interceptors.request.use(
       (config) => {
-
         const token = localStorage.getItem('accessToken');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
@@ -53,7 +51,6 @@ class ApiClient {
           originalRequest._retry = true;
 
           try {
-
             await this.refreshToken();
             const token = localStorage.getItem('accessToken');
             if (token) {
@@ -62,7 +59,6 @@ class ApiClient {
 
             return this.client(originalRequest);
           } catch (refreshError) {
-
             this.logout();
             navigate('/login');
             return Promise.reject(refreshError);
