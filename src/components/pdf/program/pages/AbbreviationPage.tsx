@@ -4,12 +4,10 @@ import { PDFPage } from '../../shared/ui/PDFPage';
 import { calcWidth, PDFTable } from '../../shared';
 
 export const AbbreviationPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
-  // Не отображаем страницу, если нет сокращений
+
   if (!program.abbreviations || program.abbreviations.length === 0) {
     return null;
   }
-
-  // Сортируем аббревиатуры в алфавитном порядке
   const sortedAbbreviations = [...program.abbreviations].sort((a, b) =>
     a.abbreviation.localeCompare(b.abbreviation, 'ru'),
   );

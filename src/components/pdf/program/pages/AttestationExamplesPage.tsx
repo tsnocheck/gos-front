@@ -8,16 +8,12 @@ import { isEmptyHTMLContent } from '../../shared/utils';
 export const AttestationExamplesPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
   const nonIntermediate =
     program.attestations?.filter((a) => a.moduleCode === 'open' || a.moduleCode === 'close') ?? [];
-
-  // Проверяем, есть ли у аттестаций какой-либо контент (примеры или критерии)
   const hasContent = nonIntermediate.some(
     (a) =>
       !isEmptyHTMLContent(a.examples) ||
       !isEmptyHTMLContent(a.criteria) ||
       !isEmptyHTMLContent(a.requirements),
   );
-
-  // Не отображаем страницу, если нет аттестаций или контента
   if (nonIntermediate.length === 0 || !hasContent) {
     return null;
   }

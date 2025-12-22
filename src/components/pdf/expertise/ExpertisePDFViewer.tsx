@@ -30,8 +30,6 @@ const pages = [
   ExpertiseRecommendationsPage,
   ExpertiseConclusionPage,
 ];
-
-// Генератор PDF-документа экспертизы
 export const ExpertisePDF: React.FC<{
   expertise: Expertise;
 }> = (props) => {
@@ -57,8 +55,6 @@ export const ExpertisePDFViewer: React.FC<{
     </div>
   );
 };
-
-// Компонент для скачивания PDF экспертизы
 export const ExpertisePDFDownloadButton: React.FC<{
   id: Expertise['id'];
 }> = ({ id }) => {

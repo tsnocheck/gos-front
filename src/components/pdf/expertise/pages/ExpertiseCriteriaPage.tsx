@@ -128,7 +128,7 @@ const renderSectionTable = (
   showHeader: boolean = false,
 ) => (
   <View key={section.section}>
-    {/* Заголовок таблицы - только для первой секции */}
+    {}
     {showHeader && (
       <PDFTable.Tr isHeader>
         <PDFTable.Th style={{ width: '8%' }}>№ п/п</PDFTable.Th>
@@ -138,7 +138,7 @@ const renderSectionTable = (
       </PDFTable.Tr>
     )}
 
-    {/* Заголовок секции */}
+    {}
     <PDFTable.Tr>
       <PDFTable.Td
         style={{
@@ -153,7 +153,7 @@ const renderSectionTable = (
       </PDFTable.Td>
     </PDFTable.Tr>
 
-    {/* Критерии секции */}
+    {}
     {section.criteria.map((criterion, criterionIndex) => {
       const criterionValue = expertise[criterion.key] as Criterion | undefined;
       const hasCommentOrRecommendation =
@@ -178,7 +178,7 @@ const renderSectionTable = (
             </PDFTable.Td>
           </PDFTable.Tr>
 
-          {/* Отображаем замечания и рекомендации только если value = false */}
+          {}
           {hasCommentOrRecommendation && (
             <>
               {criterionValue.comment && (
@@ -208,12 +208,12 @@ const renderSectionTable = (
 );
 
 export const ExpertiseCriteriaPage: FC<ExpertisePDFProps> = ({ expertise, pageNumber = 1 }) => {
-  const firstPageSections = criteriaData.slice(0, 2); // Разделы 1 и 2
-  const secondPageSections = criteriaData.slice(2); // Разделы 3 и 4
+  const firstPageSections = criteriaData.slice(0, 2);
+  const secondPageSections = criteriaData.slice(2);
 
   return (
     <>
-      {/* Первая страница - разделы 1 и 2 с единой таблицей */}
+      {}
       <PDFPage title="Критерии экспертизы программы" pageNumber={pageNumber}>
         <PDFTable.Self style={{ marginTop: 10 }}>
           {firstPageSections.map((section, index) =>
@@ -222,7 +222,7 @@ export const ExpertiseCriteriaPage: FC<ExpertisePDFProps> = ({ expertise, pageNu
         </PDFTable.Self>
       </PDFPage>
 
-      {/* Вторая страница - разделы 3 и 4 с единой таблицей */}
+      {}
       <PDFPage title="Критерии экспертизы программы (продолжение)" pageNumber={pageNumber + 1}>
         <PDFTable.Self style={{ marginTop: 10 }}>
           {secondPageSections.map((section) => renderSectionTable(section, expertise, false))}

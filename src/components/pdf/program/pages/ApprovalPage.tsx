@@ -6,25 +6,21 @@ import { PDFPage } from '../../shared/ui/PDFPage';
 import { getExpertsFromExpertises } from '@/utils/getExpertsFromExpertises.ts';
 
 export const ApprovalPage: FC<ProgramPDFProps> = ({ program, authors, pageNumber }) => {
-  // Получаем вид программы или используем значение по умолчанию
+
   const programType =
     program.type || 'Дополнительная профессиональная программа повышения квалификации';
-
-  // Формируем список всех авторов (включая вручную введенных соавторов)
   const allAuthors = [
     ...authors.map((author) => ({
       name: `${author.lastName ?? ''} ${author.firstName ?? ''} ${author.middleName ?? ''}`.trim(),
       isUser: true,
     })),
   ];
-
-  // Добавляем вручную введенных соавторов (которые не являются объектами User)
   if (program.coAuthorIds) {
     program.coAuthorIds.forEach((id) => {
-      // Проверяем, не является ли это уже существующим автором
+
       const isExistingAuthor = authors.some((author) => author.id === id);
       if (!isExistingAuthor && id) {
-        // Это вручную введенное имя
+
         allAuthors.push({
           name: id,
           isUser: false,

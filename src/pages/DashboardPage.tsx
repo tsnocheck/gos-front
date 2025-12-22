@@ -24,7 +24,6 @@ export const DashboardPage: React.FC = () => {
   const { data: programStats } = useProgramStats();
   const { data: myPrograms } = useMyPrograms({ limit: 5 });
 
-  // Если пользователь не загружен, используем заглушку для UI
   const displayUser: User = user || {
     id: '1',
     email: 'demo@example.com',
@@ -37,7 +36,6 @@ export const DashboardPage: React.FC = () => {
     lastName: '',
   };
 
-  // Заглушка для программ, если данные не загружены
   const mockPrograms: { data: Program[]; total: number } = myPrograms || {
     data: [],
     total: 0,
@@ -107,7 +105,6 @@ export const DashboardPage: React.FC = () => {
           Система создания дополнительных профессиональных программ повышения квалификации
         </Text>
 
-        {/* Краткая инструкция для новых пользователей */}
         {displayUser && !programStats && (
           <div
             style={{
@@ -132,7 +129,6 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       <Row style={{ gap: 16 }}>
-        {/* Быстрые действия */}
         <Col style={{ flex: 1 }}>
           <Card title="Быстрые действия" style={{ marginBottom: 16 }}>
             <Row gutter={[16, 16]}>
@@ -142,7 +138,6 @@ export const DashboardPage: React.FC = () => {
             </Row>
           </Card>
 
-          {/* Мои последние программы */}
           {displayUser?.roles?.includes(UserRole.AUTHOR) && (
             <Card title="Мои программы" extra={<Link to="/programs">Все программы</Link>}>
               {displayPrograms?.data && displayPrograms.data.length > 0 ? (
@@ -197,7 +192,6 @@ export const DashboardPage: React.FC = () => {
           )}
         </Col>
 
-        {/* Боковая панель */}
         <Col style={{ flex: 1 }}>
           <Card title="Система ролей" style={{ marginBottom: 16 }}>
             <div>

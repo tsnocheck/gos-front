@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /// <reference types="vite/client" />
 
 declare module 'react-quill-new' {
@@ -84,3 +85,6 @@ declare module 'quill-table-better' {
 
   export default QuillTableBetter;
 }
+=======
+
+>>>>>>> a77013be014b60d59f4fa7441caa7a84daced69e

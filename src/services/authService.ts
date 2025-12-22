@@ -61,13 +61,9 @@ export const authService = {
   async forgotPassword(data: { email: string }) {
     return apiClient.post('/auth/forgot-password', data);
   },
-
-  // Проверка аутентификации
   isAuthenticated(): boolean {
     return !!localStorage.getItem('accessToken');
   },
-
-  // Получение токена
   getAccessToken(): string | null {
     return localStorage.getItem('accessToken');
   },

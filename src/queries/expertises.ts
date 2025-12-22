@@ -11,8 +11,6 @@ import type {
 } from '@/types';
 import type { ExpertiseQueryParams } from '@/services/expertiseService';
 import { programKeys } from './programs';
-
-// Query keys
 export const expertiseKeys = {
   all: ['expertises'] as const,
   lists: () => [...expertiseKeys.all, 'list'] as const,
@@ -22,8 +20,6 @@ export const expertiseKeys = {
   detail: (id: string) => [...expertiseKeys.details(), id] as const,
   stats: () => [...expertiseKeys.all, 'stats'] as const,
 };
-
-// Queries
 export const useExpertises = (params?: ExpertiseQueryParams) => {
   return useQuery({
     queryKey: expertiseKeys.list(params),
@@ -64,8 +60,6 @@ export const useExpertiseStatistics = () => {
     staleTime: 5 * 60 * 1000,
   });
 };
-
-// Mutations
 export const useCreateExpertise = () => {
   const queryClient = useQueryClient();
   return useMutation({

@@ -11,12 +11,8 @@ const TOTAL_COLS = 13;
 export const ThematicPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
   const modulesBySection = (section: ProgramSection) =>
     program.modules?.filter((m) => m.section === section) || [];
-
-  // Получаем вид программы или используем значение по умолчанию
   const programType =
     program.type || 'дополнительной профессиональной программы повышения квалификации';
-
-  // Преобразуем в нижний регистр для вставки в текст
   const programTypeInText = programType.toLowerCase();
 
   const ModuleThematicTable: FC<{ topics: Topic[] }> = ({ topics }) => {
@@ -355,7 +351,7 @@ export const ThematicPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
                     <DistantContentTable topics={m.topics || []} />
                   </Fragment>
                 )}
-                {/* Промежуточные аттестации для модуля */}
+                {}
                 <IntermediateAttestations moduleCode={`${section} ${m.code}`} />
               </Fragment>
             ))}

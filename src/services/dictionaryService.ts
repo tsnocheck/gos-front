@@ -17,7 +17,7 @@ export interface UpdateDictionaryData {
 }
 
 export const dictionaryService = {
-  // Получение справочников
+
   async getDictionaries(): Promise<Dictionary[]> {
     return apiClient.get<Dictionary[]>('/dictionaries/all');
   },
@@ -41,8 +41,6 @@ export const dictionaryService = {
   async getDictionaryTypes(): Promise<DictionaryType[]> {
     return apiClient.get<DictionaryType[]>('/dictionaries/types');
   },
-
-  // CRUD операции
   async createDictionary(data: CreateDictionaryData): Promise<Dictionary> {
     return apiClient.post<Dictionary>('/dictionaries', data);
   },
@@ -54,8 +52,6 @@ export const dictionaryService = {
   async deleteDictionary(id: string): Promise<void> {
     await apiClient.delete(`/dictionaries/${id}`);
   },
-
-  // Административные функции (только для админов)
   async initializeSystemDictionaries(): Promise<void> {
     await apiClient.post('/dictionaries/admin/initialize-system');
   },
@@ -80,16 +76,12 @@ export const dictionaryService = {
       },
     });
   },
-
-  // Поиск
   async searchDictionaries(query: string, type?: DictionaryType): Promise<Dictionary[]> {
     const params = new URLSearchParams({ query });
     if (type) params.append('type', type);
 
     return apiClient.get<Dictionary[]>(`/dictionaries/search?${params}`);
   },
-
-  // Получение популярных значений
   async getPopularDictionaries(type: DictionaryType, limit = 10): Promise<Dictionary[]> {
     return apiClient.get<Dictionary[]>(`/dictionaries/popular/${type}?limit=${limit}`);
   },

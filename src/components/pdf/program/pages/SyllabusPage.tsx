@@ -105,7 +105,7 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
         <Text style={PDFStyles.italic}>«{program.title ?? 'Название программы'}»</Text>
       </Text>
       <PDFTable.Self>
-        {/* Header row 1 - main headers */}
+        {}
         <PDFTable.Tr isHeader>
           <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}>Шифр модуля</PDFTable.Th>
           <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}>
@@ -115,7 +115,7 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
           <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}>Формы контроля</PDFTable.Th>
         </PDFTable.Tr>
 
-        {/* Header row 2 - subheaders for "Формы организации, часы" */}
+        {}
         <PDFTable.Tr isHeader>
           <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}></PDFTable.Th>
           <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}></PDFTable.Th>
@@ -125,7 +125,7 @@ export const SyllabusPage: FC<ProgramPDFProps> = ({ program, pageNumber }) => {
           <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}></PDFTable.Th>
         </PDFTable.Tr>
 
-        {/* Header row 3 - detailed subheaders */}
+        {}
         <PDFTable.Tr isHeader>
           <PDFTable.Th style={calcWidth(1 / TOTAL_COLS)}></PDFTable.Th>
           <PDFTable.Th style={calcWidth(2 / TOTAL_COLS)}></PDFTable.Th>

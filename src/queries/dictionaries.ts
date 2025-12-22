@@ -2,15 +2,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { dictionaryService } from '../services/dictionaryService';
 import type { UpdateDictionaryData } from '../services/dictionaryService';
 import { DictionaryType } from '../types/dictionary';
-
-// Query keys
 export const dictionaryKeys = {
   all: ['dictionaries'] as const,
   types: () => [...dictionaryKeys.all, 'types'] as const,
   list: (type: DictionaryType | string) => [...dictionaryKeys.all, 'list', type] as const,
 };
-
-// Queries
 export const useDictionaries = () => {
   return useQuery({
     queryKey: dictionaryKeys.all,
@@ -46,8 +42,6 @@ export const useActionsByFunctions = (functionsIds: string[], enabled = true) =>
     enabled: enabled && functionsIds?.length > 0,
   });
 };
-
-// Mutations
 export const useCreateDictionary = () => {
   const queryClient = useQueryClient();
   return useMutation({

@@ -3,7 +3,7 @@ import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http:
 
 class ApiClient {
   private client: AxiosInstance;
@@ -15,17 +15,17 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
-      withCredentials: true, // Для работы с HTTP-only cookies
+      withCredentials: true,
     });
 
     this.setupInterceptors();
   }
 
   private setupInterceptors() {
-    // Request interceptor
+
     this.client.interceptors.request.use(
       (config) => {
-        // Добавляем токен из localStorage если есть
+
         const token = localStorage.getItem('accessToken');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
@@ -36,8 +36,6 @@ class ApiClient {
         return Promise.reject(error);
       },
     );
-
-    // Response interceptor
     this.client.interceptors.response.use(
       (response: AxiosResponse) => {
         return response;
@@ -55,10 +53,8 @@ class ApiClient {
           originalRequest._retry = true;
 
           try {
-            // Попытка обновить токен
-            await this.refreshToken();
 
-            // Повторяем оригинальный запрос
+            await this.refreshToken();
             const token = localStorage.getItem('accessToken');
             if (token) {
               originalRequest.headers.Authorization = `Bearer ${token}`;
@@ -66,7 +62,7 @@ class ApiClient {
 
             return this.client(originalRequest);
           } catch (refreshError) {
-            // Если обновление токена не удалось, перенаправляем на логин
+
             this.logout();
             navigate('/login');
             return Promise.reject(refreshError);
@@ -88,8 +84,6 @@ class ApiClient {
     localStorage.removeItem('accessToken');
     Cookies.remove('session_key');
   }
-
-  // HTTP Methods
   async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
     const response = await this.client.get<T>(url, config);
     return response.data;
@@ -114,8 +108,6 @@ class ApiClient {
     const response = await this.client.delete<T>(url, config);
     return response.data;
   }
-
-  // File upload
   async uploadFile<T>(url: string, file: File, config?: AxiosRequestConfig): Promise<T> {
     const formData = new FormData();
     formData.append('file', file);
@@ -130,8 +122,6 @@ class ApiClient {
 
     return response.data;
   }
-
-  // Download file
   async downloadFile(url: string, filename?: string): Promise<void> {
     const response = await this.client.get(url, {
       responseType: 'blob',
@@ -148,7 +138,5 @@ class ApiClient {
     window.URL.revokeObjectURL(downloadUrl);
   }
 }
-
-// Create and export singleton instance
 export const apiClient = new ApiClient();
 export default apiClient;

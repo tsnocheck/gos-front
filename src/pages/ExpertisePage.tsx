@@ -122,7 +122,6 @@ export const ExpertisePage: React.FC = () => {
     const order = Array.isArray(sorter) ? sorter[0]?.order : sorter?.order;
     const field = (Array.isArray(sorter) ? sorter[0]?.field : sorter?.field) as string | undefined;
 
-    // keep pagination usage to avoid unused warning
     const _current = pagination?.current;
     const _pageSize = pagination?.pageSize;
     void _current;
@@ -179,14 +178,12 @@ export const ExpertisePage: React.FC = () => {
         />
       </Card>
 
-      {/* Модальное окно предпросмотра PDF */}
       <ViewProgramModal
         open={isPreviewOpen && !!selectedExpertise}
         programId={selectedExpertise?.program?.id ?? null}
         onClose={() => setIsPreviewOpen(false)}
       />
 
-      {/* Новое модальное окно с табличной формой экспертизы */}
       <ExpertiseFormModal
         open={isEditOpen}
         expertise={selectedExpertise ?? null}

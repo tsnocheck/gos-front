@@ -1,5 +1,3 @@
-// Типы для авторизации и сессий
-
 export interface LoginCredentials {
   email: string;
   password: string;

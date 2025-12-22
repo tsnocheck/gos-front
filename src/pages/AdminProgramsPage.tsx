@@ -26,7 +26,6 @@ export const AdminProgramsPage: React.FC = () => {
 
   const getUserById = useCallback((id: string) => users.find((user) => user.id === id), [users]);
 
-  // Архивирование и разархивирование
   const handleArchiveToggle = async (program: ExtendedProgram, checked: boolean) => {
     if (checked) {
       await programService.archiveProgram(program.id!);
@@ -36,7 +35,6 @@ export const AdminProgramsPage: React.FC = () => {
     await queryClient.invalidateQueries();
   };
 
-  // Массовое архивирование/разархивирование
   const handleBulkArchive = async (checked: boolean) => {
     for (const id of selectedRowKeys) {
       const program = (programs?.data || []).find((p) => p.id === id);
