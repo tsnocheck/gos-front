@@ -1,9 +1,13 @@
 import React, { useMemo, useRef, useState } from 'react';
-import ReactQuill from 'react-quill';
+import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import QuillResizeImage from 'quill-resize-image';
 import { Typography, Card, Button, Modal, InputNumber, Space } from 'antd';
 import { TableOutlined } from '@ant-design/icons';
 import { registerTableBlots } from './tableBlot';
+
+// Регистрируем модуль resize для изображений
+Quill.register('modules/resize', QuillResizeImage);
 
 const { Text } = Typography;
 
@@ -95,6 +99,10 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
           ['link', 'image'],
           ['clean'],
         ],
+      },
+      // Модуль для изменения размера изображений
+      resize: {
+        locale: {},
       },
     }),
     [],
@@ -307,6 +315,16 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
 
         .wysiwyg-editor-wrapper .ql-editor table tbody tr:nth-child(even) {
           background-color: #fafafa;
+        }
+
+        /* Стили для resize изображений */
+        .wysiwyg-editor-wrapper .ql-editor img {
+          cursor: pointer;
+          max-width: 100%;
+        }
+
+        .wysiwyg-editor-wrapper .ql-editor img.active {
+          outline: 2px solid #1890ff;
         }
       `}</style>
     </div>
