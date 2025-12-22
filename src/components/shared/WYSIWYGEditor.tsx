@@ -1,22 +1,24 @@
-import React, { useMemo, useRef, useState } from 'react';
-import ReactQuill, { Quill } from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import React, { useMemo, useRef } from 'react';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
+import { Quill } from 'react-quill-new';
 import QuillResizeImage from 'quill-resize-image';
-import { Typography, Card, Button, Modal, InputNumber, Space } from 'antd';
-import { TableOutlined } from '@ant-design/icons';
-import { registerTableBlots } from './tableBlot';
+import QuillTableBetter from 'quill-table-better';
+import 'quill-table-better/dist/quill-table-better.css';
+import { Typography, Card } from 'antd';
+
+const { Text } = Typography;
 
 // Регистрируем модуль resize для изображений
 Quill.register('modules/resize', QuillResizeImage);
 
-const { Text } = Typography;
-
-// Регистрируем поддержку таблиц один раз
-let tableRegistered = false;
-if (!tableRegistered) {
-  registerTableBlots();
-  tableRegistered = true;
-}
+// Регистрируем модуль таблиц
+Quill.register(
+  {
+    'modules/table-better': QuillTableBetter,
+  },
+  true,
+);
 
 interface WYSIWYGEditorProps {
   name: string;
@@ -36,53 +38,11 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
   placeholder,
 }) => {
   const quillRef = useRef<ReactQuill>(null);
-  const [isTableModalOpen, setIsTableModalOpen] = useState(false);
-  const [tableRows, setTableRows] = useState(3);
-  const [tableCols, setTableCols] = useState(3);
 
   const handleChange = (content: string) => {
     if (content !== value) {
       onChange(content);
     }
-  };
-
-  // Функция для вставки таблицы
-  const insertTable = () => {
-    const quill = quillRef.current?.getEditor();
-    if (quill) {
-      const range = quill.getSelection(true);
-
-      // Генерируем HTML для таблицы без inline стилей (будут применяться через CSS)
-      let tableHTML = '<table>';
-
-      // Добавляем заголовок
-      tableHTML += '<thead><tr>';
-      for (let col = 0; col < tableCols; col++) {
-        tableHTML += `<th>Заголовок ${col + 1}</th>`;
-      }
-      tableHTML += '</tr></thead>';
-
-      // Добавляем строки
-      tableHTML += '<tbody>';
-      for (let row = 0; row < tableRows; row++) {
-        tableHTML += '<tr>';
-        for (let col = 0; col < tableCols; col++) {
-          tableHTML += '<td><br></td>';
-        }
-        tableHTML += '</tr>';
-      }
-      tableHTML += '</tbody></table><p><br></p>';
-
-      // Вставляем таблицу как HTML
-      quill.clipboard.dangerouslyPasteHTML(range.index, tableHTML);
-      quill.setSelection(range.index + 1, 0);
-
-      setIsTableModalOpen(false);
-    }
-  };
-
-  const showTableModal = () => {
-    setIsTableModalOpen(true);
   };
 
   const modules = useMemo(
@@ -97,17 +57,31 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
           [{ align: [] }],
           ['blockquote'],
           ['link', 'image'],
+          ['table-better'],
           ['clean'],
         ],
       },
+      // Отключаем встроенный модуль таблиц Quill
+      table: false,
       // Модуль для изменения размера изображений
       resize: {
         locale: {},
+      },
+      // Модуль улучшенных таблиц
+      'table-better': {
+        language: 'ru_RU',
+        menus: ['column', 'row', 'merge', 'table', 'cell', 'wrap', 'delete'],
+        toolbarTable: true,
+      },
+      // Привязки клавиш для таблиц
+      keyboard: {
+        bindings: QuillTableBetter.keyboardBindings,
       },
     }),
     [],
   );
 
+  // Include table-related formats from quill-table-better
   const formats = [
     'header',
     'size',
@@ -123,12 +97,20 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
     'blockquote',
     'link',
     'image',
-    'table',
-    'table-row',
+    // Table formats from quill-table-better
+    'table-cell-line',
+    'table-cell-block',
     'table-cell',
-    'table-header',
+    'table-th-block',
+    'table-th',
+    'table-row',
+    'table-th-row',
     'table-body',
-    'table-head',
+    'table-thead',
+    'table-col',
+    'table-colgroup',
+    'table-container',
+    'table-temporary',
   ];
 
   return (
@@ -144,42 +126,7 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
         <Text strong style={{ fontSize: 14, color: '#262626' }}>
           {label}
         </Text>
-        <Button type="default" size="small" icon={<TableOutlined />} onClick={showTableModal}>
-          Вставить таблицу
-        </Button>
       </div>
-
-      <Modal
-        title="Создать таблицу"
-        open={isTableModalOpen}
-        onOk={insertTable}
-        onCancel={() => setIsTableModalOpen(false)}
-        okText="Вставить"
-        cancelText="Отмена"
-      >
-        <Space direction="vertical" style={{ width: '100%' }}>
-          <div>
-            <Text>Количество строк:</Text>
-            <InputNumber
-              min={1}
-              max={20}
-              value={tableRows}
-              onChange={(val) => setTableRows(val ?? 3)}
-              style={{ width: '100%', marginTop: 8 }}
-            />
-          </div>
-          <div>
-            <Text>Количество столбцов:</Text>
-            <InputNumber
-              min={1}
-              max={10}
-              value={tableCols}
-              onChange={(val) => setTableCols(val ?? 3)}
-              style={{ width: '100%', marginTop: 8 }}
-            />
-          </div>
-        </Space>
-      </Modal>
 
       <Card
         size="small"
@@ -274,29 +221,15 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
-        /* Стили для таблиц - ключевая часть! */
+        /* Стили для таблиц quill-table-better */
         .wysiwyg-editor-wrapper .ql-editor table {
           border-collapse: collapse;
           width: 100%;
           margin: 12px 0;
-          display: table !important;
-        }
-
-        .wysiwyg-editor-wrapper .ql-editor table thead {
-          display: table-header-group !important;
-        }
-
-        .wysiwyg-editor-wrapper .ql-editor table tbody {
-          display: table-row-group !important;
-        }
-
-        .wysiwyg-editor-wrapper .ql-editor table tr {
-          display: table-row !important;
         }
 
         .wysiwyg-editor-wrapper .ql-editor table td,
         .wysiwyg-editor-wrapper .ql-editor table th {
-          display: table-cell !important;
           border: 1px solid #d9d9d9;
           padding: 8px;
           min-width: 50px;
@@ -309,12 +242,10 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
           text-align: center;
         }
 
-        .wysiwyg-editor-wrapper .ql-editor table tr:hover {
-          background-color: #f5f5f5;
-        }
-
-        .wysiwyg-editor-wrapper .ql-editor table tbody tr:nth-child(even) {
-          background-color: #fafafa;
+        /* Стили для выделенных ячеек */
+        .wysiwyg-editor-wrapper .ql-editor td.ql-cell-selected,
+        .wysiwyg-editor-wrapper .ql-editor th.ql-cell-selected {
+          background-color: #e6f7ff !important;
         }
 
         /* Стили для resize изображений */
@@ -325,6 +256,32 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
 
         .wysiwyg-editor-wrapper .ql-editor img.active {
           outline: 2px solid #1890ff;
+        }
+
+        /* Стили для кнопки таблицы в тулбаре */
+        .wysiwyg-editor-wrapper .ql-toolbar .ql-table-better {
+          width: auto !important;
+        }
+
+        .wysiwyg-editor-wrapper .ql-toolbar .ql-table-better svg {
+          width: 18px;
+          height: 18px;
+        }
+
+        /* Стили для контекстного меню таблицы */
+        .ql-table-better-menu {
+          border-radius: 6px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .ql-table-better-menu .ql-table-better-menu-item {
+          padding: 8px 16px;
+          cursor: pointer;
+          transition: background-color 0.2s;
+        }
+
+        .ql-table-better-menu .ql-table-better-menu-item:hover {
+          background-color: #e6f7ff;
         }
       `}</style>
     </div>

@@ -1,6 +1,12 @@
 import React from 'react';
 import { Text, View, Link, Image } from '@react-pdf/renderer';
-import { WYSIWYGPDFTable } from './WYSIWYGPDFTable';
+import {
+  SmartTable,
+  type TableData,
+  type TableRowData,
+  type TableCellData,
+  type TableColumnData,
+} from './WYSIWYGPDFTable';
 import {
   parseHTMLToPDFStructure,
   sanitizeHTML,
@@ -335,15 +341,10 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
       );
     }
 
-    // Таблица
+    // Таблица - используем SmartTable для корректного отображения
     if (isTable(node)) {
-      return (
-        <WYSIWYGPDFTable.Table key={index} style={{ marginVertical: 8 }}>
-          {(node.children || []).map((child, childIndex) =>
-            renderTableElement(child, `${index}-${childIndex}`),
-          )}
-        </WYSIWYGPDFTable.Table>
-      );
+      const tableData = parseTableToData(node);
+      return <SmartTable key={index} data={tableData} style={{ marginVertical: 8 }} />;
     }
 
     // Если внутри другие блоки
@@ -359,177 +360,149 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     return null;
   };
 
-  // Специальная функция для рендеринга элементов таблицы
-  const renderTableElement = (
-    node: HTMLNode,
-    index: string | number,
-  ): React.ReactElement | null => {
-    // Пропускаем colgroup (используется quill-better-table для определения ширины столбцов)
-    if (node.type === 'tag' && node.name === 'colgroup') {
-      return null;
+  // Парсит HTML таблицу в структуру TableData для SmartTable
+  const parseTableToData = (tableNode: HTMLNode): TableData => {
+    const rows: TableRowData[] = [];
+    const columns: TableColumnData[] = [];
+
+    // Извлекаем информацию о колонках из colgroup
+    const colgroupNode = (tableNode.children || []).find(
+      (child) => child.type === 'tag' && child.name === 'colgroup',
+    );
+    if (colgroupNode) {
+      (colgroupNode.children || []).forEach((col) => {
+        if (col.type === 'tag' && col.name === 'col') {
+          const attribs = (col as any).attribs || {};
+          const width =
+            attribs.width || attribs.style?.match(/width:\s*(\d+(?:\.\d+)?(?:px|%)?)/)?.[1];
+          columns.push({ width: width ? parseFloat(width) : undefined });
+        }
+      });
     }
 
-    // Заголовок таблицы (thead)
-    if (node.type === 'tag' && node.name === 'thead') {
-      return (
-        <React.Fragment key={index}>
-          {(node.children || []).map((child, childIndex) => {
-            if (isTableRow(child)) {
-              return (
-                <WYSIWYGPDFTable.Row key={`${index}-${childIndex}`} isHeader>
-                  {(child.children || []).map((cell, cellIndex) =>
-                    renderTableCell(cell, `${index}-${childIndex}-${cellIndex}`, true),
-                  )}
-                </WYSIWYGPDFTable.Row>
-              );
-            }
-            return null;
-          })}
-        </React.Fragment>
-      );
+    // Обрабатываем thead
+    const theadNode = (tableNode.children || []).find(
+      (child) => child.type === 'tag' && child.name === 'thead',
+    );
+    if (theadNode) {
+      (theadNode.children || []).forEach((row) => {
+        if (isTableRow(row)) {
+          rows.push(parseTableRow(row, true));
+        }
+      });
     }
 
-    // Тело таблицы (tbody)
-    if (node.type === 'tag' && node.name === 'tbody') {
-      return (
-        <React.Fragment key={index}>
-          {(node.children || []).map((child, childIndex) => {
-            if (isTableRow(child)) {
-              return (
-                <WYSIWYGPDFTable.Row key={`${index}-${childIndex}`}>
-                  {(child.children || []).map((cell, cellIndex) =>
-                    renderTableCell(cell, `${index}-${childIndex}-${cellIndex}`, false),
-                  )}
-                </WYSIWYGPDFTable.Row>
-              );
-            }
-            return null;
-          })}
-        </React.Fragment>
-      );
+    // Обрабатываем tbody
+    const tbodyNode = (tableNode.children || []).find(
+      (child) => child.type === 'tag' && child.name === 'tbody',
+    );
+    if (tbodyNode) {
+      (tbodyNode.children || []).forEach((row) => {
+        if (isTableRow(row)) {
+          rows.push(parseTableRow(row, false));
+        }
+      });
     }
 
-    // Строка таблицы (если не в thead/tbody)
-    if (isTableRow(node)) {
-      // Определяем, является ли строка заголовочной по наличию th элементов
-      const hasThCells = (node.children || []).some((child) => child.name === 'th');
-      return (
-        <WYSIWYGPDFTable.Row key={index} isHeader={hasThCells}>
-          {(node.children || []).map((child, childIndex) =>
-            renderTableCell(child, `${index}-${childIndex}`, hasThCells),
-          )}
-        </WYSIWYGPDFTable.Row>
-      );
-    }
+    // Обрабатываем строки напрямую в table (без thead/tbody)
+    (tableNode.children || []).forEach((child) => {
+      if (isTableRow(child)) {
+        const hasThCells = (child.children || []).some((c) => c.name === 'th');
+        rows.push(parseTableRow(child, hasThCells));
+      }
+    });
 
-    return null;
+    return { rows, columns: columns.length > 0 ? columns : undefined };
   };
 
-  // Специальная функция для рендеринга ячеек таблицы
-  const renderTableCell = (
-    node: HTMLNode,
-    index: string | number,
-    isHeader: boolean,
-  ): React.ReactElement | null => {
-    if (isTableCell(node)) {
-      const CellComponent =
-        isHeader || node.name === 'th' ? WYSIWYGPDFTable.HeaderCell : WYSIWYGPDFTable.Cell;
-      const attribs = (node as any).attribs || {};
+  // Парсит строку таблицы
+  const parseTableRow = (rowNode: HTMLNode, isHeader: boolean): TableRowData => {
+    const cells: TableCellData[] = [];
 
-      // Извлекаем атрибуты colspan и width
-      const colspan = attribs.colspan ? parseInt(attribs.colspan, 10) : undefined;
-      const width = attribs.width || attribs['data-width'] || undefined;
-
-      // Извлекаем стили из data-row атрибута (quill-better-table использует data-row)
-      const dataRow = attribs['data-row'];
-      const cellStyle: any = {};
-
-      // Парсим ширину из data-row если есть
-      if (dataRow) {
-        const widthMatch = dataRow.match(/width:\s*(\d+(?:\.\d+)?)(px|%)?/);
-        if (widthMatch) {
-          const widthValue = parseFloat(widthMatch[1]);
-          const widthUnit = widthMatch[2] || 'px';
-          if (widthUnit === '%') {
-            cellStyle.width = `${widthValue}%`;
-          } else {
-            // Конвертируем px в points для PDF (примерно 0.75)
-            cellStyle.width = widthValue * 0.75;
-          }
-        }
+    (rowNode.children || []).forEach((cellNode) => {
+      if (isTableCell(cellNode)) {
+        cells.push(parseTableCellData(cellNode, isHeader || cellNode.name === 'th'));
       }
+    });
 
-      // Рендерим содержимое ячейки
-      // Проверяем, есть ли блочные элементы (параграфы, списки) внутри ячейки
-      const hasBlockElements = (node.children || []).some(
-        (child) =>
-          child.type === 'tag' &&
-          (child.name === 'p' ||
-            child.name === 'div' ||
-            child.name === 'ul' ||
-            child.name === 'ol' ||
-            child.name === 'blockquote'),
-      );
+    return { cells, isHeader };
+  };
 
-      // Если есть блочные элементы, рендерим их отдельно
-      // Иначе рендерим как inline контент
-      const cellContent = hasBlockElements
-        ? (node.children || []).map((child, childIndex) => {
-            // Для параграфов и списков внутри ячейки
-            if (child.type === 'tag' && (child.name === 'p' || child.name === 'div')) {
-              return (
-                <Text key={`${index}-${childIndex}`} style={{ fontSize: 10, lineHeight: 1.3 }}>
-                  {(child.children || []).map((grandChild, grandChildIndex) =>
-                    renderInline(grandChild, `${index}-${childIndex}-${grandChildIndex}`),
-                  )}
-                </Text>
-              );
-            }
-            // Для списков
-            if (child.type === 'tag' && (child.name === 'ul' || child.name === 'ol')) {
-              const isOrdered = child.name === 'ol';
-              return (
-                <View key={`${index}-${childIndex}`} style={{ marginLeft: 10 }}>
-                  {(child.children || []).map((listItem, listItemIndex) => {
-                    if (isListItem(listItem)) {
-                      return (
-                        <Text
-                          key={`${index}-${childIndex}-${listItemIndex}`}
-                          style={{ fontSize: 10, marginBottom: 2 }}
-                        >
-                          {isOrdered ? `${listItemIndex + 1}. ` : '• '}
-                          {(listItem.children || []).map((listChild, listChildIndex) =>
-                            renderInline(
-                              listChild,
-                              `${index}-${childIndex}-${listItemIndex}-${listChildIndex}`,
-                            ),
-                          )}
-                        </Text>
-                      );
-                    }
-                    return null;
-                  })}
-                </View>
-              );
-            }
-            return renderInline(child, `${index}-${childIndex}`);
-          })
-        : (node.children || []).map((child, childIndex) =>
-            renderInline(child, `${index}-${childIndex}`),
+  // Парсит ячейку таблицы в TableCellData
+  const parseTableCellData = (cellNode: HTMLNode, isHeader: boolean): TableCellData => {
+    const attribs = (cellNode as any).attribs || {};
+    const colspan = attribs.colspan ? parseInt(attribs.colspan, 10) : undefined;
+    const rowspan = attribs.rowspan ? parseInt(attribs.rowspan, 10) : undefined;
+
+    // Рендерим содержимое ячейки
+    const content = renderCellContent(cellNode);
+
+    return {
+      content,
+      colspan,
+      rowspan,
+      isHeader,
+    };
+  };
+
+  // Рендерит содержимое ячейки таблицы
+  const renderCellContent = (cellNode: HTMLNode): React.ReactNode => {
+    const children = cellNode.children || [];
+
+    // Проверяем, есть ли блочные элементы
+    const hasBlockElements = children.some(
+      (child) =>
+        child.type === 'tag' &&
+        (child.name === 'p' ||
+          child.name === 'div' ||
+          child.name === 'ul' ||
+          child.name === 'ol' ||
+          child.name === 'blockquote'),
+    );
+
+    if (hasBlockElements) {
+      return children.map((child, childIndex) => {
+        // Для параграфов
+        if (child.type === 'tag' && (child.name === 'p' || child.name === 'div')) {
+          return (
+            <Text key={childIndex} style={{ fontSize: 10, lineHeight: 1.3 }}>
+              {(child.children || []).map((grandChild, grandChildIndex) =>
+                renderInline(grandChild, `cell-${childIndex}-${grandChildIndex}`),
+              )}
+            </Text>
           );
-
-      return (
-        <CellComponent
-          key={index}
-          colspan={colspan}
-          width={width || cellStyle.width}
-          style={cellStyle}
-        >
-          {cellContent}
-        </CellComponent>
-      );
+        }
+        // Для списков
+        if (child.type === 'tag' && (child.name === 'ul' || child.name === 'ol')) {
+          const isOrdered = child.name === 'ol';
+          return (
+            <View key={childIndex} style={{ marginLeft: 10 }}>
+              {(child.children || []).map((listItem, listItemIndex) => {
+                if (isListItem(listItem)) {
+                  return (
+                    <Text key={listItemIndex} style={{ fontSize: 10, marginBottom: 2 }}>
+                      {isOrdered ? `${listItemIndex + 1}. ` : '• '}
+                      {(listItem.children || []).map((listChild, listChildIndex) =>
+                        renderInline(listChild, `list-${listItemIndex}-${listChildIndex}`),
+                      )}
+                    </Text>
+                  );
+                }
+                return null;
+              })}
+            </View>
+          );
+        }
+        return renderInline(child, `inline-${childIndex}`);
+      });
     }
-    return null;
+
+    // Просто inline контент
+    return (
+      <Text style={{ fontSize: 10, lineHeight: 1.3 }}>
+        {children.map((child, childIndex) => renderInline(child, `inline-${childIndex}`))}
+      </Text>
+    );
   };
 
   return <View style={style}>{nodes.map((node, index) => renderBlock(node, index))}</View>;
