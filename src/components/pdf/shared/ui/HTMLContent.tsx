@@ -35,19 +35,55 @@ interface HTMLContentProps {
 
 const CONTENT_MAX_WIDTH = 530;
 const PAGE_MAX_HEIGHT = 720;
+
+// Парсит CSS style атрибут и извлекает значения width/height
+function parseStyleAttribute(style: string | undefined): { width?: number; height?: number } {
+  if (!style) return {};
+
+  const result: { width?: number; height?: number } = {};
+
+  // Извлекаем width из style (поддержка px и pt)
+  const widthMatch = style.match(/(?:^|;)\s*width\s*:\s*(\d+(?:\.\d+)?)(px|pt|%)?/i);
+  if (widthMatch) {
+    const value = parseFloat(widthMatch[1]);
+    const unit = widthMatch[2]?.toLowerCase();
+    // pt оставляем как есть, px конвертируем (1px ≈ 0.75pt), % игнорируем
+    if (unit === 'pt') {
+      result.width = value;
+    } else if (unit !== '%') {
+      result.width = value; // px и без единиц - используем как есть
+    }
+  }
+
+  // Извлекаем height из style
+  const heightMatch = style.match(/(?:^|;)\s*height\s*:\s*(\d+(?:\.\d+)?)(px|pt|%)?/i);
+  if (heightMatch) {
+    const value = parseFloat(heightMatch[1]);
+    const unit = heightMatch[2]?.toLowerCase();
+    if (unit === 'pt') {
+      result.height = value;
+    } else if (unit !== '%') {
+      result.height = value;
+    }
+  }
+
+  return result;
+}
+
 function buildImageStyle(node: HTMLNode) {
   const attribs: any = (node as any).attribs || {};
   const forceFull = attribs['data-fullwidth'] === 'true';
-  const attrW = parseInt(attribs.width || attribs['data-width'], 10);
-  const attrH = parseInt(attribs.height || attribs['data-height'], 10);
+
+  // Сначала пробуем взять из прямых атрибутов, потом из style
+  const styleValues = parseStyleAttribute(attribs.style);
+  const attrW = parseInt(attribs.width || attribs['data-width'], 10) || styleValues.width || NaN;
+  const attrH = parseInt(attribs.height || attribs['data-height'], 10) || styleValues.height || NaN;
   if (!isNaN(attrW) && attrW > 0 && !isNaN(attrH) && attrH > 0) {
     let scale;
 
     if (forceFull) {
-
       scale = CONTENT_MAX_WIDTH / attrW;
     } else {
-
       const scaleByWidth = CONTENT_MAX_WIDTH / attrW;
       const scaleByHeight = PAGE_MAX_HEIGHT / attrH;
 
@@ -83,7 +119,6 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     node: HTMLNode,
     index: string | number,
   ): string | React.ReactElement | null => {
-
     if (node.type === 'text') {
       return node.data || '';
     }
@@ -157,7 +192,6 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
     ) as any;
   };
   const renderBlock = (node: HTMLNode, index: string | number): React.ReactElement | null => {
-
     if (isImage(node)) {
       const src = (node as any).attribs?.src || '';
       const imgStyle = buildImageStyle(node);
@@ -186,7 +220,6 @@ const HTMLContent: React.FC<HTMLContentProps> = ({ html, style }) => {
       );
     }
     if (isParagraph(node) || (node.type === 'tag' && node.name === 'div')) {
-
       const alignValue = getTextAlign(node) || 'left';
       const alignment = (
         ['left', 'center', 'right', 'justify'].includes(alignValue) ? alignValue : 'left'

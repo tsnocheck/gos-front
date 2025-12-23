@@ -63,9 +63,11 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
       },
       // Отключаем встроенный модуль таблиц Quill
       table: false,
-      // Модуль для изменения размера изображений
+      // Модуль для изменения размера изображений (без тулбара)
       resize: {
         locale: {},
+        // Используем только модули Resize и DisplaySize, без Toolbar
+        modules: ['Resize', 'DisplaySize'],
       },
       // Модуль улучшенных таблиц
       'table-better': {
@@ -251,11 +253,16 @@ const WYSIWYGEditor: React.FC<WYSIWYGEditorProps> = ({
         /* Стили для resize изображений */
         .wysiwyg-editor-wrapper .ql-editor img {
           cursor: pointer;
-          max-width: 100%;
+          max-width: 707px; /* Ограничение по ширине PDF (530pt ≈ 707px) */
         }
 
         .wysiwyg-editor-wrapper .ql-editor img.active {
           outline: 2px solid #1890ff;
+        }
+
+        /* Скрываем тулбар resize-image (100%, 50%, left, center, right) */
+        #editor-resizer .toolbar {
+          display: none !important;
         }
 
         /* Стили для кнопки таблицы в тулбаре */
